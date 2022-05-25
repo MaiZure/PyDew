@@ -17,7 +17,7 @@ class Player:
         for j in range(4):
             for i in range(4):
                 rect = pygame.Rect(i*16, j*32, 16, 32)
-                self.sprite.append(pygame.Surface(rect.size, pygame.SRCALPHA))
+                self.sprite.append(pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha())
                 self.sprite[j*4+i].blit(self.spritesheet, (0, 0), rect)
     
 

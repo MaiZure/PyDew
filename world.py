@@ -16,7 +16,7 @@ class World:
         for j in range(int(self.spritesheet.get_height()/16)):
             for i in range(int(self.spritesheet.get_width()/16)):
                 rect = pygame.Rect(i*16, j*16, 16, 16)
-                new_tile = pygame.Surface(rect.size, pygame.SRCALPHA)
+                new_tile = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
                 new_tile.blit(self.spritesheet, (0,0), rect)
                 self.tiles.append(new_tile)
         
@@ -26,10 +26,10 @@ class World:
         
         #create BG surface
         rect = pygame.Rect(0, 0, 75*16, 50*16) 
-        self.bg = pygame.Surface(rect.size)
+        self.bg = pygame.Surface(rect.size).convert()
         
-        for j in range(0,int(self.game.config.screen_height/16)):
-            for i in range(0,int(self.game.config.screen_width/16)):
+        for j in range(0,50):
+            for i in range(0,75):
                 bg_tile = self.bg_layer[j*75+i]
                 bldg_tile = self.bldg_layer[j*75+i]
                 if bg_tile: self.bg.blit(self.tiles[self.bg_layer[j*75+i]], (i*16,j*16))

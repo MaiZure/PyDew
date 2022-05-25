@@ -4,6 +4,7 @@ import pygame
 from world import World
 from player import Player
 from config import Config
+from ui import UI
 
 
 pygame.init()
@@ -20,12 +21,13 @@ class PyDew:
                                                pygame.HWSURFACE|pygame.DOUBLEBUF)
         self.screen = pygame.Surface((self.config.screen_width/self.config.screen_scaling, 
                                                self.config.screen_height/self.config.screen_scaling),
-                                               pygame.HWSURFACE|pygame.DOUBLEBUF).convert_alpha()
+                                               pygame.HWSURFACE|pygame.DOUBLEBUF).convert()
         self.clock = pygame.time.Clock()
         pygame.display.set_caption("PyDew "+str(self.version))
         
         self.world = World(self)
         self.player = Player(self)
+        self.ui = UI(self)
         
         self.run = False
         
@@ -54,15 +56,18 @@ class PyDew:
     #Update game state
     def update(self):
         self.player.tick()
+        self.ui.tick()
         
     #Draw some stuff
     def render(self):
         self.world.render(self.screen)
         self.player.render(self.screen)
         
+        self.ui.render(self.screen)
+        
         scaled_screen = pygame.transform.scale(self.screen,self.final_screen.get_rect().size)
         self.final_screen.blit(scaled_screen,(0,0))
-        pygame.display.flip()
+        pygame.display.update()
 
 
 #Go!
