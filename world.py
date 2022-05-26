@@ -7,34 +7,31 @@ class World:
         print("Initializaing World")
         self.game = game
         
-        season = ".\\Tiles\\"+random.choice(("Tiles_spring.png","Tiles_summer.png","Tiles_fall.png","Tiles_winter.png"))
-        
-        self.spritesheet = pygame.image.load(season).convert_alpha()
-        self.tiles = []
-        self.tiles.append(None)
-        
-        for j in range(int(self.spritesheet.get_height()/16)):
-            for i in range(int(self.spritesheet.get_width()/16)):
-                rect = pygame.Rect(i*16, j*16, 16, 16)
-                new_tile = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
-                new_tile.blit(self.spritesheet, (0,0), rect)
-                self.tiles.append(new_tile)
+        self.set_random_season()
         
         self.bg_layer = []
-        self.bldg_layer = []    
+        self.bldg_layer = []
         self.build_world()
         
-        #create BG surface
+        # Create background surface to render map
         rect = pygame.Rect(0, 0, 75*16, 50*16) 
         self.bg = pygame.Surface(rect.size).convert()
+        self.generate_background_layers()
+    
+    def set_season(self, season):
+        self.tiles = self.game.sprite.get_spritesheet_tiles(season)
         
+    def set_random_season(self):
+        season = random.choice(["spring","summer","fall","winter"]) + "_outdoors"
+        self.set_season(season)
+        
+    def generate_background_layers(self):
         for j in range(0,50):
             for i in range(0,75):
                 bg_tile = self.bg_layer[j*75+i]
                 bldg_tile = self.bldg_layer[j*75+i]
                 if bg_tile: self.bg.blit(self.tiles[self.bg_layer[j*75+i]], (i*16,j*16))
                 if bldg_tile: self.bg.blit(self.tiles[self.bldg_layer[j*75+i]], (i*16,j*16))
-        
     
     def render(self, screen):
         top_left_x = min(max(self.game.player.x-screen.get_width()/2,0),75*16-screen.get_width())

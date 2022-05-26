@@ -4,6 +4,7 @@ import pygame
 from world import World
 from player import Player
 from config import Config
+from spriteloader import SpriteLoader
 from ui import UI
 
 
@@ -13,7 +14,7 @@ pygame.init()
 class PyDew:
 
     def __init__(self):
-        self.version = "0.0.1.3"
+        self.version = "0.0.1.4"
         print("Hello PyDew "+str(self.version))
         self.config = Config()        
         self.final_screen = pygame.display.set_mode((self.config.screen_width, 
@@ -25,6 +26,7 @@ class PyDew:
         self.clock = pygame.time.Clock()
         pygame.display.set_caption("PyDew "+str(self.version))
         
+        self.sprite = SpriteLoader()
         self.world = World(self)
         self.player = Player(self)
         self.ui = UI(self)
@@ -50,6 +52,10 @@ class PyDew:
         for e in pygame.event.get():
             if e.type == pygame.QUIT:
                 self.run = False
+            if e.type == pygame.KEYUP:
+                if e.key == pygame.K_t:
+                    self.world.set_random_season();
+                    self.world.generate_background_layers();
         keys = pygame.key.get_pressed()
         self.player.handle_input(keys)
         
