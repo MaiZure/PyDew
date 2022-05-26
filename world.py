@@ -7,11 +7,16 @@ class World:
         print("Initializaing World")
         self.game = game
         
+        self.tiles = []
         self.set_random_season()
+        
         
         self.bg_layer = []
         self.bldg_layer = []
         self.build_world()
+        
+        self.map_width = 75
+        self.map_height = 50
         
         # Create background surface to render map
         rect = pygame.Rect(0, 0, 75*16, 50*16) 
@@ -19,7 +24,7 @@ class World:
         self.generate_background_layers()
     
     def set_season(self, season):
-        self.tiles = self.game.sprite.get_spritesheet_tiles(season)
+        self.tiles = self.game.sprite.get_spritesheet_map_tiles(season)
         
     def set_random_season(self):
         season = random.choice(["spring","summer","fall","winter"]) + "_outdoors"

@@ -15,6 +15,7 @@ class SpriteLoader:
         self.sheet["summer_outdoors"] = (pygame.image.load(".\\Tiles\\Tiles_summer.png").convert_alpha(), 16, 16)
         self.sheet["fall_outdoors"] = (pygame.image.load(".\\Tiles\\Tiles_fall.png").convert_alpha(), 16, 16)
         self.sheet["winter_outdoors"] = (pygame.image.load(".\\Tiles\\Tiles_winter.png").convert_alpha(), 16, 16)
+        self.sheet["emily"] = (pygame.image.load(".\\Tiles\\Emily.png").convert_alpha(), 16, 32)
     
     # Get the spritesheet from the library
     def get_spritesheet(self, name) -> pygame.image:
@@ -30,7 +31,7 @@ class SpriteLoader:
         
     # Decompose the spritesheet in to a list of tiles
     def get_spritesheet_tiles(self,name) -> list:
-        tiles = [None]    # All tile lists start with an empty (no-draw index)
+        tiles = []
         spritesheet = self.get_spritesheet(name)
         sheet_width = spritesheet.get_width()
         sheet_height = spritesheet.get_height()
@@ -45,5 +46,11 @@ class SpriteLoader:
                 new_tile.blit(spritesheet, (0,0), rect)
                 tiles.append(new_tile)
                 
+        return tiles
+    
+    # Gets all tiles for a map
+    def get_spritesheet_map_tiles(self, name) -> list:
+        tiles = self.get_spritesheet_tiles(name)
+        tiles.insert(0,None)  # All map tiles start with an empty (no-draw index)
         return tiles
         

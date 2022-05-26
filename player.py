@@ -4,22 +4,15 @@ class Player:
     def __init__(self, game):
         print("Initializaing Player")
         self.game = game
-        self.spritesheet = pygame.image.load(".\\Tiles\\Emily.png").convert_alpha()
+
+        self.sprite = game.sprite.get_spritesheet_tiles("emily")
         self.x = 32*16 #self.game.config.screen_width/2
         self.y = 17*16 #self.game.config.screen_height/2
         self.dir = 0
-        self.sprite = []
         self.frametimer = 0
         self.frame = 0
         self.running = False
         self.m_up = self.m_down = self.m_right = self.m_left = False
-        
-        for j in range(4):
-            for i in range(4):
-                rect = pygame.Rect(i*16, j*32, 16, 32)
-                self.sprite.append(pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha())
-                self.sprite[j*4+i].blit(self.spritesheet, (0, 0), rect)
-    
 
     def handle_input(self, input):
         if input[pygame.K_s]: self.m_down = True

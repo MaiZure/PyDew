@@ -1,0 +1,51 @@
+Version Milestones
+
+--0.1  (The world)
+Map loading, All layers
+Walking / Collisions
+Map Transitions
+Time Passing
+Animated backgrounds
+
+--0.2  (UX/UI)
+Menus
+Inventory
+Music & Sound
+Day/Night Cycle
+
+
+--0.3  (People)
+NPCs
+Schedules
+Dialogue system
+
+
+--0.4  (Farm)
+Digging, Planting, Growing
+Farm Buildings
+Animals
+
+
+--0.5  (Activities)
+Fishing
+Minigames
+Trading / Upgrading
+
+
+--0.6  (Adventuring)
+Enemies
+Combat
+Mines
+
+
+--0.7  (Events)
+Friendship events
+Wakeup Events
+
+
+--0.8  (Quests)
+Quest System
+
+
+--0.9  (Polish)
+Missing Stuff
