@@ -16,6 +16,7 @@ class SpriteLoader:
         self.sheet["fall_outdoors"] = (pygame.image.load(".\\Tiles\\Tiles_fall.png").convert_alpha(), 16, 16)
         self.sheet["winter_outdoors"] = (pygame.image.load(".\\Tiles\\Tiles_winter.png").convert_alpha(), 16, 16)
         self.sheet["emily"] = (pygame.image.load(".\\Tiles\\Emily.png").convert_alpha(), 16, 32)
+        self.sheet["cursors"] = (pygame.image.load(".\\Tiles\\Cursors.png").convert_alpha(), 16, 16)
     
     # Get the spritesheet from the library
     def get_spritesheet(self, name) -> pygame.image:

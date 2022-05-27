@@ -5,6 +5,7 @@ from world import World
 from player import Player
 from config import Config
 from spriteloader import SpriteLoader
+from maploader import MapLoader
 from ui import UI
 
 
@@ -20,13 +21,28 @@ class PyDew:
         self.final_screen = pygame.display.set_mode((self.config.screen_width, 
                                                self.config.screen_height),
                                                pygame.HWSURFACE|pygame.DOUBLEBUF)
-        self.screen = pygame.Surface((self.config.screen_width/self.config.screen_scaling, 
+        self.unscaled_screen = pygame.Surface((self.config.screen_width/self.config.screen_scaling, 
+                                               self.config.screen_height/self.config.screen_scaling))
+        self.bg_surface = pygame.Surface((self.config.screen_width/self.config.screen_scaling, 
+                                               self.config.screen_height/self.config.screen_scaling))
+        self.fg_surface = pygame.Surface((self.config.screen_width/self.config.screen_scaling, 
                                                self.config.screen_height/self.config.screen_scaling),
-                                               pygame.HWSURFACE|pygame.DOUBLEBUF).convert()
+                                               pygame.SRCALPHA)
+        self.npc_surface = pygame.Surface((self.config.screen_width/self.config.screen_scaling, 
+                                               self.config.screen_height/self.config.screen_scaling),
+                                               pygame.SRCALPHA)
+        self.ui_surface = pygame.Surface((self.config.screen_width/self.config.screen_scaling, 
+                                               self.config.screen_height/self.config.screen_scaling),
+                                               pygame.SRCALPHA)
+        self.menu_surface = pygame.Surface((self.config.screen_width/self.config.screen_scaling, 
+                                               self.config.screen_height/self.config.screen_scaling),
+                                               pygame.SRCALPHA)                       
+        
         self.clock = pygame.time.Clock()
         pygame.display.set_caption("PyDew "+str(self.version))
         
         self.sprite = SpriteLoader()
+        self.map = MapLoader()
         self.world = World(self)
         self.player = Player(self)
         self.ui = UI(self)
@@ -61,17 +77,24 @@ class PyDew:
         
     #Update game state
     def update(self):
+        self.world.tick()
         self.player.tick()
         self.ui.tick()
         
     #Draw some stuff
     def render(self):
-        self.world.render(self.screen)
-        self.player.render(self.screen)
+        self.world.render_back(self.bg_surface)
+        self.player.render(self.bg_surface)   # Use NPC surface?
+        self.world.render_front(self.fg_surface)
         
-        self.ui.render(self.screen)
+        self.ui.render(self.ui_surface)
         
-        scaled_screen = pygame.transform.scale(self.screen,self.final_screen.get_rect().size)
+        self.unscaled_screen.blit(self.bg_surface,(0,0))
+        self.unscaled_screen.blit(self.fg_surface,(0,0))
+        self.unscaled_screen.blit(self.ui_surface,(0,0))
+       
+        scaled_screen = pygame.transform.scale(self.unscaled_screen,self.final_screen.get_rect().size)
+        
         self.final_screen.blit(scaled_screen,(0,0))
         pygame.display.update()
 
