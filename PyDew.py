@@ -71,7 +71,7 @@ class PyDew:
             if e.type == pygame.KEYUP:
                 if e.key == pygame.K_t:
                     self.world.set_random_season();
-                    self.world.generate_background_layers();
+                    self.world.regenerate_season = True # Make fxn
         keys = pygame.key.get_pressed()
         self.player.handle_input(keys)
         

@@ -9,7 +9,7 @@ class World:
         self.new_map = True
         
         self.tiles = []
-        self.set_random_season()        
+                
         
         #TODO - Make these layer arrays
         self.bg_layer = game.map.get_layer_map("forest",0)
@@ -25,11 +25,13 @@ class World:
         rect = pygame.Rect(0, 0, self.map_width*16, self.map_height*16) 
         self.bg = pygame.Surface(rect.size).convert()
         self.fg = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
-        self.generate_background_layers()
-        self.generate_foreground_layers()
+        
+        self.set_random_season()
         
     def set_season(self, season):
         self.tiles = self.game.sprite.get_spritesheet_map_tiles(season)
+        self.generate_background_layers()
+        self.generate_foreground_layers()
         
     def set_random_season(self):
         season = random.choice(["spring","summer","fall","winter"]) + "_outdoors"
@@ -43,13 +45,19 @@ class World:
                 if bg_tile and bg_tile < len(self.tiles): 
                     self.bg.blit(self.tiles[bg_tile], (i*16,j*16))
                 if bldg_tile and bldg_tile < len(self.tiles):
+                    #if bldg_tile > len(self.tiles):
+                    #    print("Tile ("+str(i)+","+str(j)+") is "+str(bldg_tile)) 
+                    #    continue
                     self.bg.blit(self.tiles[bldg_tile], (i*16,j*16))
                     
     def generate_foreground_layers(self):
         for j in range(0,self.map_height):
             for i in range(0,self.map_width):
+                #path_tile = self.path_layer[j*self.map_width+i]
                 front_tile = self.front_layer[j*self.map_width+i]
                 afront_tile = self.always_front_layer[j*self.map_width+i]
+                #if path_tile and path_tile < len(self.tiles): 
+                #    self.fg.blit(self.tiles[path_tile], (i*16,j*16))
                 if front_tile and front_tile < len(self.tiles): 
                     self.fg.blit(self.tiles[front_tile], (i*16,j*16))
                 if afront_tile and afront_tile < len(self.tiles):
