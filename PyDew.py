@@ -6,6 +6,7 @@ from player import Player
 from config import Config
 from spriteloader import SpriteLoader
 from maploader import MapLoader
+from object import Object
 from ui import UI
 
 
@@ -15,7 +16,7 @@ pygame.init()
 class PyDew:
 
     def __init__(self):
-        self.version = "0.0.1.4"
+        self.version = "0.0.2.5"
         print("Hello PyDew "+str(self.version))
         self.config = Config()        
         self.final_screen = pygame.display.set_mode((self.config.screen_width, 

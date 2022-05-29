@@ -56,7 +56,7 @@ class Player:
         
     def move_down(self):
         self.dir = 0;
-        gx = self.gx
+        gx = int((self.x+8)/16)
         gy = int((self.y+17)/16)
         if self.game.world.is_movable(gx,gy):
             self.y += 2-self.walking;
@@ -65,14 +65,14 @@ class Player:
     def move_right(self):
         self.dir = 1;
         gx = int((self.x+17)/16)
-        gy = self.gy
+        gy = int((self.y+8)/16)
         if self.game.world.is_movable(gx,gy):
             self.x += 2-self.walking;
         self.m_right = False
         
     def move_up(self):
         self.dir = 2;
-        gx = self.gx
+        gx = int((self.x+8)/16)
         gy = int((self.y-1)/16)
         if self.game.world.is_movable(gx,gy):
             self.y -= 2-self.walking;
@@ -81,7 +81,7 @@ class Player:
     def move_left(self):
         self.dir = 3;
         gx = int((self.x-1)/16)
-        gy = self.gy
+        gy = int((self.y+8)/16)
         if self.game.world.is_movable(gx,gy):
             self.x -= 2-self.walking;
         self.m_left = False
