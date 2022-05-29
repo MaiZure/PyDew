@@ -6,7 +6,7 @@ from player import Player
 from config import Config
 from spriteloader import SpriteLoader
 from maploader import MapLoader
-from object import Object
+from mapobject import MapObject
 from ui import UI
 
 
@@ -16,7 +16,7 @@ pygame.init()
 class PyDew:
 
     def __init__(self):
-        self.version = "0.0.2.5"
+        self.version = "0.0.2.6"
         print("Hello PyDew "+str(self.version))
         self.config = Config()        
         self.final_screen = pygame.display.set_mode((self.config.screen_width, 
@@ -43,7 +43,7 @@ class PyDew:
         pygame.display.set_caption("PyDew "+str(self.version))
         
         self.sprite = SpriteLoader()
-        self.season = random.choice(["spring","summer","fall","winter"])
+        self.season = random.choice(["spring"])#,"summer","fall","winter"])
         self.map = MapLoader()
         self.world = World(self)
         self.player = Player(self)
