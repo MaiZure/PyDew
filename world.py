@@ -47,7 +47,6 @@ class World:
         self.animated_tiles = self.get_map_animations(self.current_map)
         self.embed_map_animations(self.bg_layer, self.bg_tile_update_reel)
         self.embed_map_animations(self.bldg_layer, self.bldg_tile_update_reel)
-        print(self.bg_tile_update_reel)
         
     def set_random_season(self):
         season = random.choice(["spring","summer","fall","winter"])+"_outdoorsTileSheet"
@@ -170,7 +169,6 @@ class World:
         for next_tile in tiles_to_update:
             last_frame = layer[next_tile].pop(0)
             delay = min(int((last_frame[0]*60)/1000),59)
-            print(str(last_frame[0]) + "--" + str(delay))
             reel[delay] += [next_tile]
             layer[next_tile].append(last_frame)
             self.update_tile(next_tile,layer)
