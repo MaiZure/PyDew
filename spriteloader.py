@@ -1,13 +1,15 @@
 import pygame
 
 class SpriteLoader:
-    def __init__(self):
+    def __init__(self, game):
         print("Initializing Sprites")
+        
+        self.game = game
         
         # Load all images in to a library (dictionary)
         self.sheet = {}       
         self.load_spritesheets()
-    
+        
     # Procedure to load all spritesheets from disk in to this object
     def load_spritesheets(self) -> None:
         # Each sheet contains a 3-tuple: (image, tile_width, tile_height)
@@ -53,9 +55,4 @@ class SpriteLoader:
                 tiles.append(new_tile)
                 
         return tiles
-    
-    # Gets all tiles for a map
-    #def get_spritesheet_map_tiles(self, name) -> list:
-    #    tiles = self.get_spritesheet_tiles(name)
-    #    return tiles
         

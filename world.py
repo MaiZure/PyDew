@@ -15,6 +15,10 @@ class World:
         self.current_map_path_objects = []
         self.paths_tile_base = 0
         self.animated_tiles = []
+        self.passable_tiles = []
+        self.impassable_tiles = []
+        self.collision_map = []     # Basic Boolean collisions (Aligns with self.tiles)
+        self.spawnable_map = []     
         
         self.bg_tile_update_reel = [[] for a in range(60)]
         self.bldg_tile_update_reel = [[] for a in range(60)]
@@ -49,9 +53,16 @@ class World:
                 self.tiles += self.game.sprite.get_spritesheet_map_tiles(tileset["image"])
         self.generate_background_layers()
         self.generate_foreground_layers()
-        self.animated_tiles = self.get_map_animations(self.current_map)
+        self.animated_tiles = self.game.map.get_map_animations(self.current_map)
+        self.passable_tiles, self.impassable_tiles = self.game.map.get_passable_tiles(self.current_map)
+        
+        self.collision_map = self.generate_collision_map()
+        for mapobject in self.current_map_path_objects:
+            mapobject.init_second_stage()
         self.embed_map_animations(self.bg_layer, self.bg_tile_update_reel)
         self.embed_map_animations(self.bldg_layer, self.bldg_tile_update_reel)
+        
+        
         
     def set_random_season(self):
         #season = random.choice(["spring","summer","fall","winter"])+"_outdoorsTileSheet"
@@ -81,7 +92,7 @@ class World:
                 front_tile = self.front_layer[j*self.map_width+i]
                 afront_tile = self.always_front_layer[j*self.map_width+i]
                 if path_tile: # My god clean this up
-                    if path_tile-self.paths_tile_base < 9:
+                    if path_tile-self.paths_tile_base < 9: # Delete pathing-related tiles (unused?)
                         self.path_layer[j*self.map_width+i] = 0
                     MapObject(self.game,self,path_tile-self.paths_tile_base,i,j)
                 if front_tile: 
@@ -89,15 +100,24 @@ class World:
                 if afront_tile:
                     self.fg.blit(self.tiles[afront_tile], (i*16,j*16))
                     
-    def get_map_animations(self, mapname):
-        animated_tiles = []
-        for tile in self.game.map.map[mapname]["tilesets"][0]["tiles"]:
-            if "animation" in tile.keys():
-                alist = []
-                for atile in tile["animation"]:
-                    alist.append((atile["duration"],atile["tileid"]+1))
-                animated_tiles.append(alist)
-        return animated_tiles
+    def generate_collision_map(self) -> list:
+        collision_map = []
+        
+        # Use bldg_layer as a baseline
+        for tile in self.bldg_layer:
+            if tile:
+                if tile in self.passable_tiles: # Handle custom properties
+                    collision_map.append(0)
+                else:
+                    collision_map.append(1)
+            else:
+                collision_map.append(0)
+                
+        # Handle custom bg_layer properties
+        for tile_index in range(len(self.bg_layer)):
+            if self.bg_layer[tile_index] in self.impassable_tiles:
+                collision_map[tile_index] = 1
+        return collision_map
         
     def embed_map_animations(self, layer, reel):
         matchlist = self.make_animation_matchlist()
@@ -138,13 +158,17 @@ class World:
         top_left_y = min(max(self.game.player.y-screen.get_height()/2,0),self.map_height*16-screen.get_height())
         screen.blit(self.bg, (0,0), (top_left_x,top_left_y,screen.get_width(),screen.get_height()))
         
-    def render_front(self, screen):
+    def render_mid(self, screen):
         screen.fill(pygame.Color(0,0,0,0))
-        top_left_x = min(max(self.game.player.x-screen.get_width()/2,0),self.map_width*16-screen.get_width())
-        top_left_y = min(max(self.game.player.y-screen.get_height()/2,0),self.map_height*16-screen.get_height())
         for mapobject in self.current_map_path_objects:
             if self.is_visible(mapobject.gx, mapobject.gy):
                 mapobject.render(screen)
+        self.game.player.render(screen)
+        
+    def render_front(self, screen):
+        screen.fill(pygame.Color(0,0,0,0))
+        top_left_x = min(max(self.game.player.x-screen.get_width()/2,0),self.map_width*16-screen.get_width())
+        top_left_y = min(max(self.game.player.y-screen.get_height()/2,0),self.map_height*16-screen.get_height())       
         screen.blit(self.fg, (0,0), (top_left_x,top_left_y,screen.get_width(),screen.get_height()))
         
     def get_tile_x(self, tile_num):
@@ -161,8 +185,7 @@ class World:
         
     def is_movable(self,x,y):
         tile_num = self.get_tile_num(x,y)
-        if self.bldg_layer[tile_num]: return False
-        if self.path_layer[tile_num]: return False
+        if self.collision_map[tile_num]: return False
         return True
         
     def is_visible(self,x,y):

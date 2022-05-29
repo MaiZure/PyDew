@@ -1,12 +1,13 @@
 import pygame, json, zlib, base64
 
 class MapLoader:
-    def __init__(self):
+    def __init__(self, game):
         print("Initializing Maps")
         
         # Load all maps in to a library (dictionary)
         self.map = {}        
         self.load_maps()
+        self.game = game
         
     def load_maps(self) -> None:
         self.map["forest"] = json.load(open("forest.tmj"))
@@ -37,3 +38,30 @@ class MapLoader:
     def get_layer_height(self, name, num) -> int:
         assert num >= 0 and num <= 4
         return self.map[name]["layers"][num*2]["height"]
+        
+    def get_map_animations(self, name): #Only works for first/main tileset for now
+        animated_tiles = []
+        for tile in self.game.map.map[name]["tilesets"][0]["tiles"]:
+            if "animation" in tile.keys():
+                alist = []
+                for atile in tile["animation"]:
+                    alist.append((atile["duration"],atile["tileid"]+1))
+                animated_tiles.append(alist)
+        return animated_tiles
+        
+    def get_passable_tiles(self, name): # Only works for first/main tilset for now
+        passable_tiles = []
+        impassable_tiles = []
+        #return
+        for tile in self.game.map.map[name]["tilesets"][0]["tiles"]:
+            tile_id = tile["id"]
+            if "properties" in tile.keys():
+                for property in tile["properties"]:
+                    if property["name"] == "Passable":
+                        if property["value"] == "T" or property["value"] == "t":
+                            passable_tiles.append(tile_id+1)
+                        if property["value"] == "F" or property["value"] == "f":
+                            impassable_tiles.append(tile_id+1) 
+        return passable_tiles, impassable_tiles
+        
+   

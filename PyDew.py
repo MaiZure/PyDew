@@ -26,6 +26,9 @@ class PyDew:
                                                self.config.screen_height/self.config.screen_scaling))
         self.bg_surface = pygame.Surface((self.config.screen_width/self.config.screen_scaling, 
                                                self.config.screen_height/self.config.screen_scaling))
+        self.mid_surface = pygame.Surface((self.config.screen_width/self.config.screen_scaling, 
+                                               self.config.screen_height/self.config.screen_scaling),
+                                               pygame.SRCALPHA)
         self.fg_surface = pygame.Surface((self.config.screen_width/self.config.screen_scaling, 
                                                self.config.screen_height/self.config.screen_scaling),
                                                pygame.SRCALPHA)
@@ -42,9 +45,9 @@ class PyDew:
         self.clock = pygame.time.Clock()
         pygame.display.set_caption("PyDew "+str(self.version))
         
-        self.sprite = SpriteLoader()
+        self.sprite = SpriteLoader(self)
         self.season = random.choice(["spring"])#,"summer","fall","winter"])
-        self.map = MapLoader()
+        self.map = MapLoader(self)
         self.world = World(self)
         self.player = Player(self)
         self.ui = UI(self)
@@ -86,12 +89,13 @@ class PyDew:
     #Draw some stuff
     def render(self):
         self.world.render_back(self.bg_surface)
-        self.player.render(self.bg_surface)   # Use NPC surface?
+        #self.player.render(self.bg_surface)   # Use NPC surface?
+        self.world.render_mid(self.mid_surface)
         self.world.render_front(self.fg_surface)
-        
         self.ui.render(self.ui_surface)
         
         self.unscaled_screen.blit(self.bg_surface,(0,0))
+        self.unscaled_screen.blit(self.mid_surface,(0,0))
         self.unscaled_screen.blit(self.fg_surface,(0,0))
         self.unscaled_screen.blit(self.ui_surface,(0,0))
        

@@ -12,12 +12,21 @@ class MapObject:
         self.world = world
         self.gx = gx
         self.gy = gy
+        self.tile_num = world.get_tile_num(self.gx,self.gy)
+        self.collision_width = 1
+        self.collision_height = 1
+        self.sprite_width = 1
+        self.sprite_height = 1
         self.x = self.gx*16
         self.y = self.gy*16
         self.sprite = game.sprite.get_spritesheet_tiles("paths")
         self.type = type
+        
         # Object is valid -- register with world tracker
         world.current_map_path_objects.append(self)
+        
+    def init_second_stage(self):
+        self.world.collision_map[self.tile_num] = 1
         
     def render(self, screen):
         top_left_x = min(max(self.game.player.x-screen.get_width()/2,0),self.world.map_width*16-screen.get_width())
