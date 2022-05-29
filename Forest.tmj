@@ -783,7 +783,7 @@
         {
          "columns":25,
          "firstgid":1,
-         "image":"..\/..\/..\/..\/StardewAssets\/Tilesets\/Maps\/spring_outdoorsTileSheet",
+         "image":"spring_outdoorsTileSheet",
          "imageheight":1264,
          "imagewidth":400,
          "margin":0,
@@ -3888,7 +3888,7 @@
         {
          "columns":4,
          "firstgid":1976,
-         "image":"..\/..\/..\/..\/StardewAssets\/Tilesets\/Maps\/paths",
+         "image":"paths",
          "imageheight":144,
          "imagewidth":64,
          "margin":0,
@@ -3956,7 +3956,7 @@
         {
          "columns":16,
          "firstgid":2012,
-         "image":"..\/..\/..\/..\/StardewAssets\/Tilesets\/Maps\/spring_outdoorsTileSheet2",
+         "image":"spring_outdoorsTileSheet2",
          "imageheight":256,
          "imagewidth":256,
          "margin":0,

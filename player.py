@@ -24,7 +24,7 @@ class Player:
         self.walking = input[pygame.K_LSHIFT]
         
     def tick(self):
-        self.frametimer += 1 + self.walking
+        self.frametimer += 2 - self.walking
         self.frame = int((self.frametimer/20)%4)
         
         if self.m_down: self.move_down()

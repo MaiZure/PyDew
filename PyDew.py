@@ -42,6 +42,7 @@ class PyDew:
         pygame.display.set_caption("PyDew "+str(self.version))
         
         self.sprite = SpriteLoader()
+        self.season = random.choice(["spring","summer","fall","winter"])
         self.map = MapLoader()
         self.world = World(self)
         self.player = Player(self)

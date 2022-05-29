@@ -9,17 +9,22 @@ class World:
         self.new_map = True
         
         self.tiles = []
-                
+        self.current_map = "forest"
+        self.animated_tiles = []
+        
+        self.bg_tile_update_reel = [[] for a in range(60)]
+        self.bldg_tile_update_reel = [[] for a in range(60)]
+        
         
         #TODO - Make these layer arrays
-        self.bg_layer = game.map.get_layer_map("forest",0)
-        self.bldg_layer = game.map.get_layer_map("forest",1)
-        self.path_layer = game.map.get_layer_map("forest",2)
-        self.front_layer = game.map.get_layer_map("forest",3)
-        self.always_front_layer = game.map.get_layer_map("forest",4)
+        self.bg_layer = game.map.get_layer_map(self.current_map,0)
+        self.bldg_layer = game.map.get_layer_map(self.current_map,1)
+        self.path_layer = game.map.get_layer_map(self.current_map,2)
+        self.front_layer = game.map.get_layer_map(self.current_map,3)
+        self.always_front_layer = game.map.get_layer_map(self.current_map,4)
         
-        self.map_width = game.map.get_layer_width("forest",0)
-        self.map_height = game.map.get_layer_height("forest",0)
+        self.map_width = game.map.get_layer_width(self.current_map,0)
+        self.map_height = game.map.get_layer_height(self.current_map,0)
         
         # Create background surface to render map
         rect = pygame.Rect(0, 0, self.map_width*16, self.map_height*16) 
@@ -29,12 +34,23 @@ class World:
         self.set_random_season()
         
     def set_season(self, season):
-        self.tiles = self.game.sprite.get_spritesheet_map_tiles(season)
+        self.tiles = [None]
+        if season:
+            self.tiles += self.game.sprite.get_spritesheet_tiles(season)
+            self.tiles += self.game.sprite.get_spritesheet_tiles("paths")
+            self.tiles += self.game.sprite.get_spritesheet_tiles(season+"2")
+        else:
+            for tileset in self.game.map.map[self.current_map]["tilesets"]:
+                self.tiles += self.game.sprite.get_spritesheet_map_tiles(tileset["image"])
         self.generate_background_layers()
         self.generate_foreground_layers()
+        self.animated_tiles = self.get_map_animations(self.current_map)
+        self.embed_map_animations(self.bg_layer, self.bg_tile_update_reel)
+        self.embed_map_animations(self.bldg_layer, self.bldg_tile_update_reel)
+        print(self.bg_tile_update_reel)
         
     def set_random_season(self):
-        season = random.choice(["spring","summer","fall","winter"]) + "_outdoors"
+        season = random.choice(["spring","summer","fall","winter"])+"_outdoorsTileSheet"
         self.set_season(season)
         
     def generate_background_layers(self):
@@ -42,13 +58,16 @@ class World:
             for i in range(0,self.map_width):
                 bg_tile = self.bg_layer[j*self.map_width+i]
                 bldg_tile = self.bldg_layer[j*self.map_width+i]
-                if bg_tile and bg_tile < len(self.tiles): 
-                    self.bg.blit(self.tiles[bg_tile], (i*16,j*16))
-                if bldg_tile and bldg_tile < len(self.tiles):
-                    #if bldg_tile > len(self.tiles):
-                    #    print("Tile ("+str(i)+","+str(j)+") is "+str(bldg_tile)) 
-                    #    continue
-                    self.bg.blit(self.tiles[bldg_tile], (i*16,j*16))
+                if bg_tile:
+                    if type(bg_tile) == int: # Just a tile number
+                        self.bg.blit(self.tiles[bg_tile], (i*16,j*16))
+                    if type(bg_tile) == list: # Animated - List of tuple frames (duration, tile number)
+                        self.bg.blit(self.tiles[bg_tile[0][1]], (i*16,j*16))
+                if bldg_tile:
+                    if type(bldg_tile) == int:
+                        self.bg.blit(self.tiles[bldg_tile], (i*16,j*16))
+                    if type(bldg_tile) == list:
+                        self.bg.blit(self.tiles[bg_tile[0][1]], (i*16,j*16))
                     
     def generate_foreground_layers(self):
         for j in range(0,self.map_height):
@@ -58,11 +77,41 @@ class World:
                 afront_tile = self.always_front_layer[j*self.map_width+i]
                 #if path_tile and path_tile < len(self.tiles): 
                 #    self.fg.blit(self.tiles[path_tile], (i*16,j*16))
-                if front_tile and front_tile < len(self.tiles): 
+                if front_tile: 
                     self.fg.blit(self.tiles[front_tile], (i*16,j*16))
-                if afront_tile and afront_tile < len(self.tiles):
+                if afront_tile:
                     self.fg.blit(self.tiles[afront_tile], (i*16,j*16))
                     
+    def get_map_animations(self, mapname):
+        animated_tiles = []
+        for tile in self.game.map.map[mapname]["tilesets"][0]["tiles"]:
+            if "animation" in tile.keys():
+                alist = []
+                for atile in tile["animation"]:
+                    alist.append((atile["duration"],atile["tileid"]+1))
+                animated_tiles.append(alist)
+        return animated_tiles
+        
+    def embed_map_animations(self, layer, reel):
+        matchlist = self.make_animation_matchlist()
+        for i in range(len(layer)):
+            tile = layer[i]
+            if tile in matchlist:
+                layer[i] = self.find_animation_reel(tile)
+                reel[0]+=[i]
+        
+    def make_animation_matchlist(self):
+        match = []
+        for i in range(len(self.animated_tiles)):
+            match.append(self.animated_tiles[i][0][1])
+        return match
+        
+    def find_animation_reel(self, first_tile):
+        for reel in self.animated_tiles:
+            if reel[0][1] == first_tile:
+                return reel.copy()
+        return None
+        
     def init_active_map(self):
         self.game.player.set_map_width(self.map_width)
         self.game.player.set_map_height(self.map_height)
@@ -71,6 +120,9 @@ class World:
     def tick(self):
         if self.new_map:
             self.init_active_map()
+        self.cycle_reel(self.bg_tile_update_reel, self.bg_layer)
+        self.cycle_reel(self.bldg_tile_update_reel, self.bldg_layer)
+        
         
     def render_back(self, screen):
         top_left_x = min(max(self.game.player.x-screen.get_width()/2,0),self.map_width*16-screen.get_width())
@@ -82,3 +134,44 @@ class World:
         top_left_x = min(max(self.game.player.x-screen.get_width()/2,0),self.map_width*16-screen.get_width())
         top_left_y = min(max(self.game.player.y-screen.get_height()/2,0),self.map_height*16-screen.get_height())
         screen.blit(self.fg, (0,0), (top_left_x,top_left_y,screen.get_width(),screen.get_height()))
+        
+    def get_tile_x(self, tile_num):
+        return tile_num % self.map_width
+        
+    def get_tile_y(self, tile_num):
+        return int(tile_num / self.map_width)
+        
+    def get_tile_num(self, x, y):
+        return y*self.map_width+x
+        
+    def get_tile_xy(self,tile_num):
+        return (self.get_tile_x(tile_num), self.get_tile_y(tile_num))
+        
+    def blit_tile(self, surface, layer, tile_num, x, y):
+        new_tile = layer[tile_num]
+        if type(new_tile) == int:
+            surface.blit(self.tiles[new_tile], (x*16, y*16))
+        if type(new_tile) == list:
+            surface.blit(self.tiles[new_tile[0][1]], (x*16, y*16))
+    
+    def update_tile(self, tile_num, layer):
+        new_tile = layer[tile_num]
+        x = self.get_tile_x(tile_num)
+        y = self.get_tile_y(tile_num)
+        if layer == self.bg_layer:
+            self.blit_tile(self.bg, self.bg_layer, tile_num, x, y)
+        if layer == self.bldg_layer:
+            self.blit_tile(self.bg, self.bg_layer, tile_num, x, y)
+            self.blit_tile(self.bg, self.bldg_layer, tile_num, x, y)
+        
+    def cycle_reel(self, reel, layer):
+        tiles_to_update = reel.pop(0)
+        reel.append([])
+        for next_tile in tiles_to_update:
+            last_frame = layer[next_tile].pop(0)
+            delay = min(int((last_frame[0]*60)/1000),59)
+            print(str(last_frame[0]) + "--" + str(delay))
+            reel[delay] += [next_tile]
+            layer[next_tile].append(last_frame)
+            self.update_tile(next_tile,layer)
+        

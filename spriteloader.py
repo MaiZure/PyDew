@@ -11,10 +11,15 @@ class SpriteLoader:
     # Procedure to load all spritesheets from disk in to this object
     def load_spritesheets(self) -> None:
         # Each sheet contains a 3-tuple: (image, tile_width, tile_height)
-        self.sheet["spring_outdoors"] = (pygame.image.load(".\\Tiles\\Tiles_spring.png").convert_alpha(), 16, 16)
-        self.sheet["summer_outdoors"] = (pygame.image.load(".\\Tiles\\Tiles_summer.png").convert_alpha(), 16, 16)
-        self.sheet["fall_outdoors"] = (pygame.image.load(".\\Tiles\\Tiles_fall.png").convert_alpha(), 16, 16)
-        self.sheet["winter_outdoors"] = (pygame.image.load(".\\Tiles\\Tiles_winter.png").convert_alpha(), 16, 16)
+        self.sheet["spring_outdoorsTileSheet"] = (pygame.image.load(".\\Tiles\\spring_outdoorsTileSheet.png").convert_alpha(), 16, 16)
+        self.sheet["spring_outdoorsTileSheet2"] = (pygame.image.load(".\\Tiles\\spring_outdoorsTileSheet2.png").convert_alpha(), 16, 16)
+        self.sheet["summer_outdoorsTileSheet"] = (pygame.image.load(".\\Tiles\\summer_outdoorsTileSheet.png").convert_alpha(), 16, 16)
+        self.sheet["summer_outdoorsTileSheet2"] = (pygame.image.load(".\\Tiles\\summer_outdoorsTileSheet2.png").convert_alpha(), 16, 16)
+        self.sheet["fall_outdoorsTileSheet"] = (pygame.image.load(".\\Tiles\\fall_outdoorsTileSheet.png").convert_alpha(), 16, 16)
+        self.sheet["fall_outdoorsTileSheet2"] = (pygame.image.load(".\\Tiles\\fall_outdoorsTileSheet2.png").convert_alpha(), 16, 16)
+        self.sheet["winter_outdoorsTileSheet"] = (pygame.image.load(".\\Tiles\\winter_outdoorsTileSheet.png").convert_alpha(), 16, 16)
+        self.sheet["winter_outdoorsTileSheet2"] = (pygame.image.load(".\\Tiles\\winter_outdoorsTileSheet2.png").convert_alpha(), 16, 16)
+        self.sheet["paths"] = (pygame.image.load(".\\Tiles\\paths.png").convert_alpha(), 16, 16)
         self.sheet["emily"] = (pygame.image.load(".\\Tiles\\Emily.png").convert_alpha(), 16, 32)
         self.sheet["cursors"] = (pygame.image.load(".\\Tiles\\Cursors.png").convert_alpha(), 16, 16)
     
@@ -50,8 +55,7 @@ class SpriteLoader:
         return tiles
     
     # Gets all tiles for a map
-    def get_spritesheet_map_tiles(self, name) -> list:
-        tiles = self.get_spritesheet_tiles(name)
-        tiles.insert(0,None)  # All map tiles start with an empty (no-draw index)
-        return tiles
+    #def get_spritesheet_map_tiles(self, name) -> list:
+    #    tiles = self.get_spritesheet_tiles(name)
+    #    return tiles
         
