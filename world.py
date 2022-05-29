@@ -97,8 +97,10 @@ class World:
             tile = layer[i]
             if tile in matchlist:
                 layer[i] = self.find_animation_reel(tile)
-                reel[0]+=[i]
-        
+                if layer == self.bg_layer:
+                    reel[random.randint(0,59)]+=[i]
+                else:
+                    reel[0]+=[i]
     def make_animation_matchlist(self):
         match = []
         for i in range(len(self.animated_tiles)):
