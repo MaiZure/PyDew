@@ -6,8 +6,11 @@ class Player:
         self.game = game
 
         self.sprite = game.sprite.get_spritesheet_tiles("emily")
-        self.x = 34*16 #self.game.config.screen_width/2
-        self.y = 24*16 #self.game.config.screen_height/2
+        self.gx = 34
+        self.gy = 24
+        self.x = self.gx*16 #self.game.config.screen_width/2
+        self.y = self.gy*16 #self.game.config.screen_height/
+        
         self.dir = 0
         self.frametimer = 0
         self.frame = 0
@@ -26,6 +29,8 @@ class Player:
     def tick(self):
         self.frametimer += 2 - self.walking
         self.frame = int((self.frametimer/20)%4)
+        self.gx = int(self.x/16)
+        self.gy = int(self.y/16)
         
         if self.m_down: self.move_down()
         if self.m_right: self.move_right()

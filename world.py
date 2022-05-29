@@ -148,6 +148,13 @@ class World:
     def get_tile_xy(self,tile_num):
         return (self.get_tile_x(tile_num), self.get_tile_y(tile_num))
         
+    def is_visible(self,x,y):
+        if x < self.game.player.gx-self.game.config.base_display_tile_width - 2: return False
+        if y < self.game.player.gy-self.game.config.base_display_tile_height - 2: return False
+        if x > self.game.player.gx+self.game.config.base_display_tile_width + 2: return False
+        if y > self.game.player.gy+self.game.config.base_display_tile_height + 2: return False
+        return True
+        
     def blit_tile(self, surface, layer, tile_num, x, y):
         new_tile = layer[tile_num]
         if type(new_tile) == int:
@@ -159,6 +166,9 @@ class World:
         new_tile = layer[tile_num]
         x = self.get_tile_x(tile_num)
         y = self.get_tile_y(tile_num)
+        
+        if not self.is_visible(x,y): return
+        
         if layer == self.bg_layer:
             self.blit_tile(self.bg, self.bg_layer, tile_num, x, y)
         if layer == self.bldg_layer:
