@@ -148,6 +148,11 @@ class World:
     def get_tile_xy(self,tile_num):
         return (self.get_tile_x(tile_num), self.get_tile_y(tile_num))
         
+    def is_movable(self,x,y):
+        tile_num = self.get_tile_num(x,y)
+        if self.bldg_layer[tile_num]: return False
+        return True
+        
     def is_visible(self,x,y):
         if x < self.game.player.gx-self.game.config.base_display_tile_width - 2: return False
         if y < self.game.player.gy-self.game.config.base_display_tile_height - 2: return False

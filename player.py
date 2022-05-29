@@ -49,23 +49,39 @@ class Player:
         top_left_x = min(max(self.game.player.x-screen.get_width()/2,0),self.map_width*16-screen.get_width())
         top_left_y = min(max(self.game.player.y-screen.get_height()/2,0),self.map_height*16-screen.get_height())
         screen.blit(self.sprite[self.dir*4+self.frame], (self.x-top_left_x,self.y-16-top_left_y), (0,0,16,32))
+        #pygame.draw.circle(screen, (255,255,0), (self.x-top_left_x,self.y-top_left_y), 2)
+        #pygame.draw.circle(screen, (255,255,0), (self.x-top_left_x+16,self.y-top_left_y), 2)
+        #pygame.draw.circle(screen, (255,255,0), (self.x-top_left_x,self.y-top_left_y+16), 2)
+        #pygame.draw.circle(screen, (255,255,0), (self.x-top_left_x+16,self.y-top_left_y+16), 2)
         
     def move_down(self):
         self.dir = 0;
-        self.y += 2-self.walking;
+        gx = self.gx
+        gy = int((self.y+17)/16)
+        if self.game.world.is_movable(gx,gy):
+            self.y += 2-self.walking;
         self.m_down = False
         
     def move_right(self):
         self.dir = 1;
-        self.x += 2-self.walking;
+        gx = int((self.x+17)/16)
+        gy = self.gy
+        if self.game.world.is_movable(gx,gy):
+            self.x += 2-self.walking;
         self.m_right = False
         
     def move_up(self):
         self.dir = 2;
-        self.y -= 2-self.walking;
+        gx = self.gx
+        gy = int((self.y-1)/16)
+        if self.game.world.is_movable(gx,gy):
+            self.y -= 2-self.walking;
         self.m_up = False
         
     def move_left(self):
         self.dir = 3;
-        self.x -= 2-self.walking;
+        gx = int((self.x-1)/16)
+        gy = self.gy
+        if self.game.world.is_movable(gx,gy):
+            self.x -= 2-self.walking;
         self.m_left = False
