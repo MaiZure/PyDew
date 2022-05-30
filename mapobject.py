@@ -20,15 +20,38 @@ class MapObject:
         self.x = self.gx*16
         self.y = self.gy*16
         self.sprite = game.sprite.get_spritesheet_tiles("paths")
+        self.large_sprite = None
+        self.ogx = 0
+        self.ogy = 0
         self.type = type
+        self.reverse = False
         
         # Object is valid -- register with world tracker
         world.current_map_path_objects.append(self)
         
     def init_second_stage(self):
         self.world.collision_map[self.tile_num] = 1
+        self.reverse = random.choice((True,False))
+        spr_name = ""
+        if self.type == 9: spr_name = "spr_oak"
+        if self.type == 10: spr_name = "spr_maple"
+        if self.type == 11: spr_name = "spr_pine"
+        if self.type == 24: spr_name = "spr_bush_large"
+        if self.type == 25: spr_name = "spr_bush_medium"
+        if self.type == 26: spr_name = "spr_bush_small"
+        if spr_name:
+            if self.reverse:
+                self.large_sprite = self.game.sprite.get_large_sprite(spr_name)
+            else:
+                self.large_sprite = self.game.sprite.get_large_sprite_reverse(spr_name)
+            self.ogx, self.ogy = self.game.sprite.get_large_sprite_origin(spr_name)
+         
         
     def render(self, screen):
         top_left_x = min(max(self.game.player.x-screen.get_width()/2,0),self.world.map_width*16-screen.get_width())
         top_left_y = min(max(self.game.player.y-screen.get_height()/2,0),self.world.map_height*16-screen.get_height())
-        screen.blit(self.sprite[self.type], (self.x-top_left_x,self.y-top_left_y), (0,0,16,32))
+        if self.large_sprite:
+            screen.blit(self.large_sprite, (self.x-top_left_x-self.ogx*16,self.y-top_left_y-self.ogy*16), (0,0,3*16,6*16))
+        else:
+            screen.blit(self.sprite[self.type], (self.x-top_left_x,self.y-top_left_y), (0,0,16,16))
+        
