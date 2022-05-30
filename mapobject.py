@@ -23,6 +23,7 @@ class MapObject:
         self.large_sprite = None
         self.ogx = 0
         self.ogy = 0
+        self.hp = 0
         self.type = type
         self.reverse = False
         
@@ -44,10 +45,21 @@ class MapObject:
                 self.large_sprite = self.game.sprite.get_large_sprite(spr_name)
             else:
                 self.large_sprite = self.game.sprite.get_large_sprite_reverse(spr_name)
+                
+            self.set_large_collision_box(spr_name)
             self.ogx, self.ogy = self.game.sprite.get_large_sprite_origin(spr_name)
          
-        
+    def set_large_collision_box(self, spr_name):
+        # Collisions start from the front/bottom of a sprite and work backward
+        self.collision_width = self.game.sprite.get_collision_width(spr_name)
+        self.collision_height = self.game.sprite.get_collision_height(spr_name)
+        for j in range(self.collision_height):
+            for i in range(self.collision_width):
+                tile_num = self.world.get_tile_num(self.gx+i,self.gy-j)
+                self.world.collision_map[tile_num] = 1
+    
     def render(self, screen):
+        if not self.game.world.is_visible(self.gx, self.gy): return
         top_left_x = min(max(self.game.player.x-screen.get_width()/2,0),self.world.map_width*16-screen.get_width())
         top_left_y = min(max(self.game.player.y-screen.get_height()/2,0),self.world.map_height*16-screen.get_height())
         if self.large_sprite:

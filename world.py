@@ -44,10 +44,10 @@ class World:
     def set_season(self, season):
         self.tiles = [None]
         if season:
-            self.tiles += self.game.sprite.get_spritesheet_tiles(season)
+            self.tiles += self.game.sprite.get_tiles(season)
             self.paths_tile_base = len(self.tiles)
-            self.tiles += self.game.sprite.get_spritesheet_tiles("paths")
-            self.tiles += self.game.sprite.get_spritesheet_tiles(season+"2")
+            self.tiles += self.game.sprite.get_tiles("paths")
+            self.tiles += self.game.sprite.get_tiles(season+"2")
         else:
             for tileset in self.game.map.map[self.current_map]["tilesets"]:
                 self.tiles += self.game.sprite.get_spritesheet_map_tiles(tileset["image"])
