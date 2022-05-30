@@ -5,7 +5,7 @@ class Player:
         print("Initializaing Player")
         self.game = game
 
-        self.sprite = game.sprite.get_spritesheet_tiles("emily")
+        self.sprite = game.sprite.get_tiles("emily")
         self.gx = 34
         self.gy = 24
         self.x = self.gx*16 #self.game.config.screen_width/2

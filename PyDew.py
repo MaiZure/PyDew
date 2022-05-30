@@ -16,7 +16,7 @@ pygame.init()
 class PyDew:
 
     def __init__(self):
-        self.version = "0.0.2.8"
+        self.version = "0.0.3.9"
         print("Hello PyDew "+str(self.version))
         self.config = Config()        
         self.final_screen = pygame.display.set_mode((self.config.screen_width, 
@@ -75,6 +75,7 @@ class PyDew:
                 self.run = False
             if e.type == pygame.KEYUP:
                 if e.key == pygame.K_t:
+                    return
                     self.world.set_random_season();
                     self.world.regenerate_season = True # Make fxn
         keys = pygame.key.get_pressed()

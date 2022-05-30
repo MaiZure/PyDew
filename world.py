@@ -161,15 +161,17 @@ class World:
     def render_mid(self, screen):
         screen.fill(pygame.Color(0,0,0,0))
         for mapobject in self.current_map_path_objects:
-            if self.is_visible(mapobject.gx, mapobject.gy):
-                mapobject.render(screen)
+            mapobject.render_mid(screen)
         self.game.player.render(screen)
         
     def render_front(self, screen):
         screen.fill(pygame.Color(0,0,0,0))
         top_left_x = min(max(self.game.player.x-screen.get_width()/2,0),self.map_width*16-screen.get_width())
         top_left_y = min(max(self.game.player.y-screen.get_height()/2,0),self.map_height*16-screen.get_height())       
+        for mapobject in self.current_map_path_objects:
+            mapobject.render_front(screen)
         screen.blit(self.fg, (0,0), (top_left_x,top_left_y,screen.get_width(),screen.get_height()))
+        
         
     def get_tile_x(self, tile_num):
         return tile_num % self.map_width

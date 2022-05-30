@@ -71,9 +71,51 @@ class SpriteLoader:
                 new_tile.blit(spritesheet, (0,0), rect)
                 tiles.append(new_tile)
                 
-        return tiles
+        return tiles       
+        
+    def get_large_sprite_origin(self,name) -> tuple:
+        return self.large_sprites[name]["sprite_origin"]
+        
+    def get_collision_width(self,name) -> int:
+        return self.large_sprites[name]["collision_width"]
+        
+    def get_collision_height(self,name) -> int:
+        return self.large_sprites[name]["collision_height"]
+        
+    def get_large_sprite(self, name):
+        sheet = self.large_sprites[name]["sheet"]
+        sheet_tiles = self.get_tiles(sheet)
+        sprite_height = self.large_sprites[name]["sprite_height"]
+        sprite_width = self.large_sprites[name]["sprite_width"]
+        tiles = self.large_sprites[name]["tiles"].copy()
+        if type(tiles[0]) == list: # Choose from two possible sprites
+            tiles = random.choice(tiles).copy()
+        rect = pygame.Rect(0, 0, sprite_width*16, sprite_height*16)
+        new_sprite_mid = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
+        new_sprite_front = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
+        
+        for column in range(sprite_height):
+            for row in range(sprite_width):
+                src_tile = tiles.pop(0)
+                if src_tile:
+                    rect = pygame.Rect(row*16, column*16, 16, 16) # Optimize - don't make 2 sprites if not used
+                    if src_tile[1] == 1:  #Should be < 3 when mid layer is actually working (rendered by gy order) 
+                        new_sprite_mid.blit(sheet_tiles[src_tile[0]], rect)
+                    if src_tile[1] > 1 :
+                        new_sprite_front.blit(sheet_tiles[src_tile[0]], rect)
+        return new_sprite_mid, new_sprite_front
+     
+    def get_large_sprite_reverse(self, name) -> pygame.Surface:
+        base_sprite = self.get_large_sprite(name) #This is a tuple
+        rect = pygame.Rect(0, 0, base_sprite[0].get_width(), base_sprite[0].get_height())
+        new_sprite = (pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha(),
+            pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha())
+        new_sprite[0].blit(pygame.transform.flip(base_sprite[0], True, False), rect)
+        new_sprite[1].blit(pygame.transform.flip(base_sprite[1], True, False), rect)
+        return new_sprite
         
     def build_large_sprites(self) -> None:
+        # 1 and 2 in 'mid' and 3 in front
         self.large_sprites["spr_oak"] = {
             "sheet": "spring_outdoorsTileSheet",
             "tiles": [(0,3), (1,3), (2,3), (25, 3), (26, 3), (27,3), (50, 3), (51, 3), (52, 3), (75, 3), (76, 3), (77, 3), None, (101,2), None, None, (126,1), None],
@@ -128,40 +170,21 @@ class SpriteLoader:
             "collision_width": 1,
             "collision_height": 1
         }
-        
-        
-        
-    def get_large_sprite_origin(self,name) -> tuple:
-        return self.large_sprites[name]["sprite_origin"]
-        
-    def get_collision_width(self,name) -> int:
-        return self.large_sprites[name]["collision_width"]
-        
-    def get_collision_height(self,name) -> int:
-        return self.large_sprites[name]["collision_height"]
-        
-    def get_large_sprite(self, name):
-        sheet = self.large_sprites[name]["sheet"]
-        sheet_tiles = self.get_tiles(sheet)
-        sprite_height = self.large_sprites[name]["sprite_height"]
-        sprite_width = self.large_sprites[name]["sprite_width"]
-        tiles = self.large_sprites[name]["tiles"].copy()
-        if type(tiles[0]) == list: # Choose from two possible sprites
-            tiles = random.choice(tiles).copy()
-        rect = pygame.Rect(0, 0, sprite_width*16, sprite_height*16)
-        new_sprite = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
-        
-        for column in range(sprite_height):
-            for row in range(sprite_width):
-                src_tile = tiles.pop(0)
-                if src_tile:
-                    rect = pygame.Rect(row*16, column*16, 16, 16)
-                    new_sprite.blit(sheet_tiles[src_tile[0]], rect)
-        return new_sprite
-     
-    def get_large_sprite_reverse(self, name) -> pygame.Surface:
-        base_sprite = self.get_large_sprite(name)
-        rect = pygame.Rect(0, 0, base_sprite.get_width(), base_sprite.get_height())
-        new_sprite = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
-        new_sprite.blit(pygame.transform.flip(base_sprite, True, False), rect)
-        return new_sprite
+        self.large_sprites["spr_stick"] = {
+            "sheet": "springobjects",
+            "tiles": [[(294,1)],[(295,1)]],
+            "sprite_height": 1,
+            "sprite_width": 1,
+            "sprite_origin": (0,0),
+            "collision_width": 1,
+            "collision_height": 1
+        }
+        self.large_sprites["spr_weed"] = {
+            "sheet": "springobjects",
+            "tiles": [[(784,1)],[(674,1)],[(675,1)]],
+            "sprite_height": 1,
+            "sprite_width": 1,
+            "sprite_origin": (0,0),
+            "collision_width": 1,
+            "collision_height": 1
+        }

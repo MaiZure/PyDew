@@ -19,8 +19,10 @@ class MapObject:
         self.sprite_height = 1
         self.x = self.gx*16
         self.y = self.gy*16
-        self.sprite = game.sprite.get_spritesheet_tiles("paths")
+        self.sprite = game.sprite.get_tiles("paths")
         self.large_sprite = None
+        self.large_sprite_mid = None
+        self.large_sprite_front = None
         self.ogx = 0
         self.ogy = 0
         self.hp = 0
@@ -37,6 +39,10 @@ class MapObject:
         if self.type == 9: spr_name = "spr_oak"
         if self.type == 10: spr_name = "spr_maple"
         if self.type == 11: spr_name = "spr_pine"
+        if self.type == 13: spr_name = "spr_weed"
+        if self.type == 14: spr_name = "spr_weed"
+        if self.type == 15: spr_name = "spr_weed"
+        if self.type == 18: spr_name = "spr_stick" #Not a large sprite -- fix later
         if self.type == 24: spr_name = "spr_bush_large"
         if self.type == 25: spr_name = "spr_bush_medium"
         if self.type == 26: spr_name = "spr_bush_small"
@@ -46,6 +52,8 @@ class MapObject:
             else:
                 self.large_sprite = self.game.sprite.get_large_sprite_reverse(spr_name)
                 
+            self.large_sprite_mid = self.large_sprite[0]
+            self.large_sprite_front = self.large_sprite[1]
             self.set_large_collision_box(spr_name)
             self.ogx, self.ogy = self.game.sprite.get_large_sprite_origin(spr_name)
          
@@ -57,13 +65,21 @@ class MapObject:
             for i in range(self.collision_width):
                 tile_num = self.world.get_tile_num(self.gx+i,self.gy-j)
                 self.world.collision_map[tile_num] = 1
-    
-    def render(self, screen):
+            
+    def render_mid(self, screen):
         if not self.game.world.is_visible(self.gx, self.gy): return
         top_left_x = min(max(self.game.player.x-screen.get_width()/2,0),self.world.map_width*16-screen.get_width())
         top_left_y = min(max(self.game.player.y-screen.get_height()/2,0),self.world.map_height*16-screen.get_height())
         if self.large_sprite:
-            screen.blit(self.large_sprite, (self.x-top_left_x-self.ogx*16,self.y-top_left_y-self.ogy*16), (0,0,3*16,6*16))
+            screen.blit(self.large_sprite_mid, (self.x-top_left_x-self.ogx*16,self.y-top_left_y-self.ogy*16), (0,0,3*16,6*16))
         else:
             screen.blit(self.sprite[self.type], (self.x-top_left_x,self.y-top_left_y), (0,0,16,16))
-        
+            
+    def render_front(self, screen):
+        if not self.game.world.is_visible(self.gx, self.gy): return
+        top_left_x = min(max(self.game.player.x-screen.get_width()/2,0),self.world.map_width*16-screen.get_width())
+        top_left_y = min(max(self.game.player.y-screen.get_height()/2,0),self.world.map_height*16-screen.get_height())
+        if self.large_sprite:
+            screen.blit(self.large_sprite_front, (self.x-top_left_x-self.ogx*16,self.y-top_left_y-self.ogy*16), (0,0,3*16,6*16))
+        else:
+            screen.blit(self.sprite[self.type], (self.x-top_left_x,self.y-top_left_y), (0,0,16,16))
