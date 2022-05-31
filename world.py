@@ -8,53 +8,71 @@ class World:
     def __init__(self, game):
         print("Initializaing World")
         self.game = game
-        self.new_map = True
+        self.season = random.choice(["spring","summer","fall","winter"])
         
+        self.map_layers = []
         self.tiles = []
-        self.current_map = "forest"
+        self.tiles_index = {}
+        self.current_map = "" #town
         self.current_map_path_objects = []
+        self.warp_points = []
         self.paths_tile_base = 0
         self.animated_tiles = []
         self.passable_tiles = []
         self.impassable_tiles = []
-        self.collision_map = []     # Basic Boolean collisions (Aligns with self.tiles)
+        self.collision_map = []     # Basic Boolean collisions (Aligned with self.tiles)
         self.spawnable_map = []     
         
-        self.bg_tile_update_reel = [[] for a in range(60)]
+        self.bg_tile_update_reel = [[] for a in range(60)]   # Maintan 60 frames
         self.bldg_tile_update_reel = [[] for a in range(60)]
         
+        # Map layers
+        self.bg_layer = []
+        self.bldg_layer = []
+        self.path_layer = []
+        self.front_layer = []
+        self.always_front_layer = []
+        
+        self.map_width = 0 
+        self.map_height = 0 
+        
+        self.init_map("forest")
+        
+    def init_map(self, map_name):
+        self.current_map = map_name
+        self.new_map = True
+        
+        self.bg_tile_update_reel = [[] for a in range(60)]   # Maintan 60 frames
+        self.bldg_tile_update_reel = [[] for a in range(60)]
+        
+        self.current_map_path_objects.clear()
         
         #TODO - Make these layer arrays
-        self.bg_layer = game.map.get_layer_map(self.current_map,0)
-        self.bldg_layer = game.map.get_layer_map(self.current_map,1)
-        self.path_layer = game.map.get_layer_map(self.current_map,2)
-        self.front_layer = game.map.get_layer_map(self.current_map,3)
-        self.always_front_layer = game.map.get_layer_map(self.current_map,4)
+        self.bg_layer = self.game.map.get_layer_data(self.current_map,"Back")
+        self.bldg_layer = self.game.map.get_layer_data(self.current_map,"Buildings")
+        self.path_layer = self.game.map.get_layer_data(self.current_map,"Paths")
+        self.front_layer = self.game.map.get_layer_data(self.current_map,"Front")
+        self.always_front_layer = self.game.map.get_layer_data(self.current_map,"AlwaysFront")
         
-        self.map_width = game.map.get_layer_width(self.current_map,0)
-        self.map_height = game.map.get_layer_height(self.current_map,0)
+        self.map_width = self.game.map.get_layer_width(self.current_map,0)
+        self.map_height = self.game.map.get_layer_height(self.current_map,0)
         
         # Create background surface to render map
         rect = pygame.Rect(0, 0, self.map_width*16, self.map_height*16) 
         self.bg = pygame.Surface(rect.size).convert()
         self.fg = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
         
-        self.set_random_season()
+        self.init_second_stage()
         
-    def set_season(self, season):
-        self.tiles = [None]
-        if season:
-            self.tiles += self.game.sprite.get_tiles(season)
-            self.paths_tile_base = len(self.tiles)
-            self.tiles += self.game.sprite.get_tiles("paths")
-            self.tiles += self.game.sprite.get_tiles(season+"2")
-        else:
-            for tileset in self.game.map.map[self.current_map]["tilesets"]:
-                self.tiles += self.game.sprite.get_spritesheet_map_tiles(tileset["image"])
+        
+    def init_second_stage(self):
+        self.tiles = self.game.map.get_map_tiles(self.current_map)
+        self.tiles_index = self.game.map.get_map_tiles_index(self.current_map)
         self.generate_background_layers()
         self.generate_foreground_layers()
-        self.animated_tiles = self.game.map.get_map_animations(self.current_map)
-        self.passable_tiles, self.impassable_tiles = self.game.map.get_passable_tiles(self.current_map)
+        self.animated_tiles = self.game.map.get_map_animations(self.current_map, self.tiles_index)
+        self.passable_tiles, self.impassable_tiles = self.game.map.get_passable_tiles(self.current_map, self.tiles_index)
+        self.warp_points = self.game.map.get_map_warps(self.current_map)
         
         self.collision_map = self.generate_collision_map()
         for mapobject in self.current_map_path_objects:
@@ -65,9 +83,8 @@ class World:
         
         
     def set_random_season(self):
-        #season = random.choice(["spring","summer","fall","winter"])+"_outdoorsTileSheet"
-        season = "spring_outdoorsTileSheet"
-        self.set_season(season)
+        self.season = random.choice(["spring","summer","fall","winter"])
+        self.set_season()
         
     def generate_background_layers(self):
         for j in range(0,self.map_height):
@@ -86,15 +103,16 @@ class World:
                         self.bg.blit(self.tiles[bg_tile[0][1]], (i*16,j*16))
                     
     def generate_foreground_layers(self):
+        paths_tile_base = self.tiles_index["paths"]
         for j in range(0,self.map_height):
             for i in range(0,self.map_width):
                 path_tile = self.path_layer[j*self.map_width+i]
                 front_tile = self.front_layer[j*self.map_width+i]
                 afront_tile = self.always_front_layer[j*self.map_width+i]
                 if path_tile: # My god clean this up
-                    if path_tile-self.paths_tile_base < 9: # Delete pathing-related tiles (unused?)
+                    if path_tile-paths_tile_base < 9: # Delete pathing-related tiles (unused?)
                         self.path_layer[j*self.map_width+i] = 0
-                    MapObject(self.game,self,path_tile-self.paths_tile_base,i,j)
+                    MapObject(self.game,self,path_tile-paths_tile_base,i,j)
                 if front_tile: 
                     self.fg.blit(self.tiles[front_tile], (i*16,j*16))
                 if afront_tile:
@@ -185,16 +203,19 @@ class World:
     def get_tile_xy(self,tile_num):
         return (self.get_tile_x(tile_num), self.get_tile_y(tile_num))
         
-    def is_movable(self,x,y):
-        tile_num = self.get_tile_num(x,y)
+    def is_movable(self,gx,gy):
+        tile_num = self.get_tile_num(gx,gy)
+        if gx >= self.map_width: return True
+        if gy >= self.map_height: return True
+        if tile_num > len(self.collision_map): return True
         if self.collision_map[tile_num]: return False
         return True
         
     def is_visible(self,x,y):
         if x < self.game.player.gx-self.game.config.base_display_tile_width - 2: return False
-        if y < self.game.player.gy-self.game.config.base_display_tile_height - 2: return False
+        if y < self.game.player.gy-self.game.config.base_display_tile_height - 4: return False
         if x > self.game.player.gx+self.game.config.base_display_tile_width + 2: return False
-        if y > self.game.player.gy+self.game.config.base_display_tile_height + 2: return False
+        if y > self.game.player.gy+self.game.config.base_display_tile_height + 4: return False
         return True
         
     def blit_tile(self, surface, layer, tile_num, x, y):
@@ -226,4 +247,15 @@ class World:
             reel[delay] += [next_tile]
             layer[next_tile].append(last_frame)
             self.update_tile(next_tile,layer)
+            
+    def warp_player(self, warp_point):
+        dest = self.warp_points[warp_point]
+        new_map = dest[0]
+        new_gx = dest[1]
+        new_gy = dest[2]
+        self.init_map(new_map)
+        self.game.player.set_gx(new_gx)
+        self.game.player.set_gy(new_gy)
+        
+        
         

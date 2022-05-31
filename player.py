@@ -6,10 +6,10 @@ class Player:
         self.game = game
 
         self.sprite = game.sprite.get_tiles("emily")
-        self.gx = 34
-        self.gy = 24
-        self.x = self.gx*16 #self.game.config.screen_width/2
-        self.y = self.gy*16 #self.game.config.screen_height/
+        self.gx = 78   #34
+        self.gy = 16  #24
+        self.x = self.gx*16 
+        self.y = self.gy*16 
         
         self.dir = 0
         self.frametimer = 0
@@ -32,6 +32,10 @@ class Player:
         self.gx = int(self.x/16)
         self.gy = int(self.y/16)
         
+        if (self.gx, self.gy) in self.game.world.warp_points:
+            self.game.world.warp_player((self.gx, self.gy))
+            
+        
         if self.m_down: self.move_down()
         if self.m_right: self.move_right()
         if self.m_up: self.move_up()
@@ -45,6 +49,15 @@ class Player:
         assert h >= 0 <= 120
         self.map_height = h
         
+    def set_gx(self, gx):
+        self.gx = gx
+        self.x = self.gx*16 
+        
+    def set_gy(self, gy):
+        self.gy = gy
+        self.y = self.gy*16
+        
+        
     def render(self, screen):
         top_left_x = min(max(self.game.player.x-screen.get_width()/2,0),self.map_width*16-screen.get_width())
         top_left_y = min(max(self.game.player.y-screen.get_height()/2,0),self.map_height*16-screen.get_height())
@@ -57,7 +70,7 @@ class Player:
     def move_down(self):
         self.dir = 0;
         gx = int((self.x+8)/16)
-        gy = int((self.y+17)/16)
+        gy = int((self.y+16)/16)
         if self.game.world.is_movable(gx,gy):
             self.y += 2-self.walking;
         self.m_down = False
@@ -73,7 +86,7 @@ class Player:
     def move_up(self):
         self.dir = 2;
         gx = int((self.x+8)/16)
-        gy = int((self.y-1)/16)
+        gy = int((self.y+4)/16)
         if self.game.world.is_movable(gx,gy):
             self.y -= 2-self.walking;
         self.m_up = False

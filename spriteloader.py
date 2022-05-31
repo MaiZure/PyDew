@@ -29,9 +29,12 @@ class SpriteLoader:
         self.sheet["fall_outdoorsTileSheet2"] = (pygame.image.load(".\\Tiles\\fall_outdoorsTileSheet2.png").convert_alpha(), 16, 16)
         self.sheet["winter_outdoorsTileSheet"] = (pygame.image.load(".\\Tiles\\winter_outdoorsTileSheet.png").convert_alpha(), 16, 16)
         self.sheet["winter_outdoorsTileSheet2"] = (pygame.image.load(".\\Tiles\\winter_outdoorsTileSheet2.png").convert_alpha(), 16, 16)
+        self.sheet["spring_beach"] = (pygame.image.load(".\\Tiles\\spring_beach.png").convert_alpha(), 16, 16)
+        self.sheet["spring_town"] = (pygame.image.load(".\\Tiles\\spring_town.png").convert_alpha(), 16, 16)
+        self.sheet["spring_monsterGraveTiles"] = (pygame.image.load(".\\Tiles\\spring_monsterGraveTiles.png").convert_alpha(), 16, 16)
         self.sheet["bushes"] = (pygame.image.load(".\\Tiles\\bushes.png").convert_alpha(), 16, 16)
         self.sheet["paths"] = (pygame.image.load(".\\Tiles\\paths.png").convert_alpha(), 16, 16)
-        self.sheet["emily"] = (pygame.image.load(".\\Tiles\\Emily.png").convert_alpha(), 16, 32)
+        self.sheet["emily"] = (pygame.image.load(".\\Tiles\\emily.png").convert_alpha(), 16, 32)
         self.sheet["cursors"] = (pygame.image.load(".\\Tiles\\Cursors.png").convert_alpha(), 16, 16)
         self.sheet["springobjects"] = (pygame.image.load(".\\Tiles\\springobjects.png").convert_alpha(), 16, 16)
     

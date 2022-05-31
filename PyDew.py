@@ -16,7 +16,7 @@ pygame.init()
 class PyDew:
 
     def __init__(self):
-        self.version = "0.0.3.9"
+        self.version = "0.0.4.10"
         print("Hello PyDew "+str(self.version))
         self.config = Config()        
         self.final_screen = pygame.display.set_mode((self.config.screen_width, 
@@ -46,11 +46,11 @@ class PyDew:
         pygame.display.set_caption("PyDew "+str(self.version))
         
         self.sprite = SpriteLoader(self)
-        self.season = random.choice(["spring"])#,"summer","fall","winter"])
         self.map = MapLoader(self)
         self.world = World(self)
         self.player = Player(self)
         self.ui = UI(self)
+        self.paused = False
         
         self.run = False
         
@@ -63,9 +63,14 @@ class PyDew:
     def game_loop(self):
         while self.run:
             self.check_input()
-            self.update()
+            
+            if not self.paused:
+                self.update()
+            
             self.render()
-            self.clock.tick(60)
+            
+            self.clock.tick(60) # ~60 FPS
+        
         pygame.quit()
     
     #Check/Dispatch user input
@@ -78,8 +83,13 @@ class PyDew:
                     return
                     self.world.set_random_season();
                     self.world.regenerate_season = True # Make fxn
+                if e.key == pygame.K_p:
+                    self.world.init_map("forest")
+        
         keys = pygame.key.get_pressed()
-        self.player.handle_input(keys)
+        
+        if not self.paused:
+            self.player.handle_input(keys)
         
     #Update game state
     def update(self):
