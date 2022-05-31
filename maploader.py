@@ -18,6 +18,7 @@ class MapLoader:
         self.map["backwoods"] = json.load(open("backwoods.tmj"))
         self.map["beach"] = json.load(open("beach.tmj"))
         self.map["railroad"] = json.load(open("railroad.tmj"))
+        self.map["animalshop"] = json.load(open("animalshop.tmj"))
         
     def get_layer_data(self, map_name, layer_name) -> list:
         for layer in self.map[map_name]["layers"]:
@@ -75,6 +76,29 @@ class MapLoader:
                     warp_dest_gy = int(warp_data.pop(0))
                     warps[(warp_gx, warp_gy)] = (warp_dest.lower(), warp_dest_gx, warp_dest_gy)
         return warps
+        
+    def get_map_actions(self,map_name) -> dict:
+        actions = {}  # nested tuple ( (gx,gy), (newmap, gx, gy) )
+        for layer in self.map[map_name]["layers"]:
+            if layer["name"] == "Buildings" and "objects" in layer:
+                for object in layer["objects"]:
+                    if "properties" in object:
+                        for property in object["properties"]:
+                            if property["name"] == "Action":
+                                action_data = property["value"].split()
+                                if action_data[0] == "Warp" or action_data[0] == "LockedDoorWarp":
+                                    warp_gx = int(int(object["x"])/16)
+                                    warp_gy = int((int(object["y"])+16)/16)
+                                    action_type = (action_data.pop(0)).lower()
+                                    warp_dest_gx = int(action_data.pop(0))
+                                    warp_dest_gy = int(action_data.pop(0))
+                                    map_name = (action_data.pop(0)).lower()
+                                    if action_type == "lockeddoorwarp":
+                                        start_time = int(action_data.pop(0))
+                                        end_time = int(action_data.pop(0))
+                                        ## Add relatonship requierments
+                                        actions[(warp_gx, warp_gy)] = (map_name, warp_dest_gx, warp_dest_gy)
+        return actions
         
     def get_map_tiles_index(self, name) -> list:
         index = {}

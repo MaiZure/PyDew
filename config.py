@@ -2,7 +2,7 @@
 
 class Config:
     def __init__(self):
-        print("Initializaing Config")
+        print("Initializing Config")
         
         self.screen_width = 1440  #1920 is typical
         self.screen_height = 810  #1080 is typical

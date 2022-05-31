@@ -4,7 +4,7 @@ import pygame
 class UI:
 
     def __init__(self, game):
-        print("Initializaing UI")
+        print("Initializing UI")
         self.game = game
         
         cursors = ".\\Tiles\\Cursors.png"

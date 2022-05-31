@@ -37,6 +37,7 @@ class SpriteLoader:
         self.sheet["emily"] = (pygame.image.load(".\\Tiles\\emily.png").convert_alpha(), 16, 32)
         self.sheet["cursors"] = (pygame.image.load(".\\Tiles\\Cursors.png").convert_alpha(), 16, 16)
         self.sheet["springobjects"] = (pygame.image.load(".\\Tiles\\springobjects.png").convert_alpha(), 16, 16)
+        self.sheet["townInterior"] = (pygame.image.load(".\\Tiles\\TownInterior.png").convert_alpha(), 16, 16)
     
     def build_tiles(self) -> None:
         for sheet in self.sheet: 

@@ -6,7 +6,7 @@ from mapobject import MapObject
 class World:
 
     def __init__(self, game):
-        print("Initializaing World")
+        print("Initializing World")
         self.game = game
         self.season = random.choice(["spring","summer","fall","winter"])
         
@@ -15,7 +15,8 @@ class World:
         self.tiles_index = {}
         self.current_map = "" #town
         self.current_map_path_objects = []
-        self.warp_points = []
+        self.warp_points = {}
+        self.action_points = {}
         self.paths_tile_base = 0
         self.animated_tiles = []
         self.passable_tiles = []
@@ -73,6 +74,7 @@ class World:
         self.animated_tiles = self.game.map.get_map_animations(self.current_map, self.tiles_index)
         self.passable_tiles, self.impassable_tiles = self.game.map.get_passable_tiles(self.current_map, self.tiles_index)
         self.warp_points = self.game.map.get_map_warps(self.current_map)
+        self.action_points = self.game.map.get_map_actions(self.current_map)
         
         self.collision_map = self.generate_collision_map()
         for mapobject in self.current_map_path_objects:
@@ -102,13 +104,16 @@ class World:
                     if type(bldg_tile) == list:
                         self.bg.blit(self.tiles[bg_tile[0][1]], (i*16,j*16))
                     
-    def generate_foreground_layers(self):
+    def generate_foreground_layers(self):   ## Refactor this fxn somehow
         paths_tile_base = self.tiles_index["paths"]
         for j in range(0,self.map_height):
             for i in range(0,self.map_width):
                 path_tile = self.path_layer[j*self.map_width+i]
                 front_tile = self.front_layer[j*self.map_width+i]
-                afront_tile = self.always_front_layer[j*self.map_width+i]
+                if self.always_front_layer:  # Because get_layer_data() returns None if no AlwaysFront layer exists
+                    afront_tile = self.always_front_layer[j*self.map_width+i]   #self.always_front_layer could be None
+                else:
+                    afront_tile = None # to avoid error 7 lines below
                 if path_tile: # My god clean this up
                     if path_tile-paths_tile_base < 9: # Delete pathing-related tiles (unused?)
                         self.path_layer[j*self.map_width+i] = 0
@@ -159,6 +164,13 @@ class World:
                 return reel.copy()
         return None
         
+    def do_action(self, location):
+        if location in self.action_points:
+            #should probably story a type for various behaviors -- for now, warp only
+            self.warp_player(self.action_points[location])
+        else:
+            print ("No action at " + str(location))
+        
     def init_active_map(self):
         self.game.player.set_map_width(self.map_width)
         self.game.player.set_map_height(self.map_height)
@@ -207,6 +219,7 @@ class World:
         tile_num = self.get_tile_num(gx,gy)
         if gx >= self.map_width: return True
         if gy >= self.map_height: return True
+        if gx < 1: return True
         if tile_num > len(self.collision_map): return True
         if self.collision_map[tile_num]: return False
         return True
@@ -248,8 +261,8 @@ class World:
             layer[next_tile].append(last_frame)
             self.update_tile(next_tile,layer)
             
-    def warp_player(self, warp_point):
-        dest = self.warp_points[warp_point]
+    def warp_player(self, dest):
+        #dest = self.warp_points[warp_point]
         new_map = dest[0]
         new_gx = dest[1]
         new_gy = dest[2]
