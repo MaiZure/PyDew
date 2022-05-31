@@ -39,7 +39,12 @@ class World:
         
         self.init_map("forest")
         
-    def init_map(self, map_name):
+    def init_map(self, map_name) -> bool:
+        
+        if not map_name in self.game.map.map:
+            print("ERROR - Map doesn't exist yet ("+map_name+")")
+            return False
+            
         self.current_map = map_name
         self.new_map = True
         
@@ -64,6 +69,7 @@ class World:
         self.fg = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
         
         self.init_second_stage()
+        return True
         
         
     def init_second_stage(self):
@@ -266,9 +272,9 @@ class World:
         new_map = dest[0]
         new_gx = dest[1]
         new_gy = dest[2]
-        self.init_map(new_map)
-        self.game.player.set_gx(new_gx)
-        self.game.player.set_gy(new_gy)
+        if self.init_map(new_map):
+            self.game.player.set_gx(new_gx)
+            self.game.player.set_gy(new_gy)
         
         
         

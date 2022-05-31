@@ -1,4 +1,4 @@
-import pygame, json, zlib, base64
+import pygame, json, zlib, base64, os
 
 class MapLoader:
     def __init__(self, game):
@@ -10,15 +10,11 @@ class MapLoader:
         self.game = game
         
     def load_maps(self) -> None:
-        self.map["forest"] = json.load(open("forest.tmj"))
-        self.map["farm"] = json.load(open("farm.tmj"))
-        self.map["town"] = json.load(open("town.tmj"))
-        self.map["busstop"] = json.load(open("busstop.tmj"))
-        self.map["mountain"] = json.load(open("mountain.tmj"))
-        self.map["backwoods"] = json.load(open("backwoods.tmj"))
-        self.map["beach"] = json.load(open("beach.tmj"))
-        self.map["railroad"] = json.load(open("railroad.tmj"))
-        self.map["animalshop"] = json.load(open("animalshop.tmj"))
+        path = ".\\Maps\\"
+        files = os.listdir(path)
+        for file in files:
+            name = ((file.split("."))[0]).lower()
+            self.map[name] = json.load(open(path+file))
         
     def get_layer_data(self, map_name, layer_name) -> list:
         for layer in self.map[map_name]["layers"]:
@@ -53,7 +49,7 @@ class MapLoader:
     def get_tileset_names(self, name) -> list:
         names = []
         for tileset in self.map[name]["tilesets"]:
-            names.append(tileset["image"])
+            names.append((tileset["image"].split("/")).pop())
         return names
         
     def get_map_tiles(self, name) -> list:
@@ -112,7 +108,7 @@ class MapLoader:
     def get_map_animations(self, name, tiles_index) -> list: 
         animated_tiles = []
         for tileset in self.map[name]["tilesets"]:
-            tileset_name = tileset["image"]
+            tileset_name = (tileset["image"].split("/")).pop()
             tile_offset = tiles_index[tileset_name]
             if "tiles" in tileset:
                 for tile in tileset["tiles"]:
@@ -128,7 +124,7 @@ class MapLoader:
         impassable_tiles = []
         
         for tileset in self.map[name]["tilesets"]:
-            tileset_name = tileset["image"]
+            tileset_name = (tileset["image"].split("/")).pop()
             tile_offset = tiles_index[tileset_name]
             if "tiles" in tileset:
                 for tile in tileset["tiles"]:
