@@ -7,16 +7,15 @@ from config import Config
 from spriteloader import SpriteLoader
 from maploader import MapLoader
 from mapobject import MapObject
+from audio import Audio
 from ui import UI
-
-
-pygame.init()
 
 
 class PyDew:
 
     def __init__(self):
-        self.version = "0.0.4.10"
+        pygame.init()
+        self.version = "0.0.5.11"
         print("Hello PyDew "+str(self.version))
         self.config = Config()        
         self.final_screen = pygame.display.set_mode((self.config.screen_width, 
@@ -50,6 +49,7 @@ class PyDew:
         self.world = World(self)
         self.player = Player(self)
         self.ui = UI(self)
+        self.audio = Audio(self)
         self.paused = False
         
         self.run = False
