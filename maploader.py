@@ -49,7 +49,9 @@ class MapLoader:
     def get_tileset_names(self, name) -> list:
         names = []
         for tileset in self.map[name]["tilesets"]:
-            names.append((tileset["image"].split("/")).pop())
+            tileset_name = (tileset["image"].split("/")).pop()
+            tileset_name = tileset_name.split(".")[0]
+            names.append(tileset_name)
         return names
         
     def get_map_tiles(self, name) -> list:
@@ -79,7 +81,7 @@ class MapLoader:
             if layer["name"] == "Buildings" and "objects" in layer:
                 for object in layer["objects"]:
                     if "properties" in object:
-                        for property in object["properties"]:
+                        for property in object["properties"]:   #TODO - Generalize this to load ALL actions
                             if property["name"] == "Action":
                                 action_data = property["value"].split()
                                 if action_data[0] == "Warp" or action_data[0] == "LockedDoorWarp":
@@ -109,6 +111,7 @@ class MapLoader:
         animated_tiles = []
         for tileset in self.map[name]["tilesets"]:
             tileset_name = (tileset["image"].split("/")).pop()
+            tileset_name = tileset_name.split(".")[0]
             tile_offset = tiles_index[tileset_name]
             if "tiles" in tileset:
                 for tile in tileset["tiles"]:
@@ -125,6 +128,7 @@ class MapLoader:
         
         for tileset in self.map[name]["tilesets"]:
             tileset_name = (tileset["image"].split("/")).pop()
+            tileset_name = tileset_name.split(".")[0]
             tile_offset = tiles_index[tileset_name]
             if "tiles" in tileset:
                 for tile in tileset["tiles"]:

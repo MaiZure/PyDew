@@ -66,6 +66,7 @@ class World:
         # Create background surface to render map
         rect = pygame.Rect(0, 0, self.map_width*16, self.map_height*16) 
         self.bg = pygame.Surface(rect.size).convert()
+        self.mid = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
         self.fg = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
         
         self.init_second_stage()
@@ -109,6 +110,7 @@ class World:
                         self.bg.blit(self.tiles[bldg_tile], (i*16,j*16))
                     if type(bldg_tile) == list:
                         self.bg.blit(self.tiles[bg_tile[0][1]], (i*16,j*16))
+                
                     
     def generate_foreground_layers(self):   ## Refactor this fxn somehow
         paths_tile_base = self.tiles_index["paths"]
@@ -125,7 +127,7 @@ class World:
                         self.path_layer[j*self.map_width+i] = 0
                     MapObject(self.game,self,path_tile-paths_tile_base,i,j)
                 if front_tile: 
-                    self.fg.blit(self.tiles[front_tile], (i*16,j*16))
+                    self.mid.blit(self.tiles[front_tile], (i*16,j*16))
                 if afront_tile:
                     self.fg.blit(self.tiles[afront_tile], (i*16,j*16))
                     
@@ -196,6 +198,9 @@ class World:
         
     def render_mid(self, screen):
         screen.fill(pygame.Color(0,0,0,0))
+        top_left_x = min(max(self.game.player.x-screen.get_width()/2,0),self.map_width*16-screen.get_width())
+        top_left_y = min(max(self.game.player.y-screen.get_height()/2,0),self.map_height*16-screen.get_height()) 
+        screen.blit(self.mid, (0,0), (top_left_x,top_left_y,screen.get_width(),screen.get_height()))
         for mapobject in self.current_map_path_objects:
             mapobject.render_mid(screen)
         self.game.player.render(screen)
