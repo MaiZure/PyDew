@@ -4,26 +4,30 @@ Version Milestones
 Map loading, All layers
 Walking / Collisions
 Map Transitions
-Time Passing
 Animated backgrounds
+Player Character
+
 
 --0.2  (UX/UI)
+Mouse input
 Menus
 Inventory
 Music & Sound
 Day/Night Cycle
+Time Passing
+
+
+--0.4  (Farm)
+Chopping, Mining,
+Digging, Planting, Growing
+Farm Buildings
+Animals
 
 
 --0.3  (People)
 NPCs
 Schedules
 Dialogue system
-
-
---0.4  (Farm)
-Digging, Planting, Growing
-Farm Buildings
-Animals
 
 
 --0.5  (Activities)

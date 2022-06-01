@@ -205,6 +205,7 @@ class World:
             mapobject.render_mid(screen)
         self.game.player.render(screen)
         
+        
     def render_front(self, screen):
         screen.fill(pygame.Color(0,0,0,0))
         top_left_x = min(max(self.game.player.x-screen.get_width()/2,0),self.map_width*16-screen.get_width())

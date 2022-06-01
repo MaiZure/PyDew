@@ -42,7 +42,12 @@ class MapObject:
         if self.type == 13: spr_name = "spr_weed"
         if self.type == 14: spr_name = "spr_weed"
         if self.type == 15: spr_name = "spr_weed"
+        if self.type == 16: spr_name = "spr_rock_small"
+        if self.type == 17: spr_name = "spr_rock_small"
         if self.type == 18: spr_name = "spr_stick" #Not a large sprite -- fix later
+        if self.type == 19: spr_name = "spr_log"
+        if self.type == 20: spr_name = "spr_rock_large"
+        if self.type == 21: spr_name = "spr_stump_large"
         if self.type == 24: spr_name = "spr_bush_large"
         if self.type == 25: spr_name = "spr_bush_medium"
         if self.type == 26: spr_name = "spr_bush_small"

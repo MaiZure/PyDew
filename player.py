@@ -26,7 +26,8 @@ class Player:
         if input[pygame.K_w]: self.m_up = True
         if input[pygame.K_a]: self.m_left = True
         if input[pygame.K_x]: self.do_action()
-        if input[pygame.K_c]: print("Player at (" +str(self.gx)+","+str(self.gy) + ")")
+        if input[pygame.K_c]: self.use_item()
+        if input[pygame.K_l]: print("Player at (" +str(self.gx)+","+str(self.gy) + ")")
         self.walking = input[pygame.K_LSHIFT]
         
     def tick(self):
@@ -71,6 +72,9 @@ class Player:
         
         self.game.world.do_action((target_x, target_y))
     
+    def use_item(self):
+        pass
+        
     def render(self, screen):
         top_left_x = min(max(self.game.player.x-screen.get_width()/2,0),self.map_width*16-screen.get_width())
         top_left_y = min(max(self.game.player.y-screen.get_height()/2,0),self.map_height*16-screen.get_height())

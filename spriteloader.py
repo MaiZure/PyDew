@@ -193,3 +193,39 @@ class SpriteLoader:
             "collision_width": 1,
             "collision_height": 1
         }
+        self.large_sprites["spr_rock_small"] = {
+            "sheet": "springobjects",
+            "tiles": [[(343,1)],[(450,1)]],
+            "sprite_height": 1,
+            "sprite_width": 1,
+            "sprite_origin": (0,0),
+            "collision_width": 1,
+            "collision_height": 1
+        }
+        self.large_sprites["spr_log"] = {
+            "sheet": "springobjects",
+            "tiles": [[(602,1),(603,1),(626,1),(627,1)]],
+            "sprite_height": 2,
+            "sprite_width": 2,
+            "sprite_origin": (0,0),
+            "collision_width": 2,
+            "collision_height": 2
+        }
+        self.large_sprites["spr_stump_large"] = {
+            "sheet": "springobjects",
+            "tiles": [[(600,1),(601,1),(624,1),(625,1)]],
+            "sprite_height": 2,
+            "sprite_width": 2,
+            "sprite_origin": (0,0),
+            "collision_width": 2,
+            "collision_height": 2
+        }
+        self.large_sprites["spr_rock_large"] = {
+            "sheet": "springobjects",
+            "tiles": [[(672,1),(673,1),(696,1),(697,1)]],
+            "sprite_height": 2,
+            "sprite_width": 2,
+            "sprite_origin": (0,0),
+            "collision_width": 2,
+            "collision_height": 2
+        }
