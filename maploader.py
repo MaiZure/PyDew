@@ -84,7 +84,7 @@ class MapLoader:
                                 action_data = property["value"].split()
                                 if action_data[0] == "Warp" or action_data[0] == "LockedDoorWarp":
                                     warp_gx = int(int(object["x"])/16)
-                                    warp_gy = int((int(object["y"])+16)/16)
+                                    warp_gy = int(int(object["y"])/16)
                                     action_type = (action_data.pop(0)).lower()
                                     warp_dest_gx = int(action_data.pop(0))
                                     warp_dest_gy = int(action_data.pop(0))

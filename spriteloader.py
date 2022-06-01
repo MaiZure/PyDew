@@ -1,4 +1,4 @@
-import pygame
+import pygame, os
 import random
 
 class SpriteLoader:
@@ -9,7 +9,8 @@ class SpriteLoader:
         
         # Load all images in to a library (dictionary)
         self.sheet = {}
-        self.load_spritesheets()
+        self.load_tile_spritesheets()
+        self.load_character_spritesheets()
         
         self.tiles = {}
         self.build_tiles()
@@ -19,27 +20,22 @@ class SpriteLoader:
         self.build_large_sprites()
         
     # Procedure to load all spritesheets from disk in to this object
-    def load_spritesheets(self) -> None:
+    def load_tile_spritesheets(self) -> None:
         # Each sheet contains a 3-tuple: (image, tile_width, tile_height)
-        self.sheet["spring_outdoorsTileSheet"] = (pygame.image.load(".\\Tiles\\spring_outdoorsTileSheet.png").convert_alpha(), 16, 16)
-        self.sheet["spring_outdoorsTileSheet2"] = (pygame.image.load(".\\Tiles\\spring_outdoorsTileSheet2.png").convert_alpha(), 16, 16)
-        self.sheet["summer_outdoorsTileSheet"] = (pygame.image.load(".\\Tiles\\summer_outdoorsTileSheet.png").convert_alpha(), 16, 16)
-        self.sheet["summer_outdoorsTileSheet2"] = (pygame.image.load(".\\Tiles\\summer_outdoorsTileSheet2.png").convert_alpha(), 16, 16)
-        self.sheet["fall_outdoorsTileSheet"] = (pygame.image.load(".\\Tiles\\fall_outdoorsTileSheet.png").convert_alpha(), 16, 16)
-        self.sheet["fall_outdoorsTileSheet2"] = (pygame.image.load(".\\Tiles\\fall_outdoorsTileSheet2.png").convert_alpha(), 16, 16)
-        self.sheet["winter_outdoorsTileSheet"] = (pygame.image.load(".\\Tiles\\winter_outdoorsTileSheet.png").convert_alpha(), 16, 16)
-        self.sheet["winter_outdoorsTileSheet2"] = (pygame.image.load(".\\Tiles\\winter_outdoorsTileSheet2.png").convert_alpha(), 16, 16)
-        self.sheet["spring_beach"] = (pygame.image.load(".\\Tiles\\spring_beach.png").convert_alpha(), 16, 16)
-        self.sheet["spring_town"] = (pygame.image.load(".\\Tiles\\spring_town.png").convert_alpha(), 16, 16)
-        self.sheet["spring_monsterGraveTiles"] = (pygame.image.load(".\\Tiles\\spring_monsterGraveTiles.png").convert_alpha(), 16, 16)
-        self.sheet["bushes"] = (pygame.image.load(".\\Tiles\\bushes.png").convert_alpha(), 16, 16)
-        self.sheet["paths"] = (pygame.image.load(".\\Tiles\\paths.png").convert_alpha(), 16, 16)
-        self.sheet["emily"] = (pygame.image.load(".\\Tiles\\emily.png").convert_alpha(), 16, 32)
-        self.sheet["cursors"] = (pygame.image.load(".\\Tiles\\Cursors.png").convert_alpha(), 16, 16)
-        self.sheet["springobjects"] = (pygame.image.load(".\\Tiles\\springobjects.png").convert_alpha(), 16, 16)
-        self.sheet["townInterior"] = (pygame.image.load(".\\Tiles\\townInterior.png").convert_alpha(), 16, 16)
-        self.sheet["townInterior_2"] = (pygame.image.load(".\\Tiles\\townInterior_2.png").convert_alpha(), 16, 16)
+        path = ".\\Tiles\\"
+        files = os.listdir(path)
+        for file in files:
+            name = ((file.split("."))[0])
+            self.sheet[name] = (pygame.image.load(open(path+file)).convert_alpha(), 16, 16)
     
+    def load_character_spritesheets(self) -> None:
+        # Each sheet contains a 3-tuple: (image, tile_width, tile_height)
+        path = ".\\Characters\\"
+        files = os.listdir(path)
+        for file in files:
+            name = ((file.split("."))[0]).lower()
+            self.sheet[name] = (pygame.image.load(open(path+file)).convert_alpha(), 16, 32)
+            
     def build_tiles(self) -> None:
         for sheet in self.sheet: 
             self.tiles[sheet] = self.get_spritesheet_tiles(sheet)

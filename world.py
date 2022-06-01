@@ -226,6 +226,7 @@ class World:
         if gx >= self.map_width: return True
         if gy >= self.map_height: return True
         if gx < 1: return True
+        if gy < 1: return True
         if tile_num > len(self.collision_map): return True
         if self.collision_map[tile_num]: return False
         return True

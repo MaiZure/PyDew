@@ -11,7 +11,7 @@ class Player:
         self.x = self.gx*16 
         self.y = self.gy*16 
         
-        self.dir = 0
+        self.dir = 0 # 0 = down, 1 = right, 2 = up, 3 = left
         self.frametimer = 0
         self.frame = 0
         self.walking = False
@@ -25,6 +25,7 @@ class Player:
         if input[pygame.K_w]: self.m_up = True
         if input[pygame.K_a]: self.m_left = True
         if input[pygame.K_x]: self.do_action()
+        if input[pygame.K_c]: print("Player at (" +str(self.gx)+","+str(self.gy) + ")")
         self.walking = input[pygame.K_LSHIFT]
         
     def tick(self):
@@ -32,7 +33,6 @@ class Player:
         self.frame = int((self.frametimer/20)%4)
         self.gx = int((self.x+8)/16)
         self.gy = int((self.y+8)/16)
-        #print("Player at (" +str(self.gx)+","+str(self.gy) + ")")
         
         if (self.gx, self.gy) in self.game.world.warp_points:
             self.game.world.warp_player(self.game.world.warp_points[(self.gx, self.gy)])
@@ -60,7 +60,15 @@ class Player:
         self.y = self.gy*16
         
     def do_action(self):
-        self.game.world.do_action((self.gx, self.gy))
+        target_x = self.gx
+        target_y = self.gy
+        
+        if self.dir == 0: target_y += 1
+        if self.dir == 1: target_x += 1
+        if self.dir == 2: target_y -= 1
+        if self.dir == 3: target_x -= 1
+        
+        self.game.world.do_action((target_x, target_y))
     
     def render(self, screen):
         top_left_x = min(max(self.game.player.x-screen.get_width()/2,0),self.map_width*16-screen.get_width())

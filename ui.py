@@ -9,7 +9,7 @@ class UI:
         
         cursors = ".\\Tiles\\Cursors.png"
         
-        self.spritesheet = game.sprite.get_spritesheet("cursors")
+        self.spritesheet = game.sprite.get_spritesheet("Cursors")
         
         rect = pygame.Rect(333, 431, 72, 58)
         self.clock_sprite = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
