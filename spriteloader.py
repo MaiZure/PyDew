@@ -9,8 +9,12 @@ class SpriteLoader:
         
         # Load all images in to a library (dictionary)
         self.sheet = {}
+        self.character_sheet = {}
         self.load_tile_spritesheets()
         self.load_character_spritesheets()
+        
+        #Put all character sheets in base sheets
+        self.sheet = self.sheet | self.character_sheet
         
         self.tiles = {}
         self.build_tiles()
@@ -34,7 +38,7 @@ class SpriteLoader:
         files = os.listdir(path)
         for file in files:
             name = ((file.split("."))[0]).lower()
-            self.sheet[name] = (pygame.image.load(open(path+file)).convert_alpha(), 16, 32)
+            self.character_sheet[name] = (pygame.image.load(open(path+file)).convert_alpha(), 16, 32)
             
     def build_tiles(self) -> None:
         for sheet in self.sheet: 

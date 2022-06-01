@@ -1,11 +1,12 @@
-import pygame
+import pygame, random
 
 class Player:
     def __init__(self, game):
         print("Initializing Player")
         self.game = game
-
-        self.sprite = game.sprite.get_tiles("emily")
+        
+        self.name = random.choice(list(game.sprite.character_sheet.keys()))
+        self.sprite = game.sprite.get_tiles(self.name)
         self.gx = 78  #34
         self.gy = 16  #24
         self.x = self.gx*16 
