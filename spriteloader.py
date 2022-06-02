@@ -38,6 +38,7 @@ class SpriteLoader:
         files = os.listdir(path)
         for file in files:
             name = ((file.split("."))[0]).lower()
+            if name == "farmer": continue #skip subs - cheap hack for now
             self.character_sheet[name] = (pygame.image.load(open(path+file)).convert_alpha(), 16, 32)
             
     def build_tiles(self) -> None:

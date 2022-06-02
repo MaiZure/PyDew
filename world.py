@@ -1,5 +1,6 @@
 import random
 import pygame
+from npc import NPC
 
 from mapobject import MapObject
 
@@ -9,6 +10,10 @@ class World:
         print("Initializing World")
         self.game = game
         self.season = random.choice(["spring","summer","fall","winter"])
+        self.top_left_x = 0
+        self.top_left_y = 0
+        self.map_width = 0
+        self.map_height = 0
         
         self.map_layers = []
         self.tiles = []
@@ -22,7 +27,8 @@ class World:
         self.passable_tiles = []
         self.impassable_tiles = []
         self.collision_map = []     # Basic Boolean collisions (Aligned with self.tiles)
-        self.spawnable_map = []     
+        self.spawnable_map = []
+        self.npcs = []
         
         self.bg_tile_update_reel = [[] for a in range(60)]   # Maintan 60 frames
         self.bldg_tile_update_reel = [[] for a in range(60)]
@@ -89,11 +95,17 @@ class World:
         self.embed_map_animations(self.bg_layer, self.bg_tile_update_reel)
         self.embed_map_animations(self.bldg_layer, self.bldg_tile_update_reel)
         
+        self.init_npcs()
         
         
     def set_random_season(self):
         self.season = random.choice(["spring","summer","fall","winter"])
         self.set_season()
+        
+    def init_npcs(self):
+        if self.npcs: return
+        
+        self.npcs.append(NPC(self.game))
         
     def generate_background_layers(self):
         for j in range(0,self.map_height):
@@ -180,17 +192,31 @@ class World:
             print ("No action at " + str(location))
         
     def init_active_map(self):
-        self.game.player.set_map_width(self.map_width)
-        self.game.player.set_map_height(self.map_height)
+        self.set_map_width(self.map_width)
+        self.set_map_height(self.map_height)
         self.new_map = False
+        
+    def set_map_width(self,w) -> None:
+        assert w >= 0 <= 120
+        self.map_width = w
+    
+    def set_map_height(self,h) -> None:
+        assert h >= 0 <= 120
+        self.map_height = h
         
     def tick(self):
         if self.new_map:
             self.init_active_map()
         self.cycle_reel(self.bg_tile_update_reel, self.bg_layer)
         self.cycle_reel(self.bldg_tile_update_reel, self.bldg_layer)
+        self.game.player.tick()
+        for npc in self.npcs:
+            npc.tick()
         
-        
+    def prerender(self, screen):
+        self.top_left_x = min(max(self.game.player.x-screen.get_width()/2,0),self.map_width*16-screen.get_width())
+        self.top_left_y = min(max(self.game.player.y-screen.get_height()/2,0),self.map_height*16-screen.get_height())
+    
     def render_back(self, screen):
         top_left_x = min(max(self.game.player.x-screen.get_width()/2,0),self.map_width*16-screen.get_width())
         top_left_y = min(max(self.game.player.y-screen.get_height()/2,0),self.map_height*16-screen.get_height())
@@ -203,7 +229,10 @@ class World:
         screen.blit(self.mid, (0,0), (top_left_x,top_left_y,screen.get_width(),screen.get_height()))
         for mapobject in self.current_map_path_objects:
             mapobject.render_mid(screen)
+        for npc in self.npcs:
+            npc.render(screen)
         self.game.player.render(screen)
+        
         
         
     def render_front(self, screen):

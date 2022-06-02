@@ -1,34 +1,27 @@
 import pygame, random
 
-class Player:
+class NPC:
     def __init__(self, game):
-        print("Initializing Player")
+        print("Initializing NPC")
         self.game = game
         
-        self.name = random.choice(list(game.sprite.character_sheet.keys()))
+        self.name = "emily"
         self.sprite = game.sprite.get_tiles(self.name)
-        self.gx = 78  #34
-        self.gy = 16  #24
+        self.gx = 64  #34
+        self.gy = 13  #24
         self.x = self.gx*16 
         self.y = self.gy*16 
         
         self.dir = 0 # 0 = down, 1 = right, 2 = up, 3 = left
         self.frametimer = 0
         self.frame = 0
-        self.walking = False
+        self.walking = True
         self.m_up = self.m_down = self.m_right = self.m_left = False
         self.map_width = 0
         self.map_height = 0
 
     def handle_input(self, input):
-        if input[pygame.K_s]: self.m_down = True
-        if input[pygame.K_d]: self.m_right = True
-        if input[pygame.K_w]: self.m_up = True
-        if input[pygame.K_a]: self.m_left = True
-        if input[pygame.K_x]: self.do_action()
-        if input[pygame.K_c]: self.use_item()
-        if input[pygame.K_l]: print("Player at (" +str(self.gx)+","+str(self.gy) + ")")
-        self.walking = input[pygame.K_LSHIFT]
+        pass
         
     def tick(self):
         self.frametimer += 2 - self.walking
@@ -38,43 +31,16 @@ class Player:
         
         if (self.gx, self.gy) in self.game.world.warp_points:
             self.game.world.warp_player(self.game.world.warp_points[(self.gx, self.gy)])
-            
-        
+                  
         if self.m_down: self.move_down()
         if self.m_right: self.move_right()
         if self.m_up: self.move_up()
-        if self.m_left: self.move_left()
-        
-    def set_gx(self, gx):
-        self.gx = gx
-        self.x = self.gx*16 
-        
-    def set_gy(self, gy):
-        self.gy = gy
-        self.y = self.gy*16
-        
-    def do_action(self):
-        target_x = self.gx
-        target_y = self.gy
-        
-        if self.dir == 0: target_y += 1
-        if self.dir == 1: target_x += 1
-        if self.dir == 2: target_y -= 1
-        if self.dir == 3: target_x -= 1
-        
-        self.game.world.do_action((target_x, target_y))
-    
-    def use_item(self):
-        pass
+        if self.m_left: self.move_left()     
         
     def render(self, screen):
         top_left_x = self.game.world.top_left_x
         top_left_y = self.game.world.top_left_y
         screen.blit(self.sprite[self.dir*4+self.frame], (self.x-top_left_x,self.y-16-top_left_y), (0,0,16,32))
-        #pygame.draw.circle(screen, (255,255,0), (self.x-top_left_x,self.y-top_left_y), 2)
-        #pygame.draw.circle(screen, (255,255,0), (self.x-top_left_x+16,self.y-top_left_y), 2)
-        #pygame.draw.circle(screen, (255,255,0), (self.x-top_left_x,self.y-top_left_y+16), 2)
-        #pygame.draw.circle(screen, (255,255,0), (self.x-top_left_x+16,self.y-top_left_y+16), 2)
         
     def move_down(self):
         self.dir = 0;

@@ -94,11 +94,11 @@ class PyDew:
     #Update game state
     def update(self):
         self.world.tick()
-        self.player.tick()
         self.ui.tick()
         
     #Draw some stuff
     def render(self):
+        self.world.prerender(self.bg_surface)
         self.world.render_back(self.bg_surface)
         #self.player.render(self.bg_surface)   # Use NPC surface?
         self.world.render_mid(self.mid_surface)
