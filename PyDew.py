@@ -15,7 +15,7 @@ class PyDew:
 
     def __init__(self):
         pygame.init()
-        self.version = "0.0.6.14"
+        self.version = "0.0.7.15"
         print("Hello PyDew "+str(self.version))
         self.config = Config()        
         self.final_screen = pygame.display.set_mode((self.config.screen_width, 

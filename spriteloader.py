@@ -10,11 +10,13 @@ class SpriteLoader:
         # Load all images in to a library (dictionary)
         self.sheet = {}
         self.character_sheet = {}
+        self.player_sheet = {}
         self.load_tile_spritesheets()
         self.load_character_spritesheets()
+        self.load_player_spritesheets()
         
         #Put all character sheets in base sheets
-        self.sheet = self.sheet | self.character_sheet
+        self.sheet = self.sheet | self.character_sheet | self.player_sheet
         
         self.tiles = {}
         self.build_tiles()
@@ -40,6 +42,14 @@ class SpriteLoader:
             name = ((file.split("."))[0]).lower()
             if name == "farmer": continue #skip subs - cheap hack for now
             self.character_sheet[name] = (pygame.image.load(open(path+file)).convert_alpha(), 16, 32)
+            
+    def load_player_spritesheets(self) -> None:
+        # Each sheet contains a 3-tuple: (image, tile_width, tile_height)
+        path = ".\\Characters\\Farmer\\"
+        self.player_sheet["farmer_base"] = (pygame.image.load(open(path+"farmer_base.png")).convert_alpha(), 16, 32)
+        self.player_sheet["hairstyles"] = (pygame.image.load(open(path+"hairstyles.png")).convert_alpha(), 16, 32)
+        self.player_sheet["shirts"] = (pygame.image.load(open(path+"shirts.png")).convert_alpha(), 8, 32)
+        self.player_sheet["pants"] = (pygame.image.load(open(path+"pants.png")).convert_alpha(), 16, 32)
             
     def build_tiles(self) -> None:
         for sheet in self.sheet: 

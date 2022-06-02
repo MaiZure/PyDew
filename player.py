@@ -6,7 +6,14 @@ class Player:
         self.game = game
         
         self.name = random.choice(list(game.sprite.character_sheet.keys()))
-        self.sprite = game.sprite.get_tiles(self.name)
+        self.sprite = game.sprite.get_tiles("farmer_base")
+        self.hair = game.sprite.get_tiles("hairstyles")
+        self.shirt = game.sprite.get_tiles("shirts")
+        self.pants = game.sprite.get_tiles("pants")
+        #self.pants = 0 ## TODO - Get first set of pants 192,672 of whole sheet
+        self.hair_num = 3#random.randint(0,7)
+        self.shirt_num = 8
+        self.pants_num = 0
         self.gx = 78  #34
         self.gy = 16  #24
         self.x = self.gx*16 
@@ -19,6 +26,11 @@ class Player:
         self.m_up = self.m_down = self.m_right = self.m_left = False
         self.map_width = 0
         self.map_height = 0
+        self.moving = False
+        
+        self.frame_sequence = [18,56,56,23,18,57,57,41]
+        self.hair_yoff = [0,-1,-1,-1,0,-1,-1,-1]
+        self.shirt_yoff = [0,-1,-1,-1,0,-1,-1,-1]
 
     def handle_input(self, input):
         if input[pygame.K_s]: self.m_down = True
@@ -28,11 +40,17 @@ class Player:
         if input[pygame.K_x]: self.do_action()
         if input[pygame.K_c]: self.use_item()
         if input[pygame.K_l]: print("Player at (" +str(self.gx)+","+str(self.gy) + ")")
+        if input[pygame.K_h]: self.hair_num = random.randint(0,7)
         self.walking = input[pygame.K_LSHIFT]
         
     def tick(self):
-        self.frametimer += 2 - self.walking
-        self.frame = int((self.frametimer/20)%4)
+        if self.moving:
+            self.frametimer += 2 - self.walking
+            self.frame = int((self.frametimer/20)%8)
+        else:
+            self.frame = 0
+            self.frametimer = 0
+            
         self.gx = int((self.x+8)/16)
         self.gy = int((self.y+8)/16)
         
@@ -70,13 +88,22 @@ class Player:
     def render(self, screen):
         top_left_x = self.game.world.top_left_x
         top_left_y = self.game.world.top_left_y
-        screen.blit(self.sprite[self.dir*4+self.frame], (self.x-top_left_x,self.y-16-top_left_y), (0,0,16,32))
-        #pygame.draw.circle(screen, (255,255,0), (self.x-top_left_x,self.y-top_left_y), 2)
-        #pygame.draw.circle(screen, (255,255,0), (self.x-top_left_x+16,self.y-top_left_y), 2)
-        #pygame.draw.circle(screen, (255,255,0), (self.x-top_left_x,self.y-top_left_y+16), 2)
-        #pygame.draw.circle(screen, (255,255,0), (self.x-top_left_x+16,self.y-top_left_y+16), 2)
+        #body
+        screen.blit(self.sprite[self.frame_sequence[self.frame]], (self.x-top_left_x,self.y-16-top_left_y), (0,0,16,32))
         
+        #pants
+        screen.blit(self.pants[self.frame_sequence[self.frame]], (self.x-top_left_x,self.y-top_left_y), (0,0,16,32))
+        
+        #shirt
+        screen.blit(self.shirt[self.shirt_num], (self.x-top_left_x+4,self.y-top_left_y-1-self.hair_yoff[self.frame]), (0,8,8,8))
+        #arms
+        screen.blit(self.sprite[self.frame_sequence[self.frame]+6], (self.x-top_left_x,self.y-16-top_left_y), (0,0,16,32))
+        
+        #hair
+        screen.blit(self.hair[self.hair_num+8], (self.x-top_left_x,self.y-15-top_left_y-self.hair_yoff[self.frame]), (0,0,16,32))
+
     def move_down(self):
+        self.moving = True
         self.dir = 0;
         gx = int((self.x+8)/16)
         gy = int((self.y+16)/16)
@@ -85,6 +112,7 @@ class Player:
         self.m_down = False
         
     def move_right(self):
+        self.moving = True
         self.dir = 1;
         gx = int((self.x+17)/16)
         gy = int((self.y+8)/16)
@@ -93,6 +121,7 @@ class Player:
         self.m_right = False
         
     def move_up(self):
+        self.moving = True
         self.dir = 2;
         gx = int((self.x+8)/16)
         gy = int((self.y+4)/16)
@@ -101,6 +130,7 @@ class Player:
         self.m_up = False
         
     def move_left(self):
+        self.moving = True
         self.dir = 3;
         gx = int((self.x-1)/16)
         gy = int((self.y+8)/16)
