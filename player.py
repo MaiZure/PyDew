@@ -14,12 +14,7 @@ class Player:
         self.shirt_num = 8
         self.pants_num = 0
         
-        self.pants = pygame.Surface((288,672),pygame.SRCALPHA) ## TODO - Get first set of pants 192,672 of whole sheet
-        self.pants.blit(self.pants_sheet[self.pants_num], (0,0),(0,0,192,672))
-        self.game.sprite.player_sheet["player_pants"] = (self.pants, 16,32)
-        self.game.sprite.sheet["player_pants"] = self.game.sprite.player_sheet["player_pants"]
-        self.game.sprite.tiles["player_pants"] = self.game.sprite.get_spritesheet_tiles("player_pants")
-        self.pants = game.sprite.get_tiles("player_pants")
+        self.generate_pants()
         self.hair_color = (192,32,32)
         self.pants_color = (0,0,224)
         self.pants = game.sprite.colorize_tiles(self.pants,self.pants_color)
@@ -50,6 +45,15 @@ class Player:
         
         self.hair_yoff = self.hair_yoff_rl
         self.hair_frame_off = 0
+    
+    # Because pants are weird....
+    def generate_pants(self):
+        self.pants = pygame.Surface((288,672),pygame.SRCALPHA) ## TODO - Get first set of pants 192,672 of whole sheet
+        self.pants.blit(self.pants_sheet[self.pants_num], (0,0),(0,0,192,672))
+        self.game.sprite.player_sheet["player_pants"] = (self.pants, 16,32)
+        self.game.sprite.sheet["player_pants"] = self.game.sprite.player_sheet["player_pants"]
+        self.game.sprite.tiles["player_pants"] = self.game.sprite.get_spritesheet_tiles("player_pants")
+        self.pants = self.game.sprite.get_tiles("player_pants")
 
     def handle_input(self, input):
         if input[pygame.K_s]: self.m_down = True
@@ -59,8 +63,14 @@ class Player:
         if input[pygame.K_x]: self.do_action()
         if input[pygame.K_c]: self.use_item()
         if input[pygame.K_l]: print("Player at (" +str(self.gx)+","+str(self.gy) + ")")
-        if input[pygame.K_h]: self.hair_num = random.randint(0,7)
+        if input[pygame.K_h]: self.randomize_character()
         self.walking = input[pygame.K_LSHIFT]
+        
+    def randomize_character(self):
+        self.hair_num = random.randint(0,7)
+        self.shirt_num = random.randint(0,15)
+        self.pants_num = random.randint(0,15)
+        self.generate_pants()
         
     def tick(self):
         if self.moving:
