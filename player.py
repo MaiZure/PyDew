@@ -13,12 +13,17 @@ class Player:
         self.hair_num = 3#random.randint(0,7)
         self.shirt_num = 8
         self.pants_num = 0
+        self.skin_num = 23
         
         self.generate_pants()
         self.hair_color = (192,32,32)
         self.pants_color = (0,0,224)
+        self.skin = self.game.sprite.sheet["skinColors"][0]
+        self.skin_color = self.skin.get_at((2,self.skin_num))[:3]
+        
         self.pants = game.sprite.colorize_tiles(self.pants,self.pants_color)
         self.hair = game.sprite.colorize_tiles(self.hair, self.hair_color)
+        self.sprite = game.sprite.colorize_tiles(self.sprite, self.skin_color)
         
         
         self.gx = 78  #34
@@ -54,6 +59,12 @@ class Player:
         self.game.sprite.sheet["player_pants"] = self.game.sprite.player_sheet["player_pants"]
         self.game.sprite.tiles["player_pants"] = self.game.sprite.get_spritesheet_tiles("player_pants")
         self.pants = self.game.sprite.get_tiles("player_pants")
+        
+    def generate_skin(self):
+        self.sprite = self.game.sprite.get_tiles("farmer_base")
+        self.skin = self.game.sprite.sheet["skinColors"][0]
+        self.skin_color = self.skin.get_at((2,self.skin_num))[:3]
+        self.sprite = self.game.sprite.colorize_tiles(self.sprite, self.skin_color)
 
     def handle_input(self, input):
         if input[pygame.K_s]: self.m_down = True
@@ -70,12 +81,14 @@ class Player:
         self.hair_num = random.randint(0,7)
         self.shirt_num = random.randint(0,15)
         self.pants_num = random.randint(0,15)
+        self.skin_num = random.randint(0,23)
         self.generate_pants()
+        self.generate_skin()
         
     def tick(self):
         if self.moving:
             self.frametimer += 2 - self.walking
-            self.frame = int((self.frametimer/15)%8)
+            self.frame = int((self.frametimer/10)%8)
             self.moving = False
         else:
             self.frame = 0

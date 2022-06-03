@@ -50,15 +50,15 @@ class SpriteLoader:
         self.player_sheet["hairstyles"] = (pygame.image.load(open(path+"hairstyles.png")).convert_alpha(), 16, 32)
         self.player_sheet["shirts"] = (pygame.image.load(open(path+"shirts.png")).convert_alpha(), 8, 32)
         self.player_sheet["pants"] = (pygame.image.load(open(path+"pants.png")).convert_alpha(), 192, 672)
+        self.player_sheet["skinColors"] = (pygame.image.load(open(path+"skinColors.png")).convert_alpha(), 3, 24)
     
     def colorize_tiles(self, old_tiles, color):
-        #old_tiles = self.get_tiles(name)
         new_tiles = []
         for tile in old_tiles:
             new_tile = tile.copy()
             color_layer = pygame.Surface(tile.get_size()).convert_alpha()
             color_layer.fill(color)
-            new_tile.blit(color_layer, (0,0), special_flags = pygame.BLEND_RGBA_MULT)
+            new_tile.blit(color_layer, (0,0), special_flags = pygame.BLEND_RGBA_MIN)
             new_tiles.append(new_tile)
         return new_tiles
     
