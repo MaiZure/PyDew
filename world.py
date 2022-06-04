@@ -227,11 +227,19 @@ class World:
         top_left_x = min(max(self.game.player.x-screen.get_width()/2,0),self.map_width*16-screen.get_width())
         top_left_y = min(max(self.game.player.y-screen.get_height()/2,0),self.map_height*16-screen.get_height()) 
         screen.blit(self.mid, (0,0), (top_left_x,top_left_y,screen.get_width(),screen.get_height()))
+        
         for mapobject in self.current_map_path_objects:
-            mapobject.render_mid(screen)
+            if mapobject.gy < self.game.player.gy:
+                mapobject.render_mid(screen)
+        
+        self.game.player.render(screen) # Find a way to partition the MO around the player rather than O(2n)
+        
+        for mapobject in self.current_map_path_objects:
+            if mapobject.gy >= self.game.player.gy:
+                mapobject.render_mid(screen)
         for npc in self.npcs:
             npc.render(screen)
-        self.game.player.render(screen)
+        
         
         
         

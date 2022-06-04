@@ -7,4 +7,4 @@ class Audio:
         
     pygame.mixer.init()
     
-    pygame.mixer.Sound((".\\Music\\animalstore.wav")).play()
+    pygame.mixer.Sound((".\\Music\\animalstore.wav")).play(-1)

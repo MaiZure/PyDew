@@ -219,7 +219,7 @@ class SpriteLoader:
         }
         self.large_sprites["spr_bush_medium"] = {
             "sheet": "bushes",
-            "tiles": [(0,3), (1,3), (8,2), (9, 2), (16, 1), (17,1)],
+            "tiles": [(0,2), (1,2), (8,1), (9, 1), (16, 1), (17,1)],
             "sprite_height": 3,
             "sprite_width": 2,
             "sprite_origin": (0,2),
@@ -228,7 +228,7 @@ class SpriteLoader:
         }
         self.large_sprites["spr_bush_small"] = {
             "sheet": "bushes",
-            "tiles": [[(112,2), (120,1)],[(113,2), (121,1)]],
+            "tiles": [[(112,1), (120,1)],[(113,1), (121,1)]],
             "sprite_height": 2,
             "sprite_width": 1,
             "sprite_origin": (0,1),
