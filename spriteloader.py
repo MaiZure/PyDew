@@ -15,6 +15,8 @@ class SpriteLoader:
         self.load_character_spritesheets()
         self.load_player_spritesheets()
         
+        self.pc_index = self.index_sprite(self.player_sheet["farmer_base"][0])
+        
         #Put all character sheets in base sheets
         self.sheet = self.sheet | self.character_sheet | self.player_sheet
         
@@ -40,7 +42,7 @@ class SpriteLoader:
         files = os.listdir(path)
         for file in files:
             name = ((file.split("."))[0]).lower()
-            if name == "farmer": continue #skip subs - cheap hack for now
+            if name == "farmer": continue #skip subdirs - cheap hack for now
             self.character_sheet[name] = (pygame.image.load(open(path+file)).convert_alpha(), 16, 32)
             
     def load_player_spritesheets(self) -> None:
@@ -52,6 +54,39 @@ class SpriteLoader:
         self.player_sheet["pants"] = (pygame.image.load(open(path+"pants.png")).convert_alpha(), 192, 672)
         self.player_sheet["skinColors"] = (pygame.image.load(open(path+"skinColors.png")).convert_alpha(), 3, 24)
     
+    # Build the sprite index for player body. Needs 'farmer_base' and 'skinColors' loaded
+    def index_sprite(self, surf):
+        # Uses the main spritesheet including all player images (no tiles)
+        index = {"A": [], "B": [], "C": []}
+        colorA = self.player_sheet["skinColors"][0].get_at((0,0))
+        colorB = self.player_sheet["skinColors"][0].get_at((1,0))
+        colorC = self.player_sheet["skinColors"][0].get_at((2,0))
+        size = surf.get_size()
+        for j in range(size[1]):
+            for i in range(size[0]):
+                col = surf.get_at((i,j))
+                if col == colorA: index["A"].append((i,j))
+                if col == colorB: index["B"].append((i,j))
+                if col == colorC: index["C"].append((i,j))
+        return index
+        
+    def change_skin(self, skin_num):
+        colA = self.player_sheet["skinColors"][0].get_at((0,skin_num))
+        colB = self.player_sheet["skinColors"][0].get_at((1,skin_num))
+        colC = self.player_sheet["skinColors"][0].get_at((2,skin_num))
+        base = self.player_sheet["farmer_base"][0]
+        for point in self.pc_index["A"]:
+            base.set_at((point[0],point[1]),colA)
+        for point in self.pc_index["B"]:
+            base.set_at((point[0],point[1]),colB)
+        for point in self.pc_index["C"]:
+            base.set_at((point[0],point[1]),colC)
+        
+        
+        
+        self.sheet["farmer_base"] = self.player_sheet["farmer_base"]
+        self.build_tiles("farmer_base")
+        
     def colorize_tiles(self, old_tiles, color):
         new_tiles = []
         for tile in old_tiles:
@@ -62,9 +97,12 @@ class SpriteLoader:
             new_tiles.append(new_tile)
         return new_tiles
     
-    def build_tiles(self) -> None:
-        for sheet in self.sheet: 
+    def build_tiles(self, sheet=None) -> None:
+        if sheet:
             self.tiles[sheet] = self.get_spritesheet_tiles(sheet)
+        else:
+            for sheet in self.sheet: 
+                self.tiles[sheet] = self.get_spritesheet_tiles(sheet)
     
     def get_tiles(self, name) -> list:
         return self.tiles[name]

@@ -10,7 +10,7 @@ class Player:
         self.hair = game.sprite.get_tiles("hairstyles")
         self.shirt = game.sprite.get_tiles("shirts")
         self.pants_sheet = game.sprite.get_tiles("pants")
-        self.hair_num = 3#random.randint(0,7)
+        self.hair_num = 3
         self.shirt_num = 8
         self.pants_num = 0
         self.skin_num = 23
@@ -59,12 +59,6 @@ class Player:
         self.game.sprite.sheet["player_pants"] = self.game.sprite.player_sheet["player_pants"]
         self.game.sprite.tiles["player_pants"] = self.game.sprite.get_spritesheet_tiles("player_pants")
         self.pants = self.game.sprite.get_tiles("player_pants")
-        
-    def generate_skin(self):
-        self.sprite = self.game.sprite.get_tiles("farmer_base")
-        self.skin = self.game.sprite.sheet["skinColors"][0]
-        self.skin_color = self.skin.get_at((2,self.skin_num))[:3]
-        self.sprite = self.game.sprite.colorize_tiles(self.sprite, self.skin_color)
 
     def handle_input(self, input):
         if input[pygame.K_s]: self.m_down = True
@@ -78,12 +72,17 @@ class Player:
         self.walking = input[pygame.K_LSHIFT]
         
     def randomize_character(self):
-        self.hair_num = random.randint(0,7)
+        self.hair_num = random.randint(0,55)
         self.shirt_num = random.randint(0,15)
         self.pants_num = random.randint(0,15)
         self.skin_num = random.randint(0,23)
         self.generate_pants()
-        self.generate_skin()
+        self.game.sprite.change_skin(self.skin_num)
+        self.sprite = self.game.sprite.get_tiles("farmer_base")
+        self.hair_color = random.choice(((192,32,32),(232,232,32),(32,32,32)))
+        self.hair = self.game.sprite.get_tiles("hairstyles")
+        self.hair = self.game.sprite.colorize_tiles(self.hair, self.hair_color)
+        
         
     def tick(self):
         if self.moving:
@@ -149,10 +148,11 @@ class Player:
         pants_pos = (self.x-top_left_x,self.y-16-top_left_y)
         
         body_sprite = self.sprite[frame]
-        hair_sprite = self.hair[self.hair_num+self.hair_frame_off]
         arms_sprite = self.sprite[frame+6]
         shirt_sprite = self.shirt[self.shirt_num]
         pants_sprite = self.pants[frame]
+        hair_frame = (self.hair_num % 8) + int(self.hair_num/8)*24
+        hair_sprite = self.hair[hair_frame+self.hair_frame_off]
         
         if self.dir == 3:
             body_sprite = pygame.transform.flip(body_sprite,True,False)
