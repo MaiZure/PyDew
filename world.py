@@ -259,6 +259,7 @@ class World:
         for mapobject in self.current_map_path_objects:
             if mapobject.gy < self.game.player.gy:
                 mapobject.render_mid(screen)
+            else: break;
         
         self.game.player.render(screen) # Find a way to partition the MO around the player rather than O(2n)
         
@@ -311,6 +312,7 @@ class World:
         
     def blit_tile(self, surface, layer, tile_num, x, y):
         new_tile = layer[tile_num]
+        if not new_tile: return   
         if type(new_tile) == int:
             surface.blit(self.tiles[new_tile], (x*16, y*16))
         if type(new_tile) == list:
@@ -323,11 +325,9 @@ class World:
         
         if not self.is_visible(x,y): return
         
-        if layer == self.bg_layer:
-            self.blit_tile(self.bg, self.bg_layer, tile_num, x, y)
-        if layer == self.bldg_layer:
-            self.blit_tile(self.bg, self.bg_layer, tile_num, x, y)
-            self.blit_tile(self.bg, self.bldg_layer, tile_num, x, y)
+        # Render both layers to avoid lower-layer artifacts
+        self.blit_tile(self.bg, self.bg_layer, tile_num, x, y)
+        self.blit_tile(self.bg, self.bldg_layer, tile_num, x, y)
         
     def cycle_reel(self, reel, layer):
         tiles_to_update = reel.pop(0)
