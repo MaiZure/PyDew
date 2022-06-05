@@ -256,6 +256,9 @@ class World:
             npc.tick()
     
     def update_ambient(self):
+        # disable transitions for now
+        if self.outdoors: self.ambient_light = (0,0,0)
+        return
         r = self.ambient_light[0]; g=self.ambient_light[1]; b=self.ambient_light[2]
         if self.darkening:
             r = min(180, r + 1)
