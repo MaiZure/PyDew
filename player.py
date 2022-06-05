@@ -26,8 +26,8 @@ class Player:
         self.sprite = game.sprite.colorize_tiles(self.sprite, self.skin_color)
         
         
-        self.gx = 78  #34
-        self.gy = 16  #24
+        self.gx = 78  #78
+        self.gy = 16  #16
         self.x = self.gx*16 
         self.y = self.gy*16 
         

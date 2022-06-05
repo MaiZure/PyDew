@@ -1,13 +1,18 @@
 import random
 import pygame
+from light import Light
 
 class MapObject:
     """ 'type' is matched to 'path' TileIDs (caller must compute path base)"""
     def __init__(self, game, world, type, gx, gy):
-        if type < 9 or type > 33:
+        if type < 8 or type > 33:
             # This effectively removes the object as no reference is built
             return None
         
+        if type == 8:
+            Light(game, world, type, gx, gy)
+            return
+            
         self.game = game
         self.world = world
         self.gx = gx
@@ -33,7 +38,8 @@ class MapObject:
         world.current_map_path_objects.append(self)
         
     def init_second_stage(self):
-        self.world.collision_map[self.tile_num] = 1
+        if self.collision_height and self.collision_width:
+            self.world.collision_map[self.tile_num] = 1
         self.reverse = random.choice((True,False))
         spr_name = ""
         if self.type == 9: spr_name = "spr_oak"
@@ -73,8 +79,8 @@ class MapObject:
             
     def render_mid(self, screen):
         if not self.game.world.is_visible(self.gx, self.gy): return
-        top_left_x = min(max(self.game.player.x-screen.get_width()/2,0),self.world.map_width*16-screen.get_width())
-        top_left_y = min(max(self.game.player.y-screen.get_height()/2,0),self.world.map_height*16-screen.get_height())
+        top_left_x = self.game.world.top_left_x
+        top_left_y = self.game.world.top_left_y
         if self.large_sprite:
             screen.blit(self.large_sprite_mid, (self.x-top_left_x-self.ogx*16,self.y-top_left_y-self.ogy*16), (0,0,3*16,6*16))
         else:
@@ -82,8 +88,8 @@ class MapObject:
             
     def render_front(self, screen):
         if not self.game.world.is_visible(self.gx, self.gy): return
-        top_left_x = min(max(self.game.player.x-screen.get_width()/2,0),self.world.map_width*16-screen.get_width())
-        top_left_y = min(max(self.game.player.y-screen.get_height()/2,0),self.world.map_height*16-screen.get_height())
+        top_left_x = self.game.world.top_left_x
+        top_left_y = self.game.world.top_left_y
         if self.large_sprite:
             screen.blit(self.large_sprite_front, (self.x-top_left_x-self.ogx*16,self.y-top_left_y-self.ogy*16), (0,0,3*16,6*16))
         else:

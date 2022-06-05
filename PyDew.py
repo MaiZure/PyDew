@@ -15,16 +15,21 @@ class PyDew:
 
     def __init__(self):
         pygame.init()
-        self.version = "0.0.8.22"
+        self.version = "0.0.9.23"
         print("Hello PyDew "+str(self.version))
         self.config = Config()        
         self.final_screen = pygame.display.set_mode((self.config.screen_width, 
                                                self.config.screen_height),
                                                pygame.HWSURFACE|pygame.DOUBLEBUF)
         self.unscaled_screen = pygame.Surface((self.config.screen_width/self.config.screen_scaling, 
-                                               self.config.screen_height/self.config.screen_scaling))
+                                               self.config.screen_height/self.config.screen_scaling),
+                                               pygame.SRCALPHA)
+        self.ambient_surface = pygame.Surface((self.config.screen_width/self.config.screen_scaling, 
+                                               self.config.screen_height/self.config.screen_scaling),
+                                               pygame.SRCALPHA)
         self.bg_surface = pygame.Surface((self.config.screen_width/self.config.screen_scaling, 
-                                               self.config.screen_height/self.config.screen_scaling))
+                                               self.config.screen_height/self.config.screen_scaling),
+                                               pygame.SRCALPHA)
         self.mid_surface = pygame.Surface((self.config.screen_width/self.config.screen_scaling, 
                                                self.config.screen_height/self.config.screen_scaling),
                                                pygame.SRCALPHA)
@@ -50,9 +55,11 @@ class PyDew:
         self.player = Player(self)
         self.ui = UI(self)
         self.audio = Audio(self)
+        
         self.paused = False
         
         self.run = False
+        
         
     #do some more start stuff - like a main menu
     def start(self):
@@ -100,16 +107,19 @@ class PyDew:
     def render(self):
         self.world.prerender(self.bg_surface)
         self.world.render_back(self.bg_surface)
-        #self.player.render(self.bg_surface)   # Use NPC surface?
         self.world.render_mid(self.mid_surface)
         self.world.render_front(self.fg_surface)
         self.ui.render(self.ui_surface)
         
+        for light in self.world.lights:
+            light.render(self.ambient_surface)
+            
         self.unscaled_screen.blit(self.bg_surface,(0,0))
         self.unscaled_screen.blit(self.mid_surface,(0,0))
         self.unscaled_screen.blit(self.fg_surface,(0,0))
+        self.unscaled_screen.blit(self.ambient_surface,(0,0), special_flags=pygame.BLEND_SUB)
         self.unscaled_screen.blit(self.ui_surface,(0,0))
-       
+        
         scaled_screen = pygame.transform.scale(self.unscaled_screen,self.final_screen.get_rect().size)
         
         self.final_screen.blit(scaled_screen,(0,0))

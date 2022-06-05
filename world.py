@@ -30,6 +30,8 @@ class World:
         self.collision_map = []     # Basic Boolean collisions (Aligned with self.tiles)
         self.spawnable_map = []
         self.npcs = []
+        self.lights = []
+        self.ambient_light = (0,0,0)
         
         self.bg_tile_update_reel = [[] for a in range(60)]   # Maintan 60 frames
         self.bldg_tile_update_reel = [[] for a in range(60)]
@@ -42,9 +44,10 @@ class World:
         self.always_front_layer = []
         
         self.map_width = 0 
-        self.map_height = 0 
+        self.map_height = 0
+        self.outdoors = True
         
-        self.init_map("forest")
+        self.init_map("forest") #normally forest
         
     def init_map(self, map_name) -> bool:
         
@@ -86,6 +89,10 @@ class World:
         
         
     def init_second_stage(self):
+        self.lights = []
+        self.outdoors = self.game.map.get_map_outdoors(self.current_map)
+        if self.outdoors: self.ambient_light = (0,0,0)
+        else: self.ambient_light = self.game.map.get_ambient_light(self.current_map)
         self.tiles = self.game.map.get_map_tiles(self.current_map)
         self.tiles_index = self.game.map.get_map_tiles_index(self.current_map)
         self.generate_background_layers()
@@ -249,6 +256,8 @@ class World:
         if self.top_left_x < 0: self.top_left_x = int(self.top_left_x/2)
         if self.top_left_y < 0: self.top_left_y = int(self.top_left_y/2)
         
+        self.game.ambient_surface.fill((self.ambient_light[0],self.ambient_light[1],self.ambient_light[2],255))
+        
     def render_back(self, screen):
         screen.blit(self.bg, (0,0), (self.top_left_x,self.top_left_y,screen.get_width(),screen.get_height()))
         
@@ -277,6 +286,8 @@ class World:
         for mapobject in self.current_map_path_objects:
             mapobject.render_front(screen)
         screen.blit(self.fg, (0,0), (self.top_left_x,self.top_left_y,screen.get_width(),screen.get_height()))
+        #for light in self.lights:
+        #    light.render(screen)
         
         
     def get_tile_x(self, tile_num):

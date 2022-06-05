@@ -122,6 +122,26 @@ class MapLoader:
             tiles += self.game.sprite.get_tiles(tileset)
         return index
         
+    def get_map_outdoors(self, name) -> bool:
+        outdoors = False  # nested tuple ( (gx,gy), (newmap, gx, gy) )
+        for map_properties in self.map[name]["properties"]:
+            if map_properties["name"].lower() == "outdoors":
+                if map_properties["value"].lower() == "t":
+                    return True
+                    
+    def get_ambient_light(self, name) -> bool:
+        outdoors = False  # nested tuple ( (gx,gy), (newmap, gx, gy) )
+        light_cut_factor = 3
+        for map_properties in self.map[name]["properties"]:
+            if map_properties["name"].lower() == "ambientlight":
+                light = map_properties["value"].split()
+                r = int(int(light[0])/2)
+                g = int(int(light[1])/2)
+                b = int(int(light[2])/2)
+                return (r,g,b)
+        # No given light indoors so return default
+        return ((int(95/light_cut_factor),int(95/light_cut_factor),int(95/light_cut_factor)))
+        
     def get_map_animations(self, name, tiles_index) -> list: 
         animated_tiles = []
         for tileset in self.map[name]["tilesets"]:
