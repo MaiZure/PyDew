@@ -20,8 +20,9 @@ class World:
         self.tiles_index = {}
         self.current_map = "" #town
         self.current_map_path_objects = []
-        self.warp_points = {}
-        self.action_points = {}
+        self.edge_warp_points = {}  # Map edge warps
+        self.warp_points = {}       # (legacy) object warp points (doors)
+        self.action_points = {}     # General map action list
         self.paths_tile_base = 0
         self.animated_tiles = []
         self.passable_tiles = []
@@ -54,8 +55,8 @@ class World:
         self.current_map = map_name
         self.new_map = True
         
-        self.bg_tile_update_reel = [[] for a in range(60)]   # Maintan 60 frames
-        self.bldg_tile_update_reel = [[] for a in range(60)]
+        self.bg_tile_update_reel = [[] for a in range(60)]   # Maintan 60 frames in to the future
+        self.bldg_tile_update_reel = [[] for a in range(60)] # Maintan 60 frames in to the future
         
         self.current_map_path_objects.clear()
         
@@ -75,6 +76,11 @@ class World:
         self.mid = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
         self.fg = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
         
+        # Clear old surfaces
+        self.game.bg_surface.fill(pygame.Color(0,0,0,0))
+        self.game.mid_surface.fill(pygame.Color(0,0,0,0))
+        self.game.fg_surface.fill(pygame.Color(0,0,0,0))
+        
         self.init_second_stage()
         return True
         
@@ -86,7 +92,8 @@ class World:
         self.generate_foreground_layers()
         self.animated_tiles = self.game.map.get_map_animations(self.current_map, self.tiles_index)
         self.passable_tiles, self.impassable_tiles = self.game.map.get_passable_tiles(self.current_map, self.tiles_index)
-        self.warp_points = self.game.map.get_map_warps(self.current_map)
+        self.edge_warp_points = self.game.map.get_map_warps(self.current_map)
+        self.warp_points = self.game.map.get_map_warpactions(self.current_map)
         self.action_points = self.game.map.get_map_actions(self.current_map)
         
         self.collision_map = self.generate_collision_map()
@@ -128,8 +135,12 @@ class World:
         paths_tile_base = self.tiles_index["paths"]
         for j in range(0,self.map_height):
             for i in range(0,self.map_width):
-                path_tile = self.path_layer[j*self.map_width+i]
-                front_tile = self.front_layer[j*self.map_width+i]
+                path_tile = 0
+                front_tile = 0
+                if self.path_layer:
+                    path_tile = self.path_layer[j*self.map_width+i]
+                if self.front_layer:
+                    front_tile = self.front_layer[j*self.map_width+i]
                 if self.always_front_layer:  # Because get_layer_data() returns None if no AlwaysFront layer exists
                     afront_tile = self.always_front_layer[j*self.map_width+i]   #self.always_front_layer could be None
                 else:
@@ -185,11 +196,28 @@ class World:
         return None
         
     def do_action(self, location):
-        if location in self.action_points:
-            #should probably story a type for various behaviors -- for now, warp only
-            self.warp_player(self.action_points[location])
-        else:
-            print ("No action at " + str(location))
+        if location not in self.action_points:
+            return print("No action at " + str(location))
+            
+        action = self.action_points[location]
+        action_type = action[0]
+        print(action)
+        if action_type == "Message": pass
+        if action_type == "LockedDoorWarp":  # [type, tx, ty, dest_map, open time, close time, person, relation]
+            target_gx = int(action[1])
+            target_gy = int(action[2])
+            target_map = action[3].lower()
+            self.warp_player((target_map, target_gx, target_gy))
+        if action_type == "WarpCommunityCenter":
+            self.warp_player(("communitycenter_ruins", 33, 21))
+        if action_type == "Billboard": pass
+        if action_type == "Garbage": pass
+        if action_type == "HMTGF": pass
+        if action_type == "DwarfGrave": pass
+        if action_type == "TownMainBox": pass
+        if action_type == "IceCreamStand": pass
+        if action_type == "EnterSewer":
+            self.warp_player(("sewer", 16, 12))
         
     def init_active_map(self):
         self.set_map_width(self.map_width)
@@ -312,7 +340,6 @@ class World:
             self.update_tile(next_tile,layer)
             
     def warp_player(self, dest):
-        #dest = self.warp_points[warp_point]
         new_map = dest[0]
         new_gx = dest[1]
         new_gy = dest[2]

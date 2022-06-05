@@ -29,8 +29,8 @@ class NPC:
         self.gx = int((self.x+8)/16)
         self.gy = int((self.y+8)/16)
         
-        if (self.gx, self.gy) in self.game.world.warp_points:
-            self.game.world.warp_player(self.game.world.warp_points[(self.gx, self.gy)])
+        if (self.gx, self.gy) in self.game.world.edge_warp_points:
+            self.game.world.warp_player(self.game.world.edge_warp_points[(self.gx, self.gy)])
                   
         if self.m_down: self.move_down()
         if self.m_right: self.move_right()

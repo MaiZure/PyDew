@@ -13,18 +13,18 @@ Mouse input
 Menus
 Inventory
 Music & Sound
-Day/Night Cycle
 Time Passing
+Day/Night Cycle
 
 
---0.4  (Farm)
+--0.3  (Farm)
 Chopping, Mining,
 Digging, Planting, Growing
 Farm Buildings
 Animals
 
 
---0.3  (People)
+--0.4  (People)
 NPCs
 Schedules
 Dialogue system

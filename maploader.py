@@ -75,7 +75,30 @@ class MapLoader:
                     warps[(warp_gx, warp_gy)] = (warp_dest.lower(), warp_dest_gx, warp_dest_gy)
         return warps
         
-    def get_map_actions(self,map_name) -> dict:
+    def get_map_warpactions(self,map_name) -> dict:
+        warps = {}  # nested tuple ( (gx,gy), (newmap, gx, gy) )
+        for layer in self.map[map_name]["layers"]:
+            if layer["name"] == "Buildings" and "objects" in layer:
+                for object in layer["objects"]:
+                    if "properties" in object:
+                        for property in object["properties"]:   #TODO - Generalize this to load ALL actions
+                            if property["name"] == "Action":
+                                warp_data = property["value"].split()
+                                if warp_data[0] == "Warp" or warp_data[0] == "LockedDoorWarp":
+                                    warp_gx = int(int(object["x"])/16)
+                                    warp_gy = int(int(object["y"])/16)
+                                    action_type = (warp_data.pop(0)).lower()
+                                    warp_dest_gx = int(warp_data.pop(0))
+                                    warp_dest_gy = int(warp_data.pop(0))
+                                    map_name = (warp_data.pop(0)).lower()
+                                    if action_type == "lockeddoorwarp":
+                                        start_time = int(warp_data.pop(0))
+                                        end_time = int(warp_data.pop(0))
+                                        ## Add relatonship requierments
+                                        warps[(warp_gx, warp_gy)] = (map_name, warp_dest_gx, warp_dest_gy)
+        return warps
+        
+    def get_map_actions(self, map_name) -> dict:
         actions = {}  # nested tuple ( (gx,gy), (newmap, gx, gy) )
         for layer in self.map[map_name]["layers"]:
             if layer["name"] == "Buildings" and "objects" in layer:
@@ -84,22 +107,14 @@ class MapLoader:
                         for property in object["properties"]:   #TODO - Generalize this to load ALL actions
                             if property["name"] == "Action":
                                 action_data = property["value"].split()
-                                if action_data[0] == "Warp" or action_data[0] == "LockedDoorWarp":
-                                    warp_gx = int(int(object["x"])/16)
-                                    warp_gy = int(int(object["y"])/16)
-                                    action_type = (action_data.pop(0)).lower()
-                                    warp_dest_gx = int(action_data.pop(0))
-                                    warp_dest_gy = int(action_data.pop(0))
-                                    map_name = (action_data.pop(0)).lower()
-                                    if action_type == "lockeddoorwarp":
-                                        start_time = int(action_data.pop(0))
-                                        end_time = int(action_data.pop(0))
-                                        ## Add relatonship requierments
-                                        actions[(warp_gx, warp_gy)] = (map_name, warp_dest_gx, warp_dest_gy)
+                                action_gx = int(int(object["x"])/16)
+                                action_gy = int(int(object["y"])/16)
+                                actions[(action_gx,action_gy)] = action_data
         return actions
+                                
         
     def get_map_tiles_index(self, name) -> list:
-        index = {}
+        index = {"paths": -1}
         tilesets = self.get_tileset_names(name)
         tiles = [None]
         for tileset in tilesets:
