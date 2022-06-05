@@ -26,8 +26,8 @@ class Player:
         self.sprite = game.sprite.colorize_tiles(self.sprite, self.skin_color)
         
         
-        self.gx = 78  #78
-        self.gy = 16  #16
+        self.gx = 64  #78
+        self.gy = 67  #16
         self.x = self.gx*16 
         self.y = self.gy*16 
         
@@ -43,12 +43,12 @@ class Player:
         self.run_sequence_RL = (18,56,56,23,18,57,57,41)
         self.run_sequence_D = (0,1,54,1,0,2,55,2)
         self.run_sequence_U = (36,37,58,37,36,38,59,38)
-        self.frame_sequence = self.run_sequence_RL
+        self.frame_sequence = self.run_sequence_D
         self.hair_yoff_rl = (0,-1,-1,-1,0,-1,-1,-1)
         self.hair_yoff_ud = (0,-1,-2,-1,0,-1,-2,-1)
         self.shirt_yoff = (0,-1,-1,-1,0,-1,-1,-1)
         
-        self.hair_yoff = self.hair_yoff_rl
+        self.hair_yoff = self.hair_yoff_ud
         self.hair_frame_off = 0
     
     # Because pants are weird....

@@ -31,7 +31,8 @@ class World:
         self.spawnable_map = []
         self.npcs = []
         self.lights = []
-        self.ambient_light = (0,0,0)
+        self.ambient_light = (0,0,0) #(0,0,0) - day/clear, (180,150, 0) - night, (50,50,0) - day/raining
+        self.darkening = True
         
         self.bg_tile_update_reel = [[] for a in range(60)]   # Maintan 60 frames
         self.bldg_tile_update_reel = [[] for a in range(60)]
@@ -46,8 +47,9 @@ class World:
         self.map_width = 0 
         self.map_height = 0
         self.outdoors = True
+        self.night = False
         
-        self.init_map("forest") #normally forest
+        self.init_map("town") #normally forest
         
     def init_map(self, map_name) -> bool:
         
@@ -91,8 +93,12 @@ class World:
     def init_second_stage(self):
         self.lights = []
         self.outdoors = self.game.map.get_map_outdoors(self.current_map)
-        if self.outdoors: self.ambient_light = (0,0,0)
-        else: self.ambient_light = self.game.map.get_ambient_light(self.current_map)
+        
+        if self.outdoors: 
+            self.ambient_light = (0,0,0)
+        else: 
+            self.ambient_light = self.game.map.get_ambient_light(self.current_map)
+        
         self.tiles = self.game.map.get_map_tiles(self.current_map)
         self.tiles_index = self.game.map.get_map_tiles_index(self.current_map)
         self.generate_background_layers()
@@ -244,10 +250,23 @@ class World:
             self.init_active_map()
         self.cycle_reel(self.bg_tile_update_reel, self.bg_layer)
         self.cycle_reel(self.bldg_tile_update_reel, self.bldg_layer)
+        self.update_ambient()
         self.game.player.tick()
         for npc in self.npcs:
             npc.tick()
-        
+    
+    def update_ambient(self):
+        r = self.ambient_light[0]; g=self.ambient_light[1]; b=self.ambient_light[2]
+        if self.darkening:
+            r = min(180, r + 1)
+            g = min(150, g + 1)
+        else:
+            r = max(0, r - 1)
+            g = max(0, g - 1)
+        if r == 180 and g == 150: self.darkening = False
+        if r == 0 and g == 0: self.darkening = True
+        self.ambient_light = (r,g,b)
+    
     def prerender(self, screen):
         self.top_left_x = min(max(self.game.player.x-screen.get_width()/2,0),self.map_width*16-screen.get_width())
         self.top_left_y = min(max(self.game.player.y-screen.get_height()/2,0),self.map_height*16-screen.get_height())
