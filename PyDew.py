@@ -15,21 +15,19 @@ class PyDew:
 
     def __init__(self):
         pygame.init()
-        self.version = "0.0.9.23"
+        self.version = "0.0.9.24"
         print("Hello PyDew "+str(self.version))
         self.config = Config()        
         self.final_screen = pygame.display.set_mode((self.config.screen_width, 
                                                self.config.screen_height),
                                                pygame.HWSURFACE|pygame.DOUBLEBUF)
         self.unscaled_screen = pygame.Surface((self.config.screen_width/self.config.screen_scaling, 
-                                               self.config.screen_height/self.config.screen_scaling),
-                                               pygame.SRCALPHA)
+                                               self.config.screen_height/self.config.screen_scaling))
         self.ambient_surface = pygame.Surface((self.config.screen_width/self.config.screen_scaling, 
                                                self.config.screen_height/self.config.screen_scaling),
                                                pygame.SRCALPHA)
         self.bg_surface = pygame.Surface((self.config.screen_width/self.config.screen_scaling, 
-                                               self.config.screen_height/self.config.screen_scaling),
-                                               pygame.SRCALPHA)
+                                               self.config.screen_height/self.config.screen_scaling))
         self.mid_surface = pygame.Surface((self.config.screen_width/self.config.screen_scaling, 
                                                self.config.screen_height/self.config.screen_scaling),
                                                pygame.SRCALPHA)
