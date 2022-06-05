@@ -244,17 +244,17 @@ class World:
     def prerender(self, screen):
         self.top_left_x = min(max(self.game.player.x-screen.get_width()/2,0),self.map_width*16-screen.get_width())
         self.top_left_y = min(max(self.game.player.y-screen.get_height()/2,0),self.map_height*16-screen.get_height())
-    
+        
+        # Centers the screen in the case of rooms smaller than the whole screen
+        if self.top_left_x < 0: self.top_left_x = int(self.top_left_x/2)
+        if self.top_left_y < 0: self.top_left_y = int(self.top_left_y/2)
+        
     def render_back(self, screen):
-        top_left_x = min(max(self.game.player.x-screen.get_width()/2,0),self.map_width*16-screen.get_width())
-        top_left_y = min(max(self.game.player.y-screen.get_height()/2,0),self.map_height*16-screen.get_height())
-        screen.blit(self.bg, (0,0), (top_left_x,top_left_y,screen.get_width(),screen.get_height()))
+        screen.blit(self.bg, (0,0), (self.top_left_x,self.top_left_y,screen.get_width(),screen.get_height()))
         
     def render_mid(self, screen):
         screen.fill(pygame.Color(0,0,0,0))
-        top_left_x = min(max(self.game.player.x-screen.get_width()/2,0),self.map_width*16-screen.get_width())
-        top_left_y = min(max(self.game.player.y-screen.get_height()/2,0),self.map_height*16-screen.get_height()) 
-        screen.blit(self.mid, (0,0), (top_left_x,top_left_y,screen.get_width(),screen.get_height()))
+        screen.blit(self.mid, (0,0), (self.top_left_x,self.top_left_y,screen.get_width(),screen.get_height()))
         
         for mapobject in self.current_map_path_objects:
             if mapobject.gy < self.game.player.gy:
@@ -273,12 +273,10 @@ class World:
         
         
     def render_front(self, screen):
-        screen.fill(pygame.Color(0,0,0,0))
-        top_left_x = min(max(self.game.player.x-screen.get_width()/2,0),self.map_width*16-screen.get_width())
-        top_left_y = min(max(self.game.player.y-screen.get_height()/2,0),self.map_height*16-screen.get_height())       
+        screen.fill(pygame.Color(0,0,0,0))    
         for mapobject in self.current_map_path_objects:
             mapobject.render_front(screen)
-        screen.blit(self.fg, (0,0), (top_left_x,top_left_y,screen.get_width(),screen.get_height()))
+        screen.blit(self.fg, (0,0), (self.top_left_x,self.top_left_y,screen.get_width(),screen.get_height()))
         
         
     def get_tile_x(self, tile_num):
