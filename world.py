@@ -285,7 +285,6 @@ class World:
         
     def render_mid(self, screen):
         screen.fill(pygame.Color(0,0,0,0))
-        screen.blit(self.mid, (0,0), (self.top_left_x,self.top_left_y,screen.get_width(),screen.get_height()))
         
         for mapobject in self.current_map_path_objects:
             if mapobject.gy < self.game.player.gy:
@@ -299,8 +298,8 @@ class World:
                 mapobject.render_mid(screen)
         for npc in self.npcs:
             npc.render(screen)
-        
-        
+            
+        screen.blit(self.mid, (0,0), (self.top_left_x,self.top_left_y,screen.get_width(),screen.get_height()))      
         
         
     def render_front(self, screen):
