@@ -15,7 +15,7 @@ class PyDew:
 
     def __init__(self):
         pygame.init()
-        self.version = "0.1.2.28"
+        self.version = "0.1.2.29"
         print("Hello PyDew "+str(self.version))
         self.config = Config()        
         self.final_screen = pygame.display.set_mode((self.config.screen_width, 
@@ -89,6 +89,9 @@ class PyDew:
                     self.world.regenerate_season = True # Make fxn
                 if e.key == pygame.K_p:
                     self.world.init_map("forest")
+            if e.type == pygame.MOUSEBUTTONDOWN:
+                print("Mouse click at "+str(pygame.mouse.get_pos()))
+                self.ui.ibar.handle_mouse()
         
         keys = pygame.key.get_pressed()
         
