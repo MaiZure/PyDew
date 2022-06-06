@@ -14,7 +14,7 @@ class InventoryBar:
         self.ibar_enabled = True
         
         self.ibar_sprite.blit(self.spritesheet[16], (0,0), (0,0,64,64))
-        self.ibar_sprite_x = self.game.menu_surface.get_width()- self.ibar_sprite.get_width()
+        self.ibar_sprite_x = int(self.game.menu_surface.get_width()/2- self.ibar_sprite.get_width()/2)
         self.ibar_sprite_y = self.game.menu_surface.get_height() - self.ibar_sprite.get_height() - 2
             
     def tick(self):
@@ -22,5 +22,4 @@ class InventoryBar:
     
     def render(self, screen):
         if self.ibar_enabled:
-            print("blitting at (" + str(self.ibar_sprite_x)+","+str(self.ibar_sprite_y))
             screen.blit(self.ibar_sprite, (self.ibar_sprite_x,self.ibar_sprite_y))
