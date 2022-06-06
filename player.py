@@ -73,6 +73,18 @@ class Player:
         if input[pygame.K_c]: self.use_item()
         if input[pygame.K_l]: print("Player at (" +str(self.gx)+","+str(self.gy) + ")")
         if input[pygame.K_h]: self.randomize_character()
+        if input[pygame.K_1]: self.game.ui.ibar.change_selection(0)
+        if input[pygame.K_2]: self.game.ui.ibar.change_selection(1)
+        if input[pygame.K_3]: self.game.ui.ibar.change_selection(2)
+        if input[pygame.K_4]: self.game.ui.ibar.change_selection(3)
+        if input[pygame.K_5]: self.game.ui.ibar.change_selection(4)
+        if input[pygame.K_6]: self.game.ui.ibar.change_selection(5)
+        if input[pygame.K_7]: self.game.ui.ibar.change_selection(6)
+        if input[pygame.K_8]: self.game.ui.ibar.change_selection(7)
+        if input[pygame.K_9]: self.game.ui.ibar.change_selection(8)
+        if input[pygame.K_0]: self.game.ui.ibar.change_selection(9)
+        if input[pygame.K_MINUS]: self.game.ui.ibar.change_selection(10)
+        if input[pygame.K_EQUALS]: self.game.ui.ibar.change_selection(11)
         self.walking = input[pygame.K_LSHIFT]
         
     def randomize_character(self):

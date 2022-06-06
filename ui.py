@@ -14,6 +14,7 @@ class UI:
         self.ui_elements.append(StatusBars(game,self))
     
         self.menu_elements = [InventoryBar(game, self)]
+        self.ibar = self.menu_elements[0]
         
     def tick(self):
         pass
