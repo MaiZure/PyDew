@@ -184,7 +184,7 @@ class Player:
     def move_down(self):
         self.moving = True
         self.dir = 0; self.frame_sequence = self.run_sequence_D; self.hair_frame_off = 0; self.hair_yoff = self.hair_yoff_ud
-        gx = int((self.x+8)/16)
+        gx = int((self.x+6)/16)
         gy = int((self.y+16)/16)
         if self.game.world.is_movable(gx,gy):
             self.y += 2-self.walking;
@@ -193,16 +193,17 @@ class Player:
     def move_right(self):
         self.moving = True
         self.dir = 1; self.frame_sequence = self.run_sequence_RL; self.hair_frame_off = 8; self.hair_yoff = self.hair_yoff_rl
+        gy1 = int((self.y+6)/16)
+        gy2 = int((self.y+15)/16)
         gx = int((self.x+17)/16)
-        gy = int((self.y+8)/16)
-        if self.game.world.is_movable(gx,gy):
+        if self.game.world.is_movable(gx,gy1) and self.game.world.is_movable(gx,gy2) :
             self.x += 2-self.walking;
         self.m_right = False
         
     def move_up(self):
         self.moving = True
         self.dir = 2; self.frame_sequence = self.run_sequence_U; self.hair_frame_off = 16; self.hair_yoff = self.hair_yoff_ud
-        gx = int((self.x+8)/16)
+        gx = int((self.x+6)/16)
         gy = int((self.y+4)/16)
         if self.game.world.is_movable(gx,gy):
             self.y -= 2-self.walking;
@@ -211,8 +212,9 @@ class Player:
     def move_left(self):
         self.moving = True
         self.dir = 3; self.frame_sequence = self.run_sequence_RL; self.hair_frame_off = 8; self.hair_yoff = self.hair_yoff_rl
+        gy1 = int((self.y+6)/16)
+        gy2 = int((self.y+15)/16)
         gx = int((self.x-1)/16)
-        gy = int((self.y+8)/16)
-        if self.game.world.is_movable(gx,gy):
+        if self.game.world.is_movable(gx,gy1) and self.game.world.is_movable(gx,gy2) :
             self.x -= 2-self.walking;
         self.m_left = False
