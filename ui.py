@@ -2,7 +2,7 @@ import random
 import pygame
 from ui_clock import Clock
 from ui_statusbars import StatusBars
-
+from ui_menu_ibar import InventoryBar
 class UI:
 
     def __init__(self, game):
@@ -13,9 +13,15 @@ class UI:
         self.ui_elements.append(Clock(game,self))
         self.ui_elements.append(StatusBars(game,self))
     
+        self.menu_elements = [InventoryBar(game, self)]
+        
     def tick(self):
         pass
     
-    def render(self, screen):
+    def ui_render(self, screen):
         for element in self.ui_elements:
+            element.render(screen)
+            
+    def menu_render(self, screen):
+        for element in self.menu_elements:
             element.render(screen)

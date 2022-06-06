@@ -34,7 +34,9 @@ class SpriteLoader:
         files = os.listdir(path)
         for file in files:
             name = ((file.split("."))[0])
-            self.sheet[name] = (pygame.image.load(open(path+file)).convert_alpha(), 16, 16)
+            size = (16, 16)
+            if name == "MenuTiles": size = (64,64)
+            self.sheet[name] = (pygame.image.load(open(path+file)).convert_alpha(), size[0], size[1])
     
     def load_character_spritesheets(self) -> None:
         # Each sheet contains a 3-tuple: (image, tile_width, tile_height)

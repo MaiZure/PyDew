@@ -15,7 +15,7 @@ class PyDew:
 
     def __init__(self):
         pygame.init()
-        self.version = "0.1.1.26"
+        self.version = "0.1.1.27"
         print("Hello PyDew "+str(self.version))
         self.config = Config()        
         self.final_screen = pygame.display.set_mode((self.config.screen_width, 
@@ -40,8 +40,7 @@ class PyDew:
         self.ui_surface = pygame.Surface((self.config.screen_width/self.config.screen_scaling, 
                                                self.config.screen_height/self.config.screen_scaling),
                                                pygame.SRCALPHA)
-        self.menu_surface = pygame.Surface((self.config.screen_width/self.config.screen_scaling, 
-                                               self.config.screen_height/self.config.screen_scaling),
+        self.menu_surface = pygame.Surface((self.config.screen_width, self.config.screen_height),
                                                pygame.SRCALPHA)                       
         
         self.clock = pygame.time.Clock()
@@ -107,7 +106,8 @@ class PyDew:
         self.world.render_back(self.bg_surface)
         self.world.render_mid(self.mid_surface)
         self.world.render_front(self.fg_surface)
-        self.ui.render(self.ui_surface)
+        self.ui.ui_render(self.ui_surface)
+        self.ui.menu_render(self.menu_surface)
         
         for light in self.world.lights:
             light.render(self.ambient_surface)
@@ -119,6 +119,8 @@ class PyDew:
         self.unscaled_screen.blit(self.ui_surface,(0,0))
         
         scaled_screen = pygame.transform.scale(self.unscaled_screen,self.final_screen.get_rect().size)
+                
+        scaled_screen.blit(self.menu_surface, (0,0))
         
         self.final_screen.blit(scaled_screen,(0,0))
         pygame.display.update()

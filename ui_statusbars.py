@@ -14,8 +14,10 @@ class StatusBars:
         self.hbar_enabled = True
         e_rect = pygame.Rect(256, 408, 12, 56)
         h_rect = pygame.Rect(268, 408, 12, 56)
+        
         self.ebar_sprite = pygame.Surface(e_rect.size, pygame.SRCALPHA).convert_alpha()
         self.hbar_sprite = pygame.Surface(h_rect.size, pygame.SRCALPHA).convert_alpha()
+        
         
         self.ebar_sprite.blit(self.spritesheet, (0,0), e_rect)
         self.ebar_sprite_x = self.game.config.base_display_width - self.ebar_sprite.get_width() - 2
@@ -24,7 +26,8 @@ class StatusBars:
         self.hbar_sprite.blit(self.spritesheet, (0,0), h_rect)
         self.hbar_sprite_x = self.game.config.base_display_width - self.hbar_sprite.get_width()*2 - 4
         self.hbar_sprite_y = self.game.config.base_display_height - self.hbar_sprite.get_height() - 2
-    
+        
+
     def tick(self):
         pass
     
