@@ -14,6 +14,8 @@ class Player:
         self.shirt_num = 8
         self.pants_num = 0
         self.skin_num = 23
+        self.inventory = [None] * 36
+        self.inventory_limit = 12
         
         self.generate_pants()
         self.hair_color = (192,32,32)
@@ -21,7 +23,7 @@ class Player:
         self.skin = self.game.sprite.sheet["skinColors"][0]
         self.skin_color = self.skin.get_at((2,self.skin_num))[:3]
         
-        self.pants = game.sprite.colorize_tiles(self.pants,self.pants_color)
+        self.pants = game.sprite.colorize_tiles(self.pants, self.pants_color)
         self.hair = game.sprite.colorize_tiles(self.hair, self.hair_color)
         self.sprite = game.sprite.colorize_tiles(self.sprite, self.skin_color)
         

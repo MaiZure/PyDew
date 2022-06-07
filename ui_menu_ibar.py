@@ -58,10 +58,9 @@ class InventoryBar:
     def handle_mouse(self, event):
         if event.button == 1:
             pos = pygame.mouse.get_pos()
-            if self.ibar_clickrect.collidepoint(pos):
-                inv_tile_num = int((pos[0] - self.ibar_clickrect[0]) / (16*self.scaling))
-                self.change_selection(inv_tile_num)
-                return
+            inv_tile_num = int((pos[0] - self.ibar_clickrect[0]) / (16*self.scaling))
+            self.change_selection(inv_tile_num)
+            return
         if event.button == 4:
             next_tile = self.selection - 1
             if next_tile < 0: next_tile = 11

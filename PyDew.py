@@ -9,6 +9,8 @@ from maploader import MapLoader
 from mapobject import MapObject
 from audio import Audio
 from ui import UI
+from mouse import MouseHandler
+from item import Item
 
 
 class PyDew:
@@ -52,6 +54,7 @@ class PyDew:
         self.player = Player(self)
         self.ui = UI(self)
         self.audio = Audio(self)
+        self.mouse = MouseHandler(self,self.ui)
         
         self.paused = False
         
@@ -90,8 +93,9 @@ class PyDew:
                 if e.key == pygame.K_p:
                     self.world.init_map("forest")
             if e.type == pygame.MOUSEBUTTONDOWN:
-                print("Mouse click at "+str(pygame.mouse.get_pos()))
-                if e.button == 1:
+                pos = pygame.mouse.get_pos()
+                print("Mouse click at "+str(pos) + " - " + str(self.ui.ibar.ibar_clickrect))
+                if e.button == 1 & self.ui.ibar.ibar_clickrect.collidepoint(pos):
                     self.ui.ibar.handle_mouse(e)    # Move this elsewhere (not all left click goes to ibar
                 if e.button == 4 or e.button == 5:  # Mouse wheel up/down
                     self.ui.ibar.handle_mouse(e)
