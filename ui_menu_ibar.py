@@ -1,4 +1,4 @@
-import pygame
+import pygame, random
 
 class InventoryBar:
 
@@ -17,8 +17,10 @@ class InventoryBar:
         self.ibar_enabled = True
         
         self.ibar_sprite_x = int(self.game.menu_surface.get_width()/2- self.ibar_sprite.get_width()/2)
-        self.ibar_sprite_y = self.game.menu_surface.get_height() - self.ibar_sprite.get_height() - 2
-              
+        self.ibar_sprite_y_bottom = self.game.menu_surface.get_height() - self.ibar_sprite.get_height() - 2
+        self.ibar_sprite_y_top = 2
+        self.ibar_sprite_y = self.ibar_sprite_y_bottom
+        
         self.tile_width = self.scaling*16
         self.ibar_clickrect = pygame.Rect(0,0,0,0)
         
@@ -53,14 +55,26 @@ class InventoryBar:
             self.ibar_sprite_y+4*self.scaling,
             12*16*self.scaling,16*self.scaling)
     
-    def handle_mouse(self):
-        pos = pygame.mouse.get_pos()
-        if self.ibar_clickrect.collidepoint(pos):
-            inv_tile_num = int((pos[0] - self.ibar_clickrect[0]) / (16*self.scaling))
-            self.change_selection(inv_tile_num)
-    
+    def handle_mouse(self, event):
+        if event.button == 1:
+            pos = pygame.mouse.get_pos()
+            if self.ibar_clickrect.collidepoint(pos):
+                inv_tile_num = int((pos[0] - self.ibar_clickrect[0]) / (16*self.scaling))
+                self.change_selection(inv_tile_num)
+                return
+        if event.button == 4:
+            next_tile = self.selection - 1
+            if next_tile < 0: next_tile = 11
+            self.change_selection(next_tile)
+        if event.button == 5:
+            next_tile = self.selection + 1
+            if next_tile > 11: next_tile = 0
+            self.change_selection(next_tile)
+        
     def tick(self):
-        pass
+        self.ibar_sprite_y = self.ibar_sprite_y_bottom
+        if int(self.game.player.y - self.game.world.top_left_y) > 140:
+            self.ibar_sprite_y = self.ibar_sprite_y_top
         
     def change_selection(self, select):
         if select == self.selection: return
@@ -68,6 +82,7 @@ class InventoryBar:
         self.selection = select
     
     def render(self, screen):
+        screen.fill((0,0,0,0))
         if self.ibar_enabled:
             self.ibar_sprite.blit(self.spritesheet[56], (16+self.tile_width*self.selection,16), (0,0,64,64))
             if self.last_selection > -1:

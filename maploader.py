@@ -170,7 +170,7 @@ class MapLoader:
                     tile_id = tile["id"]
                     if "properties" in tile:
                         for property in tile["properties"]:
-                            if property["name"] == "Passable":
+                            if property["name"] == "Passable" or property["name"] == "Shadow":
                                 if property["value"] == "T" or property["value"] == "t":
                                     passable_tiles.append(tile_id+tile_offset)
                                 if property["value"] == "F" or property["value"] == "f":

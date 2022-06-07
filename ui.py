@@ -17,7 +17,8 @@ class UI:
         self.ibar = self.menu_elements[0]
         
     def tick(self):
-        pass
+        for element in self.menu_elements:
+            element.tick()
     
     def ui_render(self, screen):
         for element in self.ui_elements:

@@ -185,7 +185,7 @@ class SpriteLoader:
         # 1 and 2 in 'mid' and 3 in front
         self.large_sprites["spr_oak"] = {
             "sheet": "spring_outdoorsTileSheet",
-            "tiles": [(0,3), (1,3), (2,3), (25, 3), (26, 3), (27,3), (50, 3), (51, 3), (52, 3), (75, 3), (76, 3), (77, 3), None, (101,2), None, None, (126,1), None],
+            "tiles": [(0,3), (1,3), (2,3), (25, 3), (26, 3), (27,3), (50, 3), (51, 3), (52, 3), (75, 3), (76, 3), (77, 3), None, (101,1), None, None, (126,1), None],
             "sprite_height": 6,
             "sprite_width": 3,
             "sprite_origin": (1,5),
@@ -194,7 +194,7 @@ class SpriteLoader:
         }
         self.large_sprites["spr_maple"] = {
             "sheet": "spring_outdoorsTileSheet",
-            "tiles": [(3,3), (4,3), (5,3), (28, 3), (29, 3), (30,3), (53, 3), (54, 3), (55, 3), (78, 3), (79, 3), (80, 3), None, (104,2), None, None, (129,1), None],
+            "tiles": [(3,3), (4,3), (5,3), (28, 3), (29, 3), (30,3), (53, 3), (54, 3), (55, 3), (78, 3), (79, 3), (80, 3), None, (104,1), None, None, (129,1), None],
             "sprite_height": 6,
             "sprite_width": 3,
             "sprite_origin": (1,5),
@@ -203,7 +203,7 @@ class SpriteLoader:
         }
         self.large_sprites["spr_pine"] = {
             "sheet": "spring_outdoorsTileSheet",
-            "tiles": [(10,3), (11,3), (12,3), (35, 3), (36, 3), (37,3), (60, 3), (61, 3), (62, 3), (85, 3), (86, 3), (87, 3), None, (111,2), None, None, (136,1), None],
+            "tiles": [(10,3), (11,3), (12,3), (35, 3), (36, 3), (37,3), (60, 3), (61, 3), (62, 3), (85, 3), (86, 3), (87, 3), None, (111,1), None, None, (136,1), None],
             "sprite_height": 6,
             "sprite_width": 3,
             "sprite_origin": (1,5),
@@ -217,7 +217,7 @@ class SpriteLoader:
             "sprite_width": 3,
             "sprite_origin": (0,2),
             "collision_width": 3,
-            "collision_height": 2
+            "collision_height": 1
         }
         self.large_sprites["spr_bush_medium"] = {
             "sheet": "bushes",

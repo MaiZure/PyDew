@@ -91,8 +91,10 @@ class PyDew:
                     self.world.init_map("forest")
             if e.type == pygame.MOUSEBUTTONDOWN:
                 print("Mouse click at "+str(pygame.mouse.get_pos()))
-                self.ui.ibar.handle_mouse()
-        
+                if e.button == 1:
+                    self.ui.ibar.handle_mouse(e)    # Move this elsewhere (not all left click goes to ibar
+                if e.button == 4 or e.button == 5:  # Mouse wheel up/down
+                    self.ui.ibar.handle_mouse(e)
         keys = pygame.key.get_pressed()
         
         if not self.paused:

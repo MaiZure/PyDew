@@ -12,6 +12,9 @@ class World:
         self.season = random.choice(["spring","summer","fall","winter"])
         self.top_left_x = 0
         self.top_left_y = 0
+        self.top_left_x_last = 0
+        self.top_left_y_last = 0
+        self.optimized_render = False
         self.map_width = 0
         self.map_height = 0
         
@@ -271,9 +274,15 @@ class World:
         self.ambient_light = (r,g,b)
     
     def prerender(self, screen):
+        self.top_left_x_last = self.top_left_x
+        self.top_left_y_last = self.top_left_y
         self.top_left_x = min(max(self.game.player.x-screen.get_width()/2,0),self.map_width*16-screen.get_width())
         self.top_left_y = min(max(self.game.player.y-screen.get_height()/2,0),self.map_height*16-screen.get_height())
         
+        self.optimized_render = False
+        if self.top_left_x == self.top_left_x_last and self.top_left_y == self.top_left_y_last:
+            self.optimized_render = True
+            
         # Centers the screen in the case of rooms smaller than the whole screen
         if self.top_left_x < 0: self.top_left_x = int(self.top_left_x/2)
         if self.top_left_y < 0: self.top_left_y = int(self.top_left_y/2)
@@ -287,20 +296,23 @@ class World:
         screen.fill(pygame.Color(0,0,0,0))
         
         for mapobject in self.current_map_path_objects:
-            if mapobject.gy < self.game.player.gy:
+            if mapobject.gy <= self.game.player.gy:
                 mapobject.render_mid(screen)
             else: break;
+            
+        screen.blit(self.mid, (0,0), (self.top_left_x,self.top_left_y,screen.get_width(),screen.get_height()/2))
+        
+        for npc in self.npcs:
+            npc.render(screen)
         
         self.game.player.render(screen) # Find a way to partition the MO around the player rather than O(2n)
         
         for mapobject in self.current_map_path_objects:
-            if mapobject.gy >= self.game.player.gy:
-                mapobject.render_mid(screen)
-        for npc in self.npcs:
-            npc.render(screen)
+            if mapobject.gy > self.game.player.gy:
+                mapobject.render_mid(screen)      
             
-        screen.blit(self.mid, (0,0), (self.top_left_x,self.top_left_y,screen.get_width(),screen.get_height()))      
-        
+        #screen.blit(self.mid, (0,0), (self.top_left_x,self.top_left_y,screen.get_width(),screen.get_height()))      
+        screen.blit(self.mid, (0,screen.get_height()/2), (self.top_left_x,self.top_left_y+screen.get_height()/2,screen.get_width(),screen.get_height()/2))
         
     def render_front(self, screen):
         screen.fill(pygame.Color(0,0,0,0))    
