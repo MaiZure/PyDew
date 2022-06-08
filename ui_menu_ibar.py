@@ -11,7 +11,8 @@ class InventoryBar:
         self.last_selection = -1
         self.selection = 0
         self.scaling = 4
-        
+        self.slot_pos = []
+        self.ibar_number = 0
         
         self.ibar_sprite = pygame.Surface((800,96), pygame.SRCALPHA).convert_alpha()
         self.ibar_enabled = True
@@ -33,6 +34,7 @@ class InventoryBar:
         top_bar = (16,0,32,16)
         bottom_bar = (12,44,32,16)
         
+        
         self.ibar_sprite.blit(self.spritesheet[16], (0,0), (0,0,64,64))
         self.ibar_sprite.blit(self.spritesheet[16], (0,36), (0,0,64,64))
         self.ibar_sprite.blit(self.spritesheet[16], (0,35), left_bar)
@@ -46,14 +48,14 @@ class InventoryBar:
             self.ibar_sprite.blit(self.spritesheet[16], (16+i*32,80), bottom_bar)
         
         for i in range(12):
-            self.ibar_sprite.blit(self.spritesheet[9], (16+self.tile_width*i,16), (0,0,64,64))
-            self.ibar_sprite.blit(self.spritesheet[10], (16+self.tile_width*i,16), (0,0,64,64))
+            slot_x = (4*self.scaling)+(self.tile_width*i)
+            slot_y = (4*self.scaling)
+            self.slot_pos.append((self.ibar_sprite_x+slot_x,self.ibar_sprite_y+slot_y))
+            self.ibar_sprite.blit(self.spritesheet[9], (slot_x, slot_y), (0,0,64,64))
+            self.ibar_sprite.blit(self.spritesheet[10], (slot_x, slot_y), (0,0,64,64))
         
+        self.update_clickrect()
         
-        
-        self.ibar_clickrect = pygame.Rect(self.ibar_sprite_x+4*self.scaling,
-            self.ibar_sprite_y+4*self.scaling,
-            12*16*self.scaling,16*self.scaling)
     
     def handle_mouse(self, event):
         if event.button == 1:
@@ -74,6 +76,7 @@ class InventoryBar:
         self.ibar_sprite_y = self.ibar_sprite_y_bottom
         if int(self.game.player.y - self.game.world.top_left_y) > 140:
             self.ibar_sprite_y = self.ibar_sprite_y_top
+        self.update_clickrect()  # Should update on CHANGE, not every frame
         
     def change_selection(self, select):
         if select == self.selection: return
@@ -89,4 +92,12 @@ class InventoryBar:
                 self.ibar_sprite.blit(self.spritesheet[10], (16+self.tile_width*self.last_selection,16), (0,0,64,64))
                 self.last_selection = -1
             screen.blit(self.ibar_sprite, (self.ibar_sprite_x,self.ibar_sprite_y))
-            
+        
+        for i in range(self.ibar_number, self.ibar_number+12):
+            item = self.game.player.inventory[i]
+            if item:
+                item.render_inv_slot(screen, i)
+    
+    def update_clickrect(self):
+        self.ibar_clickrect = pygame.Rect(self.ibar_sprite_x+4*self.scaling,
+            self.ibar_sprite_y+4*self.scaling, 12*16*self.scaling,16*self.scaling)

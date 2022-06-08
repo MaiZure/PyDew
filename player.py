@@ -1,4 +1,5 @@
 import pygame, random
+from item import Item, Tool
 
 class Player:
     def __init__(self, game):
@@ -16,6 +17,10 @@ class Player:
         self.skin_num = 23
         self.inventory = [None] * 36
         self.inventory_limit = 12
+        self.inventory[0] = Tool(game, "hoe")
+        self.inventory[1] = Tool(game, "pickaxe")
+        self.inventory[2] = Tool(game, "axe")
+        self.inventory[3] = Tool(game, "wateringcan")
         
         self.generate_pants()
         self.hair_color = (192,32,32)

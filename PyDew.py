@@ -10,14 +10,14 @@ from mapobject import MapObject
 from audio import Audio
 from ui import UI
 from mouse import MouseHandler
-from item import Item
+from item import ItemLoader
 
 
 class PyDew:
 
     def __init__(self):
         pygame.init()
-        self.version = "0.1.3.32"
+        self.version = "0.1.3.33"
         print("Hello PyDew "+str(self.version))
         self.config = Config()        
         self.final_screen = pygame.display.set_mode((self.config.screen_width, 
@@ -51,6 +51,7 @@ class PyDew:
         self.sprite = SpriteLoader(self)
         self.map = MapLoader(self)
         self.world = World(self)
+        self.item = ItemLoader(self)
         self.player = Player(self)
         self.ui = UI(self)
         self.audio = Audio(self)
@@ -94,7 +95,7 @@ class PyDew:
                     self.world.init_map("forest")
             if e.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
-                print("Mouse click at "+str(pos) + " - " + str(self.ui.ibar.ibar_clickrect))
+                print("Mouse click at "+str(pos))
                 if e.button == 1 & self.ui.ibar.ibar_clickrect.collidepoint(pos):
                     self.ui.ibar.handle_mouse(e)    # Move this elsewhere (not all left click goes to ibar
                 if e.button == 4 or e.button == 5:  # Mouse wheel up/down
