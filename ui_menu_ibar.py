@@ -12,7 +12,7 @@ class InventoryBar:
         self.selection = 0
         self.scaling = 4
         self.slot_pos = []
-        self.ibar_number = 0
+        self.ibar_row = 0
         
         self.ibar_sprite = pygame.Surface((800,96), pygame.SRCALPHA).convert_alpha()
         self.ibar_enabled = True
@@ -93,7 +93,7 @@ class InventoryBar:
                 self.last_selection = -1
             screen.blit(self.ibar_sprite, (self.ibar_sprite_x,self.ibar_sprite_y))
         
-        for i in range(self.ibar_number, self.ibar_number+12):
+        for i in range(self.ibar_row, self.ibar_row+12):
             item = self.game.player.inventory[i]
             if item:
                 item.render_inv_slot(screen, i)

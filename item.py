@@ -6,6 +6,7 @@ class Item:
         self.game = game
         self.x = None
         self.y = None
+        self.count = 1
         
         
     def render(self, screen):
@@ -15,6 +16,7 @@ class Item:
         slot_pos = self.game.ui.ibar.slot_pos[slot_num]
         sprite = self.sprite[self.inv_frame]
         scaled_item = pygame.transform.scale(sprite,(60,60))
+        #print(str(sprite.get_size()) + "," + str(scaled_item.get_size())) 
         screen.blit(scaled_item, (slot_pos[0],slot_pos[1]))
         
 class Tool(Item):
@@ -26,22 +28,28 @@ class Tool(Item):
         self.inv_frame = tool["inv_frame"][self.quality]
         
 class Food(Item):
-    def __init__(self, game):
+    def __init__(self, game, type):
         super().__init__(game)
         
 
 class Seeds(Item):
-    def __init__(self, game):
+    def __init__(self, game, type):
         super().__init__(game)
         
 class Weapon(Item):
-    def __init__(self, game):
+    def __init__(self, game, type):
         super().__init__(game)
+        weapon = game.item.weapon[type]
+        self.sprite = self.game.sprite.get_tiles("weapons")
+        self.inv_frame = weapon["inv_frame"][0]
         
 class ItemLoader:
     def __init__(self,game):
         print ("Initializing Items")
         self.tool = {}
+        self.weapon = {}
+        self.food = {}
+        self.seed = {}
         self.tool["hoe"] = {
             "name": "Hoe",
             "inv_frame": [47, 54, 61, 89, 96]  # Each quality level
@@ -57,4 +65,8 @@ class ItemLoader:
         self.tool["wateringcan"] = {
             "name": "Watering Can",
             "inv_frame": [296, 303, 310, 338, 345]  # Each quality level
+        }       
+        self.weapon["galaxysword"] = {
+            "name": "Galaxy Sword",
+            "inv_frame": [4]  # Each quality level
         }

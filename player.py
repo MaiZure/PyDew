@@ -1,5 +1,5 @@
 import pygame, random
-from item import Item, Tool
+from item import *
 
 class Player:
     def __init__(self, game):
@@ -21,6 +21,7 @@ class Player:
         self.inventory[1] = Tool(game, "pickaxe")
         self.inventory[2] = Tool(game, "axe")
         self.inventory[3] = Tool(game, "wateringcan")
+        self.inventory[4] = Weapon(game, "galaxysword")
         
         self.generate_pants()
         self.hair_color = (192,32,32)
@@ -150,6 +151,31 @@ class Player:
     def use_item(self):
         pass
         
+    def has_inventory_space(self):
+        return None in self.inventory[:self.inventory_limit]
+        
+    def find_free_inventory_slot(self):
+        inv_row = self.game.ui.ibar.ibar_row
+        # check from active row 
+        for slot in range(inv_row*12, self.inventory_limit):
+            if self.inventory[slot] == None:
+                return slot
+        # Check for rows behind active row
+        if inv_row > 0:
+            for slot in range(0, inv_row*12):
+                if self.inventory[slot] == None:
+                    return slot
+        
+        # Some empty row should have been return (else has_inventory_space() wasn't used)
+        print ("ERROR! Inventory assumption broken")
+    
+    def pickup_item(self, item):
+        if not self.has_inventory_space():
+            return
+            
+        slot = self.find_free_inventory_slot()
+        self.slot = item
+
     def get_shirt_dir(self, dir):
         if dir == 0: return (0,0,8,8)
         if dir == 1: return (0,8,8,8)
