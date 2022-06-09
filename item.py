@@ -27,8 +27,11 @@ class Item:
         slot_pos = self.game.ui.ibar.slot_pos[slot_num]
         sprite = self.sprite[self.inv_frame]
         scaled_item = pygame.transform.scale(sprite,(60,60))
-        #print(str(sprite.get_size()) + "," + str(scaled_item.get_size())) 
         screen.blit(scaled_item, (slot_pos[0],slot_pos[1]))
+        if self.count > 1:
+            ui = self.game.ui
+            num = min(self.count,9) # prevent crash when more than 10 items for now
+            screen.blit(ui.tiny_numbers, (slot_pos[0]+55,slot_pos[1]+53),ui.tiny_numbers_rect[num]) 
         
     def create_at(self, x, y, count=1):
         self.x = x

@@ -119,7 +119,7 @@ class Player:
             
         self.gx = int((self.x+8)/16)
         self.gy = int((self.y+8)/16)
-        self.hitrect = pygame.Rect(self.x,self.y-16,16,32)
+        self.hitrect = pygame.Rect(self.x-8,self.y-16,16,32)
         
         if (self.gx, self.gy) in self.game.world.edge_warp_points:
             self.game.world.warp_player(self.game.world.edge_warp_points[(self.gx, self.gy)])
@@ -168,7 +168,6 @@ class Player:
                     return slot
         
         # Some empty row should have been return (else has_inventory_space() wasn't used)
-        print ("ERROR! Inventory assumption broken")
         return None
     
     def find_inventory_item_slot(self, item):
@@ -193,8 +192,9 @@ class Player:
                 if not self.has_inventory_space():
                     return
                 slot = self.find_free_inventory_slot()
+                self.inventory[slot] = item
             item.remove_from_world()
-            self.inventory[slot] = item
+            
         
 
     def get_shirt_dir(self, dir):

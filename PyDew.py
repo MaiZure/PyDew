@@ -14,10 +14,9 @@ from item import ItemLoader
 
 
 class PyDew:
-
     def __init__(self):
         pygame.init()
-        self.version = "0.1.3.36"
+        self.version = "0.1.3.37"
         print("Hello PyDew "+str(self.version))
         self.config = Config()        
         self.final_screen = pygame.display.set_mode((self.config.screen_width, 
@@ -64,8 +63,8 @@ class PyDew:
         
     #do some more start stuff - like a main menu
     def start(self):
-      self.run = True
-      self.game_loop()
+        self.run = True
+        self.game_loop()
         
     #The game loop
     def game_loop(self):
@@ -89,8 +88,8 @@ class PyDew:
             if e.type == pygame.KEYUP:
                 if e.key == pygame.K_t:
                     return
-                    self.world.set_random_season();
-                    self.world.regenerate_season = True # Make fxn
+                    #self.world.set_random_season()
+                    #self.world.regenerate_season = True # Make fxn
                 if e.key == pygame.K_p:
                     self.world.init_map("forest")
                 if e.key == pygame.K_v:
@@ -103,16 +102,16 @@ class PyDew:
                 if e.button == 4 or e.button == 5:  # Mouse wheel up/down
                     self.ui.ibar.handle_mouse(e)
         keys = pygame.key.get_pressed()
-        
+
         if not self.paused:
             self.player.handle_input(keys)
         
-    #Update game state
+    # Update game state
     def update(self):
         self.world.tick()
         self.ui.tick()
-        
-    #Draw some stuff
+
+    # Draw some stuff
     def render(self):
         self.world.prerender(self.bg_surface)
         self.world.render_back(self.bg_surface)
@@ -120,20 +119,20 @@ class PyDew:
         self.world.render_front(self.fg_surface)
         self.ui.ui_render(self.ui_surface)
         self.ui.menu_render(self.menu_surface)
-        
+
         for light in self.world.lights:
             light.render(self.ambient_surface)
-            
+
         self.unscaled_screen.blit(self.bg_surface,(0,0))
         self.unscaled_screen.blit(self.mid_surface,(0,0))
         self.unscaled_screen.blit(self.fg_surface,(0,0))
         self.unscaled_screen.blit(self.ambient_surface,(0,0), special_flags=pygame.BLEND_SUB)
         self.unscaled_screen.blit(self.ui_surface,(0,0))
-        
+
         scaled_screen = pygame.transform.scale(self.unscaled_screen,self.final_screen.get_rect().size)
-                
+
         scaled_screen.blit(self.menu_surface, (0,0))
-        
+
         self.final_screen.blit(scaled_screen,(0,0))
         pygame.display.update()
 
