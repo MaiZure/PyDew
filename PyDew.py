@@ -17,7 +17,7 @@ class PyDew:
 
     def __init__(self):
         pygame.init()
-        self.version = "0.1.3.35"
+        self.version = "0.1.3.36"
         print("Hello PyDew "+str(self.version))
         self.config = Config()        
         self.final_screen = pygame.display.set_mode((self.config.screen_width, 
@@ -94,7 +94,7 @@ class PyDew:
                 if e.key == pygame.K_p:
                     self.world.init_map("forest")
                 if e.key == pygame.K_v:
-                    self.world.create_wood()
+                    self.world.litterbug()
             if e.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
                 print("Mouse click at "+str(pos))

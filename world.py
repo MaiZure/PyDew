@@ -37,7 +37,10 @@ class World:
         self.lights = []
         self.ambient_light = (0,0,0) #(0,0,0) - day/clear, (180,150, 0) - night, (50,50,0) - day/raining
         self.darkening = True
-        self.testitem = None
+        
+        self.items = {}
+        for key in game.map.map:
+            self.items[key] = []
         
         self.bg_tile_update_reel = [[] for a in range(60)]   # Maintan 60 frames
         self.bldg_tile_update_reel = [[] for a in range(60)]
@@ -91,11 +94,11 @@ class World:
         self.game.mid_surface.fill(pygame.Color(0,0,0,0))
         self.game.fg_surface.fill(pygame.Color(0,0,0,0))
         
-        self.init_second_stage()
+        self.init_map_second_stage()
         return True
         
         
-    def init_second_stage(self):
+    def init_map_second_stage(self):
         self.lights = []
         self.outdoors = self.game.map.get_map_outdoors(self.current_map)
         
@@ -125,8 +128,10 @@ class World:
     def create_wood(self):
     
         # Practice items
-        self.testitem = Resource(self.game, "wood")
-        self.testitem.create_at(self.game.player.x-24, self.game.player.y-24)
+        new_item = Resource(self.game, "wood")
+        new_item.create_at(self.game.player.x-24, self.game.player.y-24)
+        self.items[self.current_map].append(new_item)
+        
         
     def set_random_season(self):
         self.season = random.choice(["spring","summer","fall","winter"])
@@ -262,8 +267,17 @@ class World:
         self.cycle_reel(self.bldg_tile_update_reel, self.bldg_layer)
         self.update_ambient()
         self.game.player.tick()
+        for item in self.items[self.current_map]:
+            item.tick()
         for npc in self.npcs:
             npc.tick()
+            
+    def litterbug(self):
+        for i in range(1000):
+            x = random.randint(0,self.map_width*16)
+            y = random.randint(0,self.map_height*16)
+            item = Resource(self.game,random.choice(["wood","stone"]))
+            item.create_at(x,y)
     
     def update_ambient(self):
         # disable transitions for now
@@ -309,8 +323,8 @@ class World:
             
         screen.blit(self.mid, (0,0), (self.top_left_x,self.top_left_y,screen.get_width(),screen.get_height()/2))
         
-        if self.testitem:
-            self.testitem.render(screen)
+        for item in self.items[self.current_map]:
+            item.render(screen)
         
         for npc in self.npcs:
             npc.render(screen)
@@ -319,7 +333,7 @@ class World:
         
         for mapobject in self.current_map_path_objects:
             if mapobject.gy > self.game.player.gy:
-                mapobject.render_mid(screen)      
+                mapobject.render_mid(screen)
             
         #screen.blit(self.mid, (0,0), (self.top_left_x,self.top_left_y,screen.get_width(),screen.get_height()))      
         screen.blit(self.mid, (0,screen.get_height()/2), (self.top_left_x,self.top_left_y+screen.get_height()/2,screen.get_width(),screen.get_height()/2))

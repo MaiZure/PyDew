@@ -4,16 +4,24 @@ import pygame
 class Item:
     def __init__(self, game):
         self.game = game
+        self.gx = None
+        self.gy = None
         self.x = None
         self.y = None
+        self.name = ""
         self.count = 1
+        self.stackable = False
         
         
     def render(self, screen):
+        if not self.x or not self.y:
+            return
+        if not self.game.world.is_visible(self.gx, self.gy):
+            return
+            
         top_left_x = self.game.world.top_left_x
         top_left_y = self.game.world.top_left_y
-        if self.x and self.y:
-            screen.blit(self.sprite[self.spr_frame], (self.x-top_left_x,self.y-top_left_y), (0,0,16,16))
+        screen.blit(self.sprite[self.spr_frame], (self.x-top_left_x,self.y-top_left_y), (0,0,16,16))
     
     def render_inv_slot(self, screen, slot_num):
         slot_pos = self.game.ui.ibar.slot_pos[slot_num]
@@ -25,24 +33,42 @@ class Item:
     def create_at(self, x, y, count=1):
         self.x = x
         self.y = y
-        pass
+        self.gx = self.x/16
+        self.gy = self.y/16
+        self.game.world.items[self.game.world.current_map].append(self)
+        
+    def remove_from_world(self):
+        current_map = self.game.world.current_map
+        self.game.world.items[current_map].remove(self)
+        self.x, self.y, self.gx, self.gy = None, None, None, None   
+        
+    def tick(self):
+        if not self.game.world.is_visible(self.gx,self.gy):
+            return
+        
+        if self.game.player.hitrect.collidepoint(self.x,self.y):
+            self.game.player.pickup_item(self)
 
 class Resource(Item):
     def __init__(self, game, type):
         super().__init__(game)
         resource = game.item.resource[type]
+        self.name = resource["name"]
         self.sprite = self.game.sprite.get_tiles("springobjects")
         self.inv_frame = resource["inv_frame"][0]
         self.spr_frame = self.inv_frame
+        self.stackable = True
         
 class Tool(Item):
     def __init__(self, game, type):
         super().__init__(game)
         tool = game.item.tool[type]
+        self.name = tool["name"]
         self.quality = random.choice([0,1,2,3,4])
         self.sprite = self.game.sprite.get_tiles("tools")
         self.inv_frame = tool["inv_frame"][self.quality]
-    
+        self.stackable = True
+        
 class Food(Item):
     def __init__(self, game, type):
         super().__init__(game)
@@ -56,8 +82,10 @@ class Weapon(Item):
     def __init__(self, game, type):
         super().__init__(game)
         weapon = game.item.weapon[type]
+        self.name = weapon["name"]
         self.sprite = self.game.sprite.get_tiles("weapons")
         self.inv_frame = weapon["inv_frame"][0]
+        self.stackable = False
         
 class ItemLoader:
     def __init__(self,game):

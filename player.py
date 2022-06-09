@@ -119,6 +119,7 @@ class Player:
             
         self.gx = int((self.x+8)/16)
         self.gy = int((self.y+8)/16)
+        self.hitrect = pygame.Rect(self.x,self.y-16,16,32)
         
         if (self.gx, self.gy) in self.game.world.edge_warp_points:
             self.game.world.warp_player(self.game.world.edge_warp_points[(self.gx, self.gy)])
@@ -168,13 +169,33 @@ class Player:
         
         # Some empty row should have been return (else has_inventory_space() wasn't used)
         print ("ERROR! Inventory assumption broken")
+        return None
+    
+    def find_inventory_item_slot(self, item):
+        for slot in range(0, self.inventory_limit):
+            if not self.inventory[slot]: continue
+            if self.inventory[slot].name == item.name:
+                return slot
+        return None
     
     def pickup_item(self, item):
-        if not self.has_inventory_space():
-            return
-            
-        slot = self.find_free_inventory_slot()
-        self.slot = item
+        if not item.stackable:
+            if not self.has_inventory_space():
+                return
+            slot = self.find_free_inventory_slot()
+            item.remove_from_world()
+            self.inventory[slot] = item
+        else: # Item is stackable
+            slot = self.find_inventory_item_slot(item)
+            if slot:
+                self.inventory[slot].count += 1
+            else:
+                if not self.has_inventory_space():
+                    return
+                slot = self.find_free_inventory_slot()
+            item.remove_from_world()
+            self.inventory[slot] = item
+        
 
     def get_shirt_dir(self, dir):
         if dir == 0: return (0,0,8,8)
