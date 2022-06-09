@@ -1,6 +1,7 @@
 import random
 import pygame
 from npc import NPC
+from item import *
 
 from mapobject import MapObject
 
@@ -36,6 +37,7 @@ class World:
         self.lights = []
         self.ambient_light = (0,0,0) #(0,0,0) - day/clear, (180,150, 0) - night, (50,50,0) - day/raining
         self.darkening = True
+        self.testitem = None
         
         self.bg_tile_update_reel = [[] for a in range(60)]   # Maintan 60 frames
         self.bldg_tile_update_reel = [[] for a in range(60)]
@@ -119,7 +121,12 @@ class World:
         self.embed_map_animations(self.bldg_layer, self.bldg_tile_update_reel)
         
         self.init_npcs()
-        
+    
+    def create_wood(self):
+    
+        # Practice items
+        self.testitem = Resource(self.game, "wood")
+        self.testitem.create_at(self.game.player.x-24, self.game.player.y-24)
         
     def set_random_season(self):
         self.season = random.choice(["spring","summer","fall","winter"])
@@ -302,6 +309,9 @@ class World:
             
         screen.blit(self.mid, (0,0), (self.top_left_x,self.top_left_y,screen.get_width(),screen.get_height()/2))
         
+        if self.testitem:
+            self.testitem.render(screen)
+        
         for npc in self.npcs:
             npc.render(screen)
         
@@ -319,8 +329,6 @@ class World:
         for mapobject in self.current_map_path_objects:
             mapobject.render_front(screen)
         screen.blit(self.fg, (0,0), (self.top_left_x,self.top_left_y,screen.get_width(),screen.get_height()))
-        #for light in self.lights:
-        #    light.render(screen)
         
         
     def get_tile_x(self, tile_num):

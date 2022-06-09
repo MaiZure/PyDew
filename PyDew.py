@@ -17,7 +17,7 @@ class PyDew:
 
     def __init__(self):
         pygame.init()
-        self.version = "0.1.3.34"
+        self.version = "0.1.3.35"
         print("Hello PyDew "+str(self.version))
         self.config = Config()        
         self.final_screen = pygame.display.set_mode((self.config.screen_width, 
@@ -50,8 +50,8 @@ class PyDew:
         
         self.sprite = SpriteLoader(self)
         self.map = MapLoader(self)
-        self.world = World(self)
         self.item = ItemLoader(self)
+        self.world = World(self)
         self.player = Player(self)
         self.ui = UI(self)
         self.audio = Audio(self)
@@ -93,6 +93,8 @@ class PyDew:
                     self.world.regenerate_season = True # Make fxn
                 if e.key == pygame.K_p:
                     self.world.init_map("forest")
+                if e.key == pygame.K_v:
+                    self.world.create_wood()
             if e.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
                 print("Mouse click at "+str(pos))
