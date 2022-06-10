@@ -17,11 +17,11 @@ class Player:
         self.skin_num = 23
         self.inventory = [None] * 36
         self.inventory_limit = 12
-        self.inventory[0] = Tool(game, "hoe")
-        self.inventory[1] = Tool(game, "pickaxe")
-        self.inventory[2] = Tool(game, "axe")
-        self.inventory[3] = Tool(game, "wateringcan")
-        self.inventory[4] = Weapon(game, "galaxysword")
+        #self.inventory[0] = Tool(game, "hoe")
+        #self.inventory[1] = Tool(game, "pickaxe")
+        #self.inventory[2] = Tool(game, "axe")
+        #self.inventory[3] = Tool(game, "wateringcan")
+        #self.inventory[4] = Weapon(game, "galaxysword")
         
         self.generate_pants()
         self.hair_color = (192,32,32)
@@ -174,10 +174,11 @@ class Player:
         for slot in range(0, self.inventory_limit):
             if not self.inventory[slot]: continue
             if self.inventory[slot].name == item.name:
-                return slot
+                if self.inventory[slot].count < 999:
+                    return slot
         return None
     
-    def pickup_item(self, item):
+    def pickup_item(self, item): 
         if not item.stackable:
             if not self.has_inventory_space():
                 return
@@ -186,7 +187,7 @@ class Player:
             self.inventory[slot] = item
         else: # Item is stackable
             slot = self.find_inventory_item_slot(item)
-            if slot:
+            if type(slot) is int:
                 self.inventory[slot].count += 1
             else:
                 if not self.has_inventory_space():

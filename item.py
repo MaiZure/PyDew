@@ -11,6 +11,7 @@ class Item:
         self.name = ""
         self.count = 1
         self.stackable = False
+        self.player = self.game.player
         
         
     def render(self, screen):
@@ -30,8 +31,10 @@ class Item:
         screen.blit(scaled_item, (slot_pos[0],slot_pos[1]))
         if self.count > 1:
             ui = self.game.ui
-            num = min(self.count,9) # prevent crash when more than 10 items for now
-            screen.blit(ui.tiny_numbers, (slot_pos[0]+55,slot_pos[1]+53),ui.tiny_numbers_rect[num]) 
+            digits = [int(x) for x in str(self.count)]
+            digits.reverse()
+            for i, d in enumerate(digits):
+                screen.blit(ui.tiny_numbers, (slot_pos[0]+55-15*i,slot_pos[1]+53),ui.tiny_numbers_rect[d]) 
         
     def create_at(self, x, y, count=1):
         self.x = x
@@ -48,9 +51,25 @@ class Item:
     def tick(self):
         if not self.game.world.is_visible(self.gx,self.gy):
             return
-        
+            
+        if self.distance_to_player() < 10:
+            self.move_towards_player()
+                
         if self.game.player.hitrect.collidepoint(self.x,self.y):
             self.game.player.pickup_item(self)
+            
+    def distance_to_player(self) -> int:
+        return ((self.gx-self.player.gx)**2 + (self.gy-self.player.gy)**2)
+
+    def move_towards_player(self) -> None:
+        if self.x < self.player.x:
+            self.x += 2
+        if self.x > self.player.x:
+            self.x -= 2
+        if self.y < self.player.y:
+            self.y += 2
+        if self.y > self.player.y:
+            self.y -= 2
 
 class Resource(Item):
     def __init__(self, game, type):

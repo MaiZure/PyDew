@@ -19,10 +19,15 @@ class UI:
         self.spritesheet = game.sprite.get_spritesheet("Cursors")
         
         self.tiny_numbers_rect=[]
-        rect = pygame.Rect(368,58,50,7)
-        self.tiny_numbers = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
-        self.tiny_numbers.blit(self.spritesheet, (0,0), rect)
-        for i in range(10): self.tiny_numbers_rect.append(pygame.Rect(i*5,0,5,7))
+        rect = pygame.Rect(368,56,50,7)
+        temp = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
+        temp.blit(self.spritesheet, (0,0), rect)
+        self.tiny_numbers = pygame.Surface((150,21), pygame.SRCALPHA).convert_alpha()
+        self.tiny_numbers = pygame.transform.scale(temp,self.tiny_numbers.get_rect().size)
+        #self.tiny_numbers.blit(self.spritesheet, (0,0), rect)
+        for i in range(10): self.tiny_numbers_rect.append(pygame.Rect(i*15,0,15,21))
+        
+        
         
     def tick(self):
         for element in self.menu_elements:
