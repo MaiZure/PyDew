@@ -16,9 +16,9 @@ from item import ItemLoader
 class PyDew:
     def __init__(self):
         pygame.init()
-        self.version = "0.1.4.40"
+        self.version = "0.1.4.41"
         print("Hello PyDew "+str(self.version))
-        self.config = Config()        
+        self.config = Config()
         self.final_screen = pygame.display.set_mode((self.config.screen_width, 
                                                self.config.screen_height),
                                                pygame.HWSURFACE|pygame.DOUBLEBUF)
@@ -103,6 +103,8 @@ class PyDew:
                     self.world.init_map("forest")
                 if e.key == pygame.K_v:
                     self.world.litterbug()
+                if e.key == pygame.K_ESCAPE:
+                    self.ui.toggle_player_menu()
             if e.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
                 print("Mouse click at "+str(pos))
@@ -126,7 +128,7 @@ class PyDew:
         self.world.render_back(self.bg_surface)
         self.world.render_mid(self.mid_surface)
         self.world.render_front(self.fg_surface)
-        self.ui.ui_render(self.ui_surface)
+        self.ui.ui_render(self.ui_surface)        
         self.ui.menu_render(self.menu_surface)
 
         for light in self.world.lights:

@@ -7,7 +7,7 @@ class InventoryBar:
         self.game = game
         self.ui = ui
         
-        self.spritesheet = game.sprite.get_tiles("MenuTiles")
+        self.spritesheet = ui.spritesheet
         self.last_selection = -1
         self.selection = 0
         self.scaling = 4
@@ -88,15 +88,16 @@ class InventoryBar:
         self.selection = select
     
     def render(self, screen):
-        screen.fill((0,0,0,0))
-        if self.ibar_enabled:
-            self.ibar_sprite.blit(self.spritesheet[56], (16+self.tile_width*self.selection,16), (0,0,64,64))
-            if self.last_selection > -1:
-                self.ibar_sprite.blit(self.spritesheet[9], (16+self.tile_width*self.last_selection,16), (0,0,64,64))
-                self.ibar_sprite.blit(self.spritesheet[10], (16+self.tile_width*self.last_selection,16), (0,0,64,64))
-                self.last_selection = -1
-            screen.blit(self.ibar_sprite, (self.ibar_sprite_x,self.ibar_sprite_y))
-        
+        if not self.ibar_enabled:
+            return
+            
+        self.ibar_sprite.blit(self.spritesheet[56], (16+self.tile_width*self.selection,16), (0,0,64,64))
+        if self.last_selection > -1:
+            self.ibar_sprite.blit(self.spritesheet[9], (16+self.tile_width*self.last_selection,16), (0,0,64,64))
+            self.ibar_sprite.blit(self.spritesheet[10], (16+self.tile_width*self.last_selection,16), (0,0,64,64))
+            self.last_selection = -1
+        screen.blit(self.ibar_sprite, (self.ibar_sprite_x,self.ibar_sprite_y))
+    
         for i in range(self.ibar_row, self.ibar_row+12):
             item = self.game.player.inventory[i]
             if item:

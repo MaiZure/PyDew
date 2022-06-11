@@ -125,7 +125,6 @@ class World:
         self.embed_map_animations(self.bg_layer, self.bg_tile_update_reel)
         self.embed_map_animations(self.bldg_layer, self.bldg_tile_update_reel)
         
-        print(self.game.sprite.tiles.keys())
         self.init_npcs()
     
     def create_wood(self):

@@ -3,6 +3,7 @@ import pygame
 from ui_clock import Clock
 from ui_statusbars import StatusBars
 from ui_menu_ibar import InventoryBar
+from ui_menu_player import PlayerMenu
 class UI:
 
     def __init__(self, game):
@@ -12,13 +13,18 @@ class UI:
         self.ui_elements = []
         self.menu_elements = []
         self.tiny_numbers_rect=[]
+        self.player_menu_enabled = False
+        self.ibar = None
+        
         
         
         
     def init_second_stage(self):
+        self.spritesheet = self.game.sprite.get_tiles("MenuTiles")
         self.ui_elements.append(Clock(self.game,self))
         self.ui_elements.append(StatusBars(self.game,self))
         self.menu_elements.append(InventoryBar(self.game, self))
+        self.menu_elements.append(PlayerMenu(self.game, self))
         self.ibar = self.menu_elements[0]
         
         #Get tiny inventory count numbers
@@ -41,5 +47,20 @@ class UI:
             element.render(screen)
             
     def menu_render(self, screen):
+        screen.fill((0,0,0,0)) if not self.player_menu_enabled else screen.fill((0,0,0,128))
         for element in self.menu_elements:
             element.render(screen)
+            
+    def toggle_player_menu(self):
+        self.activate_player_menu() if not self.game.paused else self.deactivate_player_menu()
+            
+    def activate_player_menu(self):
+        self.game.paused = True
+        self.ibar.ibar_enabled = False
+        self.player_menu_enabled = True
+              
+    def deactivate_player_menu(self):
+        
+        self.player_menu_enabled = False
+        self.ibar.ibar_enabled = True
+        self.game.paused = False
