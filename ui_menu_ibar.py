@@ -11,12 +11,13 @@ class InventoryBar:
         self.last_selection = -1
         self.selection = 0
         self.scaling = 4
-        self.slot_pos = []
+        self.slot_pos = [[],[]]
         self.ibar_row = 0
         
         self.ibar_sprite = pygame.Surface((800,96), pygame.SRCALPHA).convert_alpha()
         self.ibar_enabled = True
         
+        self.ibar_top = False
         self.ibar_sprite_x = int(self.game.menu_surface.get_width()/2- self.ibar_sprite.get_width()/2)
         self.ibar_sprite_y_bottom = self.game.menu_surface.get_height() - self.ibar_sprite.get_height() - 2
         self.ibar_sprite_y_top = 2
@@ -50,7 +51,8 @@ class InventoryBar:
         for i in range(12):
             slot_x = (4*self.scaling)+(self.tile_width*i)
             slot_y = (4*self.scaling)
-            self.slot_pos.append((self.ibar_sprite_x+slot_x,self.ibar_sprite_y+slot_y))
+            self.slot_pos[False].append((self.ibar_sprite_x+slot_x,self.ibar_sprite_y_bottom+slot_y))
+            self.slot_pos[True].append((self.ibar_sprite_x+slot_x,self.ibar_sprite_y_top+slot_y))
             self.ibar_sprite.blit(self.spritesheet[9], (slot_x, slot_y), (0,0,64,64))
             self.ibar_sprite.blit(self.spritesheet[10], (slot_x, slot_y), (0,0,64,64))
         
@@ -74,8 +76,10 @@ class InventoryBar:
         
     def tick(self):
         self.ibar_sprite_y = self.ibar_sprite_y_bottom
+        self.ibar_top = False
         if int(self.game.player.y - self.game.world.top_left_y) > 140:
             self.ibar_sprite_y = self.ibar_sprite_y_top
+            self.ibar_top = True
         self.update_clickrect()  # Should update on CHANGE, not every frame
         
     def change_selection(self, select):

@@ -11,21 +11,23 @@ class SpriteLoader:
         self.sheet = {}
         self.character_sheet = {}
         self.player_sheet = {}
+        self.tiles = {}
+        self.large_sprites = {}
+        
         self.load_tile_spritesheets()
         self.load_character_spritesheets()
-        self.load_player_spritesheets()
         
+        self.load_player_spritesheets()
         self.pc_index = self.index_sprite(self.player_sheet["farmer_base"][0])
         
         #Put all character sheets in base sheets
         self.sheet = self.sheet | self.character_sheet | self.player_sheet
         
-        self.tiles = {}
-        self.build_tiles()
-        
-        # Metadata
-        self.large_sprites = {}
-        self.build_large_sprites()
+        self.build_tiles()  # loads {tiles}
+        self.build_large_sprites()  # loads {large_sprites}
+    
+    def init_second_stage(self):
+        pass
         
     # Procedure to load all spritesheets from disk in to this object
     def load_tile_spritesheets(self) -> None:

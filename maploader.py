@@ -6,8 +6,10 @@ class MapLoader:
         
         # Load all maps in to a library (dictionary)
         self.map = {}        
-        self.load_maps()
         self.game = game
+        
+    def init_second_stage(self):
+        self.load_maps()
         
     def load_maps(self) -> None:
         path = ".\\Maps\\"

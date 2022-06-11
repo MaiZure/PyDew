@@ -25,7 +25,8 @@ class Item:
         screen.blit(self.sprite[self.spr_frame], (self.x-top_left_x,self.y-top_left_y), (0,0,16,16))
     
     def render_inv_slot(self, screen, slot_num):
-        slot_pos = self.game.ui.ibar.slot_pos[slot_num]
+        top = self.game.ui.ibar.ibar_top
+        slot_pos = self.game.ui.ibar.slot_pos[top][slot_num]
         sprite = self.sprite[self.inv_frame]
         scaled_item = pygame.transform.scale(sprite,(60,60))
         screen.blit(scaled_item, (slot_pos[0],slot_pos[1]))
@@ -63,13 +64,13 @@ class Item:
 
     def move_towards_player(self) -> None:
         if self.x < self.player.x:
-            self.x += 2
+            self.x += 3
         if self.x > self.player.x:
-            self.x -= 2
+            self.x -= 3
         if self.y < self.player.y:
-            self.y += 2
+            self.y += 3
         if self.y > self.player.y:
-            self.y -= 2
+            self.y -= 3
 
 class Resource(Item):
     def __init__(self, game, type):
@@ -117,6 +118,8 @@ class ItemLoader:
         self.weapon = {}
         self.food = {}
         self.seed = {}
+        
+    def init_second_stage(self):
         self.tool["hoe"] = {
             "name": "Hoe",
             "inv_frame": [47, 54, 61, 89, 96]  # Each quality level

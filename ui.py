@@ -10,15 +10,19 @@ class UI:
         self.game = game
 
         self.ui_elements = []
-        self.ui_elements.append(Clock(game,self))
-        self.ui_elements.append(StatusBars(game,self))
-    
-        self.menu_elements = [InventoryBar(game, self)]
+        self.menu_elements = []
+        self.tiny_numbers_rect=[]
+        
+        
+        
+    def init_second_stage(self):
+        self.ui_elements.append(Clock(self.game,self))
+        self.ui_elements.append(StatusBars(self.game,self))
+        self.menu_elements.append(InventoryBar(self.game, self))
         self.ibar = self.menu_elements[0]
         
-        self.spritesheet = game.sprite.get_spritesheet("Cursors")
-        
-        self.tiny_numbers_rect=[]
+        #Get tiny inventory count numbers
+        self.spritesheet = self.game.sprite.get_spritesheet("Cursors")
         rect = pygame.Rect(368,56,50,7)
         temp = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
         temp.blit(self.spritesheet, (0,0), rect)
@@ -26,7 +30,6 @@ class UI:
         self.tiny_numbers = pygame.transform.scale(temp,self.tiny_numbers.get_rect().size)
         #self.tiny_numbers.blit(self.spritesheet, (0,0), rect)
         for i in range(10): self.tiny_numbers_rect.append(pygame.Rect(i*15,0,15,21))
-        
         
         
     def tick(self):

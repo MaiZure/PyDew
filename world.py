@@ -36,11 +36,9 @@ class World:
         self.npcs = []
         self.lights = []
         self.ambient_light = (0,0,0) #(0,0,0) - day/clear, (180,150, 0) - night, (50,50,0) - day/raining
-        self.darkening = True
+        self.darkening = False
         
         self.items = {}
-        for key in game.map.map:
-            self.items[key] = []
         
         self.bg_tile_update_reel = [[] for a in range(60)]   # Maintan 60 frames
         self.bldg_tile_update_reel = [[] for a in range(60)]
@@ -57,6 +55,10 @@ class World:
         self.outdoors = True
         self.night = False
         
+    def init_second_stage(self):
+        for key in self.game.map.map:
+            self.items[key] = []
+            
         self.init_map("town") #normally forest
         
     def init_map(self, map_name) -> bool:
@@ -123,6 +125,7 @@ class World:
         self.embed_map_animations(self.bg_layer, self.bg_tile_update_reel)
         self.embed_map_animations(self.bldg_layer, self.bldg_tile_update_reel)
         
+        print(self.game.sprite.tiles.keys())
         self.init_npcs()
     
     def create_wood(self):
@@ -281,8 +284,8 @@ class World:
     
     def update_ambient(self):
         # disable transitions for now
-        #if self.outdoors: self.ambient_light = (0,0,0)
-        #return
+        if self.outdoors: self.ambient_light = (0,0,0)
+        return
         r = self.ambient_light[0]; g=self.ambient_light[1]; b=self.ambient_light[2]
         if self.darkening:
             r = min(180, r + 1)

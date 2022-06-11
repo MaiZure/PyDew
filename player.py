@@ -6,34 +6,16 @@ class Player:
         print("Initializing Player")
         self.game = game
         
-        self.name = random.choice(list(game.sprite.character_sheet.keys()))
-        self.sprite = game.sprite.get_tiles("farmer_base")
-        self.hair = game.sprite.get_tiles("hairstyles")
-        self.shirt = game.sprite.get_tiles("shirts")
-        self.pants_sheet = game.sprite.get_tiles("pants")
+        
         self.hair_num = 3
         self.shirt_num = 8
         self.pants_num = 0
         self.skin_num = 23
         self.inventory = [None] * 36
         self.inventory_limit = 12
-        #self.inventory[0] = Tool(game, "hoe")
-        #self.inventory[1] = Tool(game, "pickaxe")
-        #self.inventory[2] = Tool(game, "axe")
-        #self.inventory[3] = Tool(game, "wateringcan")
-        #self.inventory[4] = Weapon(game, "galaxysword")
-        
-        self.generate_pants()
         self.hair_color = (192,32,32)
         self.pants_color = (0,0,224)
-        self.skin = self.game.sprite.sheet["skinColors"][0]
-        self.skin_color = self.skin.get_at((2,self.skin_num))[:3]
-        
-        self.pants = game.sprite.colorize_tiles(self.pants, self.pants_color)
-        self.hair = game.sprite.colorize_tiles(self.hair, self.hair_color)
-        self.sprite = game.sprite.colorize_tiles(self.sprite, self.skin_color)
-        
-        
+               
         self.gx = 64  #78
         self.gy = 67  #16
         self.x = self.gx*16 
@@ -64,6 +46,26 @@ class Player:
         self.hair_frame_off = 0
     
     # Because pants are weird....
+    
+    def init_second_stage(self):
+        self.name = random.choice(list(self.game.sprite.character_sheet.keys()))
+        self.sprite = self.game.sprite.get_tiles("farmer_base")
+        self.hair = self.game.sprite.get_tiles("hairstyles")
+        self.shirt = self.game.sprite.get_tiles("shirts")
+        self.pants_sheet = self.game.sprite.get_tiles("pants")
+        self.skin = self.game.sprite.sheet["skinColors"][0]
+        self.skin_color = self.skin.get_at((2,self.skin_num))[:3]
+        self.generate_pants() ## here?
+        self.pants = self.game.sprite.colorize_tiles(self.pants, self.pants_color)
+        self.hair = self.game.sprite.colorize_tiles(self.hair, self.hair_color)
+        self.sprite = self.game.sprite.colorize_tiles(self.sprite, self.skin_color)
+    
+        self.inventory[0] = Tool(self.game, "hoe")
+        self.inventory[1] = Tool(self.game, "pickaxe")
+        self.inventory[2] = Tool(self.game, "axe")
+        self.inventory[3] = Tool(self.game, "wateringcan")
+        self.inventory[4] = Weapon(self.game, "galaxysword")
+        
     def generate_pants(self):
         self.pants = pygame.Surface((288,672),pygame.SRCALPHA) ## TODO - Get first set of pants 192,672 of whole sheet
         self.pants.blit(self.pants_sheet[self.pants_num], (0,0),(0,0,192,672))

@@ -16,7 +16,7 @@ from item import ItemLoader
 class PyDew:
     def __init__(self):
         pygame.init()
-        self.version = "0.1.4.38"
+        self.version = "0.1.4.40"
         print("Hello PyDew "+str(self.version))
         self.config = Config()        
         self.final_screen = pygame.display.set_mode((self.config.screen_width, 
@@ -59,6 +59,15 @@ class PyDew:
         self.paused = False
         
         self.run = False
+        
+        self.sprite.init_second_stage()
+        self.map.init_second_stage()
+        self.item.init_second_stage()
+        self.world.init_second_stage()
+        self.player.init_second_stage()
+        self.ui.init_second_stage()
+        self.audio.init_second_stage()
+        self.mouse.init_second_stage()
         
         
     #do some more start stuff - like a main menu

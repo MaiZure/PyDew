@@ -8,6 +8,9 @@ class MouseHandler:
         self.game = game
         self.ui = ui
         
+    def init_second_stage(self):
+        pass
+        
     def handle_input(self):
         pass
         

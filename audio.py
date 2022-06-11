@@ -8,3 +8,6 @@ class Audio:
     pygame.mixer.init()
     
     pygame.mixer.Sound((".\\Music\\animalstore.wav")).play(-1)
+    
+    def init_second_stage(self):
+        pass
