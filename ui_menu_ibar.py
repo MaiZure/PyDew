@@ -18,7 +18,7 @@ class InventoryBar:
         self.ibar_enabled = True
         
         self.ibar_top = False
-        self.ibar_sprite_x = int(self.game.menu_surface.get_width()/2- self.ibar_sprite.get_width()/2)
+        self.ibar_sprite_x = int(self.game.menu_surface.get_width()/2 - self.ibar_sprite.get_width()/2)
         self.ibar_sprite_y_bottom = self.game.menu_surface.get_height() - self.ibar_sprite.get_height() - 2
         self.ibar_sprite_y_top = 2
         self.ibar_sprite_y = self.ibar_sprite_y_bottom

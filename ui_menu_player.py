@@ -9,21 +9,95 @@ class PlayerMenu:
         
         self.spritesheet = ui.spritesheet
         self.scaling = 4
+        self.menu_top_left_x = 0
+        self.menu_top_left_y = 0
+        self.active_menu = 0
         
-        self.menu_sprite = pygame.Surface((800,96), pygame.SRCALPHA).convert_alpha()        
-        self.menu_sprite_x = int(self.game.menu_surface.get_width()/2- self.menu_sprite.get_width()/2)
-        self.menu_sprite_y_top = 2
+        self.inventory_menu_sprite = pygame.Surface((self.game.menu_surface.get_width(),self.game.menu_surface.get_height()), pygame.SRCALPHA).convert_alpha()
+        #self.menu_sprite_x = int(self.game.menu_surface.get_width()/2- self.menu_sprite.get_width()/2)
+        #self.menu_sprite_y_top = 2
         
         self.tile_width = self.scaling*16
         self.menu_clickrect = pygame.Rect(0,0,0,0)
         
+        self.menu = None
         self.generate_menus()
         
             
     def generate_menus(self):
-        pass
+        self.generate_inventory_menu()
+        self.generate_skill_menu()
+        self.generate_relationship_menu()
+        self.generate_craft_menu()
+        self.generate_item_menu()
+        self.generate_settings_menu()
+        self.generate_quit_menu()
+        
+    def generate_inventory_menu(self):
+        frame_width = 10
+        frame_height = 7
+        mid_point = int(frame_height/2)
+        self.menu = self.generate_menu_frame(frame_width,frame_height)
+        self.menu_top_left_x = int(self.game.menu_surface.get_width()/2 - self.menu.get_width()/2)
+        self.menu_top_left_y = int(self.game.menu_surface.get_height()/2 - self.menu.get_height()/2)
+        
+        self.menu.blit(self.spritesheet[4],(0,mid_point*64))
+        self.menu.blit(self.spritesheet[7],(frame_width*64-64,mid_point*64))
+        
+        for i in range(1,frame_width-1):
+            self.menu.blit(self.spritesheet[6],(i*64,mid_point*64))
+        
         
     
+    def generate_skill_menu(self):
+        pass
+    
+    def generate_relationship_menu(self):
+        pass
+        
+    def generate_craft_menu(self):
+        pass
+        
+    def generate_item_menu(self):
+        pass
+        
+    def generate_settings_menu(self):
+        pass
+        
+    def generate_quit_menu(self):
+        pass
+        
+    def generate_menu_frame(self,x,y):
+        w = x * 64
+        h = y * 64
+        menu = pygame.Surface((w,h), pygame.SRCALPHA).convert_alpha()
+        top_left_frame = 0
+        top_right_frame = 3
+        bottom_left_frame = 12
+        bottom_right_frame = 15
+        horizonal_top_frame = 2
+        horizonal_bottom_frame = 14
+        vertical_left_frame = 8
+        vertical_right_frame = 11
+        bg_frame = 9
+        
+        menu.blit(pygame.transform.scale(self.spritesheet[bg_frame],(w-64,h-64)), (32,32))
+        menu.blit(self.spritesheet[top_left_frame],(0,0))
+        menu.blit(self.spritesheet[bottom_left_frame],(0,h-64))
+        menu.blit(self.spritesheet[top_right_frame],(w-64,0))
+        menu.blit(self.spritesheet[bottom_right_frame],(w-64,h-64))
+        
+        
+        for i in range(1,x-1):
+            menu.blit(self.spritesheet[horizonal_top_frame],(i*64,0))
+            menu.blit(self.spritesheet[horizonal_bottom_frame],(i*64,h-64))
+            if i < y-1:
+                menu.blit(self.spritesheet[vertical_left_frame],(0,i*64))
+                menu.blit(self.spritesheet[vertical_right_frame],(w-64,i*64))
+            
+        return menu
+        
+        
     def handle_mouse(self, event):
         if event.button == 1:
             pass
@@ -34,6 +108,8 @@ class PlayerMenu:
     def render(self, screen):
         if not self.ui.player_menu_enabled:
             return
+            
+        screen.blit(self.menu,(self.menu_top_left_x,self.menu_top_left_y))
     
     def update_clickrect(self):
         pass
