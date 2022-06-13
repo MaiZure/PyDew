@@ -12,14 +12,16 @@ from audio import Audio
 from ui import UI
 from mouse import MouseHandler
 from item import ItemLoader
+from gamedata import GameData
 
 
 class PyDew:
     def __init__(self):
         pygame.init()
-        self.version = "0.1.5.42"
+        self.version = "0.1.5.43"
         print("Hello PyDew "+str(self.version))
         self.config = Config()
+        self.data = GameData()
         self.final_screen = pygame.display.set_mode((self.config.screen_width, 
                                                self.config.screen_height),
                                                pygame.HWSURFACE|pygame.DOUBLEBUF)
@@ -52,7 +54,7 @@ class PyDew:
         self.map = MapLoader(self)
         self.font = FontLoader(self)
         self.item = ItemLoader(self)
-        self.world = World(self)
+        self.world = World(self)    
         self.player = Player(self)
         self.ui = UI(self)
         self.audio = Audio(self)

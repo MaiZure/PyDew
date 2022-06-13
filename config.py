@@ -13,3 +13,4 @@ class Config:
         self.base_display_tile_width = int(self.base_display_width/16)
         self.base_display_tile_height = int(self.base_display_height/16)
         
+        

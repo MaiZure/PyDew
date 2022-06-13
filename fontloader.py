@@ -91,18 +91,23 @@ class FontLoader:
             surf.blit(self.spritesheet[0], (current_x, current_y), rect)
             current_x += max(rect[2], crop_wid) + self.get_char_kerning(char)["x"]
         
+        colored_text = surf.copy()
+        shadow_text = surf.copy()
+        
         # Scale
         if scaling_cut > 1:
             surf = pygame.transform.scale(surf, (int(surf.get_width()/scaling_cut),int(surf.get_height()/scaling_cut)))
         
-        # Colorize
+        # Colorize Black
         color_mask = pygame.Surface(surf.get_size()).convert_alpha()
         color_mask.fill(self.current_color)
-        surf.blit(color_mask, (0,0), special_flags = pygame.BLEND_RGBA_MIN)
-        
-        # Main Draw
-        screen.blit(surf, (pos[0], pos[1]))
+        colored_text.blit(color_mask, (0,0), special_flags = pygame.BLEND_RGBA_MIN)
         
         # Shadow
-        surf.set_alpha(64)
-        screen.blit(surf, (pos[0]-1, pos[1]+1))
+        color_mask.fill((210,150,115))
+        shadow_text.blit(color_mask, (0,0), special_flags = pygame.BLEND_RGBA_MIN)
+        
+        
+        # Main Draw
+        screen.blit(shadow_text, (pos[0]-2, pos[1]+2))
+        screen.blit(colored_text, (pos[0], pos[1]))
