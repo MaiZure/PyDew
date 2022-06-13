@@ -40,14 +40,15 @@ class PlayerMenu:
         self.menu = self.generate_menu_frame(frame_width,frame_height)
         self.menu_top_left_x = int(self.game.menu_surface.get_width()/2 - self.menu.get_width()/2)
         self.menu_top_left_y = int(self.game.menu_surface.get_height()/2 - self.menu.get_height()/2)
-        
+              
         self.menu.blit(self.spritesheet[4],(0,mid_point*64))
         self.menu.blit(self.spritesheet[7],(frame_width*64-64,mid_point*64))
         
         for i in range(1,frame_width-1):
             self.menu.blit(self.spritesheet[6],(i*64,mid_point*64))
         
-        
+        self.game.font.set_font("spritefont1")
+        self.game.font.draw_text("Hello World", self.menu, (36, 36))
     
     def generate_skill_menu(self):
         pass

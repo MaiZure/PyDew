@@ -6,6 +6,7 @@ from player import Player
 from config import Config
 from spriteloader import SpriteLoader
 from maploader import MapLoader
+from fontloader import FontLoader
 from mapobject import MapObject
 from audio import Audio
 from ui import UI
@@ -16,7 +17,7 @@ from item import ItemLoader
 class PyDew:
     def __init__(self):
         pygame.init()
-        self.version = "0.1.4.41"
+        self.version = "0.1.5.42"
         print("Hello PyDew "+str(self.version))
         self.config = Config()
         self.final_screen = pygame.display.set_mode((self.config.screen_width, 
@@ -49,6 +50,7 @@ class PyDew:
         
         self.sprite = SpriteLoader(self)
         self.map = MapLoader(self)
+        self.font = FontLoader(self)
         self.item = ItemLoader(self)
         self.world = World(self)
         self.player = Player(self)
@@ -62,6 +64,7 @@ class PyDew:
         
         self.sprite.init_second_stage()
         self.map.init_second_stage()
+        self.font.init_second_stage()
         self.item.init_second_stage()
         self.world.init_second_stage()
         self.player.init_second_stage()
@@ -124,11 +127,12 @@ class PyDew:
 
     # Draw some stuff
     def render(self):
-        self.world.prerender(self.bg_surface)
-        self.world.render_back(self.bg_surface)
-        self.world.render_mid(self.mid_surface)
-        self.world.render_front(self.fg_surface)
-        self.ui.ui_render(self.ui_surface)        
+        if not self.paused:
+            self.world.prerender(self.bg_surface)
+            self.world.render_back(self.bg_surface)
+            self.world.render_mid(self.mid_surface)
+            self.world.render_front(self.fg_surface)
+            self.ui.ui_render(self.ui_surface)        
         self.ui.menu_render(self.menu_surface)
 
         for light in self.world.lights:

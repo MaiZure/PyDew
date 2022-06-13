@@ -11,6 +11,7 @@ class SpriteLoader:
         self.sheet = {}
         self.character_sheet = {}
         self.player_sheet = {}
+        self.font = {}
         self.tiles = {}
         self.large_sprites = {}
         
@@ -20,8 +21,10 @@ class SpriteLoader:
         self.load_player_spritesheets()
         self.pc_index = self.index_sprite(self.player_sheet["farmer_base"][0])
         
+        self.load_font_spritesheets()
+        
         #Put all character sheets in base sheets
-        self.sheet = self.sheet | self.character_sheet | self.player_sheet
+        self.sheet = self.sheet | self.character_sheet | self.player_sheet | self.font
         
         self.build_tiles()  # loads {tiles}
         self.build_large_sprites()  # loads {large_sprites}
@@ -57,7 +60,17 @@ class SpriteLoader:
         self.player_sheet["shirts"] = (pygame.image.load(open(path+"shirts.png")).convert_alpha(), 8, 32)
         self.player_sheet["pants"] = (pygame.image.load(open(path+"pants.png")).convert_alpha(), 192, 672)
         self.player_sheet["skinColors"] = (pygame.image.load(open(path+"skinColors.png")).convert_alpha(), 3, 24)
-    
+        
+    def load_font_spritesheets(self) -> None:
+        # Each sheet contains a 3-tuple: (image, tile_width, tile_height)
+        # Font sheets are loaded as a single tile since processing requires custom treatment
+        path = ".\\Font\\"
+        self.font["spritefont1"] = (pygame.image.load(open(path+"SpriteFont1.png")).convert_alpha(), 512, 272)
+        self.font["smallfont"] = (pygame.image.load(open(path+"SmallFont.png")).convert_alpha(), 256, 260)
+        self.font["tinyfont"] = (pygame.image.load(open(path+"tinyFont.png")).convert_alpha(), 512, 196)
+        self.font["tinyfontborder"] = (pygame.image.load(open(path+"tinyFontBorder.png")).convert_alpha(), 512, 200)
+
+
     # Build the sprite index for player body. Needs 'farmer_base' and 'skinColors' loaded
     def index_sprite(self, surf):
         # Uses the main spritesheet including all player images (no tiles)
@@ -131,7 +144,7 @@ class SpriteLoader:
         sheet_height = spritesheet.get_height()
         tile_width = self.get_spritesheet_tile_width(name)
         tile_height = self.get_spritesheet_tile_height(name)
-        
+   
         # Loop through the sprite sheet and tilize
         for column in range(int(sheet_height/tile_height)):
             for row in range(int(sheet_width/tile_width)):
@@ -139,7 +152,7 @@ class SpriteLoader:
                 new_tile = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
                 new_tile.blit(spritesheet, (0,0), rect)
                 tiles.append(new_tile)
-                
+
         return tiles       
         
     def get_large_sprite_origin(self,name) -> tuple:

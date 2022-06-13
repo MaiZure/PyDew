@@ -14,10 +14,14 @@ class Clock:
         self.clock_sprite = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
         self.clock_sprite.blit(self.spritesheet, (0,0), rect)
         self.clock_sprite_x = self.game.config.base_display_width - self.clock_sprite.get_width() - 2
-
+        self.clock_sprite_y = 2
+        self.time_x = self.clock_sprite_x + 16
+        self.time_y = self.clock_sprite_y + 4
     
     def tick(self):
         pass
     
     def render(self, screen):
-        screen.blit(self.clock_sprite, (self.clock_sprite_x,2))
+        screen.blit(self.clock_sprite, (self.clock_sprite_x, self.clock_sprite_y))
+        
+        
