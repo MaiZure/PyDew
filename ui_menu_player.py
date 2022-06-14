@@ -8,6 +8,8 @@ class PlayerMenu:
         self.ui = ui
         
         self.spritesheet = ui.spritesheet
+        self.tabs = self.game.sprite.get_tiles("Cursors")[1012:1020]
+        self.tabs = self.game.sprite.rescale_tiles(self.tabs,4)
         self.scaling = 4
         self.menu_top_left_x = 0
         self.menu_top_left_y = 0
@@ -51,13 +53,17 @@ class PlayerMenu:
         # Inventory Blocks
         for i in range(12):
             inv_sprite = 10
-            self.menu.blit(self.spritesheet[inv_sprite],(64+i*64,56))
+            self.menu.blit(self.spritesheet[inv_sprite],(64+i*64,52))
             
             if self.game.player.inventory_limit < 24: inv_sprite = 57
-            self.menu.blit(self.spritesheet[inv_sprite],(64+i*64,136))
+            self.menu.blit(self.spritesheet[inv_sprite],(64+i*64,132))
             
             if self.game.player.inventory_limit < 36: inv_sprite = 57
-            self.menu.blit(self.spritesheet[inv_sprite],(64+i*64,200))
+            self.menu.blit(self.spritesheet[inv_sprite],(64+i*64,196))
+        
+        # Test tabs
+        #for i in range(8):
+        #    self.menu.blit(self.tabs[i],(128+i*self.tabs[i].get_size()[0],360))
             
         # Text
         self.game.font.set_font("spritefont1")

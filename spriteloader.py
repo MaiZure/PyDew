@@ -122,7 +122,7 @@ class SpriteLoader:
                 self.tiles[sheet] = self.get_spritesheet_tiles(sheet)
     
     def get_tiles(self, name) -> list:
-        return self.tiles[name]
+        return self.tiles[name]       
         
     # Get the spritesheet from the library
     def get_spritesheet(self, name) -> pygame.image:
@@ -153,7 +153,15 @@ class SpriteLoader:
                 new_tile.blit(spritesheet, (0,0), rect)
                 tiles.append(new_tile)
 
-        return tiles       
+        return tiles
+        
+    def rescale_tiles(self, tiles, factor) -> list:
+        output_tiles = []
+        for tile in tiles:
+            base_size = tile.get_size()
+            new_tile = pygame.transform.scale(tile, (int(base_size[0]*factor),int(base_size[0]*factor)))
+            output_tiles.append(new_tile)
+        return output_tiles
         
     def get_large_sprite_origin(self,name) -> tuple:
         return self.large_sprites[name]["sprite_origin"]

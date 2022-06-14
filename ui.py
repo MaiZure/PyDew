@@ -16,9 +16,6 @@ class UI:
         self.player_menu_enabled = False
         self.ibar = None
         
-        
-        
-        
     def init_second_stage(self):
         self.spritesheet = self.game.sprite.get_tiles("MenuTiles")
         self.ui_elements.append(Clock(self.game,self))
