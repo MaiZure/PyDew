@@ -34,8 +34,8 @@ class PlayerMenu:
         self.generate_quit_menu()
         
     def generate_inventory_menu(self):
-        frame_width = 10
-        frame_height = 7
+        frame_width = 14
+        frame_height = 9
         mid_point = int(frame_height/2)
         self.menu = self.generate_menu_frame(frame_width,frame_height)
         self.menu_top_left_x = int(self.game.menu_surface.get_width()/2 - self.menu.get_width()/2)
@@ -44,11 +44,24 @@ class PlayerMenu:
         self.menu.blit(self.spritesheet[4],(0,mid_point*64))
         self.menu.blit(self.spritesheet[7],(frame_width*64-64,mid_point*64))
         
+        # Cross Bar
         for i in range(1,frame_width-1):
             self.menu.blit(self.spritesheet[6],(i*64,mid_point*64))
         
+        # Inventory Blocks
+        for i in range(12):
+            inv_sprite = 10
+            self.menu.blit(self.spritesheet[inv_sprite],(64+i*64,56))
+            
+            if self.game.player.inventory_limit < 24: inv_sprite = 57
+            self.menu.blit(self.spritesheet[inv_sprite],(64+i*64,136))
+            
+            if self.game.player.inventory_limit < 36: inv_sprite = 57
+            self.menu.blit(self.spritesheet[inv_sprite],(64+i*64,200))
+            
+        # Text
         self.game.font.set_font("spritefont1")
-        self.game.font.draw_text("Hello World", self.menu, (36, 36))
+        self.game.font.draw_text(self.game.data.farm_name+" Farm", self.menu, (448, 324))
     
     def generate_skill_menu(self):
         pass
