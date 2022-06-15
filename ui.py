@@ -14,15 +14,24 @@ class UI:
         self.menu_elements = []
         self.tiny_numbers_rect=[]
         self.player_menu_enabled = False
-        self.ibar = None
+        #self.ibar = None
         
+    @property
+    def ibar(self): return self.menu_elements[0]
+    @property
+    def player_menu(self): return self.menu_elements[1]
+    @property
+    def clock(self): return self.ui_elements[0]
+    @property
+    def statusbars(self): return self.ui_elements[1]
+    
     def init_second_stage(self):
         self.spritesheet = self.game.sprite.get_tiles("MenuTiles")
         self.ui_elements.append(Clock(self.game,self))
         self.ui_elements.append(StatusBars(self.game,self))
         self.menu_elements.append(InventoryBar(self.game, self))
         self.menu_elements.append(PlayerMenu(self.game, self))
-        self.ibar = self.menu_elements[0]
+        #self.ibar = self.menu_elements[0]
         
         #Get tiny inventory count numbers
         self.spritesheet = self.game.sprite.get_spritesheet("Cursors")

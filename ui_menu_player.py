@@ -137,9 +137,12 @@ class PlayerMenu:
         return menu
         
         
-    def handle_mouse(self, event):
+    def handle_input(self, event):
+        pos = pygame.mouse.get_pos()
         if event.button == 1:
-            pass
+            if self.tabs_clickrect.collidepoint(pos):
+                print("Tabs clicked!")
+                return
         
     def tick(self):
         pass

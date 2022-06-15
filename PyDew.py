@@ -18,7 +18,7 @@ from gamedata import GameData
 class PyDew:
     def __init__(self):
         pygame.init()
-        self.version = "0.1.5.46"
+        self.version = "0.1.5.47"
         print("Hello PyDew "+str(self.version))
         self.config = Config()
         self.data = GameData()
@@ -111,12 +111,7 @@ class PyDew:
                 if e.key == pygame.K_ESCAPE:
                     self.ui.toggle_player_menu()
             if e.type == pygame.MOUSEBUTTONDOWN:
-                pos = pygame.mouse.get_pos()
-                print("Mouse click at "+str(pos))
-                if e.button == 1 & self.ui.ibar.ibar_clickrect.collidepoint(pos):
-                    self.ui.ibar.handle_mouse(e)    # Move this elsewhere (not all left click goes to ibar
-                if e.button == 4 or e.button == 5:  # Mouse wheel up/down
-                    self.ui.ibar.handle_mouse(e)
+                self.mouse.handle_input(e)
         keys = pygame.key.get_pressed()
 
         if not self.paused:
