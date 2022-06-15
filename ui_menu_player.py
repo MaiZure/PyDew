@@ -14,19 +14,18 @@ class PlayerMenu:
         self.menu_top_left_x = 0
         self.menu_top_left_y = 0
         self.active_menu = 0
+        self.tab_bar = None
         
         self.inventory_menu_sprite = pygame.Surface((self.game.menu_surface.get_width(),self.game.menu_surface.get_height()), pygame.SRCALPHA).convert_alpha()
-        #self.menu_sprite_x = int(self.game.menu_surface.get_width()/2- self.menu_sprite.get_width()/2)
-        #self.menu_sprite_y_top = 2
         
         self.tile_width = self.scaling*16
         self.menu_clickrect = pygame.Rect(0,0,0,0)
         
         self.menu = None
-        self.generate_menus()
-        
+        self.generate_menus() 
             
     def generate_menus(self):
+        self.generate_menu_tabs()
         self.generate_inventory_menu()
         self.generate_skill_menu()
         self.generate_relationship_menu()
@@ -34,6 +33,15 @@ class PlayerMenu:
         self.generate_item_menu()
         self.generate_settings_menu()
         self.generate_quit_menu()
+        
+    def generate_menu_tabs(self):
+        # BAD - Tabs need to be individual
+        count = len(self.tabs)
+        tab_width = self.tabs[0].get_width()
+        size = (tab_width*count,self.tabs[0].get_height())
+        self.tab_bar = pygame.Surface(size,pygame.SRCALPHA)
+        for i in range(count):
+            self.tab_bar.blit(self.tabs[i],(i*tab_width,0))      
         
     def generate_inventory_menu(self):
         frame_width = 14
@@ -59,11 +67,7 @@ class PlayerMenu:
             self.menu.blit(self.spritesheet[inv_sprite],(64+i*64,132))
             
             if self.game.player.inventory_limit < 36: inv_sprite = 57
-            self.menu.blit(self.spritesheet[inv_sprite],(64+i*64,196))
-        
-        # Test tabs
-        #for i in range(8):
-        #    self.menu.blit(self.tabs[i],(128+i*self.tabs[i].get_size()[0],360))
+            self.menu.blit(self.spritesheet[inv_sprite],(64+i*64,196)) 
             
         # Text
         self.game.font.set_font("spritefont1")
@@ -130,6 +134,7 @@ class PlayerMenu:
             return
             
         screen.blit(self.menu,(self.menu_top_left_x,self.menu_top_left_y))
+        screen.blit(self.tab_bar,(self.menu_top_left_x+72,self.menu_top_left_y-48)) #-40 for down tab
     
     def update_clickrect(self):
         pass
