@@ -7,22 +7,36 @@ class PlayerMenu:
         self.game = game
         self.ui = ui
         
+        self.scaling = 4
         self.spritesheet = ui.spritesheet
         self.tabs = self.game.sprite.get_tiles("Cursors")[1012:1020]
-        self.tabs = self.game.sprite.rescale_tiles(self.tabs,4)
-        self.scaling = 4
+        self.tabs = self.game.sprite.rescale_tiles(self.tabs,self.scaling)
         self.menu_top_left_x = 0
         self.menu_top_left_y = 0
+        
         self.active_menu = 0
         self.tab_bar = None
+        self.tab_selected = 0
         
         self.inventory_menu_sprite = pygame.Surface((self.game.menu_surface.get_width(),self.game.menu_surface.get_height()), pygame.SRCALPHA).convert_alpha()
         
         self.tile_width = self.scaling*16
         self.menu_clickrect = pygame.Rect(0,0,0,0)
+        self.tabs_clickrect = pygame.Rect(0,0,0,0)
         
         self.menu = None
         self.generate_menus() 
+    
+    @property
+    def tabs_top_left_x(self): return self.menu_top_left_x+72
+    @property
+    def tabs_top_left_y(self): return self.menu_top_left_y-48
+    
+    def recalc_tab_clickrect(self):
+        self.tabs_clickrect = pygame.Rect(self.tabs_top_left_x,
+            self.tabs_top_left_y,
+            self.tabs[0].get_width()*len(self.tabs),
+            self.tabs[0].get_height())
             
     def generate_menus(self):
         self.generate_menu_tabs()
@@ -33,15 +47,16 @@ class PlayerMenu:
         self.generate_item_menu()
         self.generate_settings_menu()
         self.generate_quit_menu()
+        self.recalc_tab_clickrect()
         
     def generate_menu_tabs(self):
-        # BAD - Tabs need to be individual
         count = len(self.tabs)
         tab_width = self.tabs[0].get_width()
-        size = (tab_width*count,self.tabs[0].get_height())
+        size = (tab_width*count,self.tabs[0].get_height()+8) #+8 for selected tab
         self.tab_bar = pygame.Surface(size,pygame.SRCALPHA)
         for i in range(count):
-            self.tab_bar.blit(self.tabs[i],(i*tab_width,0))      
+            yoff = 8 if i == self.tab_selected else 0
+            self.tab_bar.blit(self.tabs[i],(i*tab_width,yoff))
         
     def generate_inventory_menu(self):
         frame_width = 14
@@ -134,7 +149,7 @@ class PlayerMenu:
             return
             
         screen.blit(self.menu,(self.menu_top_left_x,self.menu_top_left_y))
-        screen.blit(self.tab_bar,(self.menu_top_left_x+72,self.menu_top_left_y-48)) #-40 for down tab
+        screen.blit(self.tab_bar,(self.tabs_top_left_x,self.tabs_top_left_y))
     
     def update_clickrect(self):
         pass
