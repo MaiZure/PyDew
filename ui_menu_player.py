@@ -19,6 +19,7 @@ class PlayerMenu:
         self.tab_selected = 0
         
         self.inventory_menu_sprite = pygame.Surface((self.game.menu_surface.get_width(),self.game.menu_surface.get_height()), pygame.SRCALPHA).convert_alpha()
+        self.skill_menu_sprite = pygame.Surface((self.game.menu_surface.get_width(),self.game.menu_surface.get_height()), pygame.SRCALPHA).convert_alpha()
         
         self.tile_width = self.scaling*16
         self.menu_clickrect = pygame.Rect(0,0,0,0)
@@ -31,8 +32,10 @@ class PlayerMenu:
     def tabs_top_left_x(self): return self.menu_top_left_x+72
     @property
     def tabs_top_left_y(self): return self.menu_top_left_y-48
+    @property
+    def tab_width(self): return self.tabs[0].get_width()
     
-    def recalc_tab_clickrect(self):
+    def update_tab_clickrect(self):
         self.tabs_clickrect = pygame.Rect(self.tabs_top_left_x,
             self.tabs_top_left_y,
             self.tabs[0].get_width()*len(self.tabs),
@@ -41,13 +44,16 @@ class PlayerMenu:
     def generate_menus(self):
         self.generate_menu_tabs()
         self.generate_inventory_menu()
-        self.generate_skill_menu()
-        self.generate_relationship_menu()
-        self.generate_craft_menu()
-        self.generate_item_menu()
-        self.generate_settings_menu()
-        self.generate_quit_menu()
-        self.recalc_tab_clickrect()
+        
+        # Draw them all to their own surfaces then just swap...eventually
+        #self.generate_skill_menu()
+        #self.generate_map_menu()
+        #self.generate_relationship_menu()
+        #self.generate_craft_menu()
+        #self.generate_item_menu()
+        #self.generate_option_menu()
+        #self.generate_quit_menu()
+        self.update_tab_clickrect()
         
     def generate_menu_tabs(self):
         count = len(self.tabs)
@@ -57,6 +63,24 @@ class PlayerMenu:
         for i in range(count):
             yoff = 8 if i == self.tab_selected else 0
             self.tab_bar.blit(self.tabs[i],(i*tab_width,yoff))
+            
+    def change_tab(self, new_tab):
+        if self.tab_selected == new_tab:
+            return
+            
+        # No need to regenerate? Just swap out display surface
+        if new_tab == 0: self.generate_inventory_menu()
+        if new_tab == 1: self.generate_skill_menu()
+        if new_tab == 2: self.generate_relationship_menu()
+        if new_tab == 3: self.generate_map_menu()
+        if new_tab == 4: self.generate_craft_menu()
+        if new_tab == 5: self.generate_item_menu()
+        if new_tab == 6: self.generate_option_menu()
+        if new_tab == 7: self.generate_quit_menu()
+        
+        self.tab_selected = new_tab
+               
+        self.generate_menu_tabs()
         
     def generate_inventory_menu(self):
         frame_width = 14
@@ -65,11 +89,10 @@ class PlayerMenu:
         self.menu = self.generate_menu_frame(frame_width,frame_height)
         self.menu_top_left_x = int(self.game.menu_surface.get_width()/2 - self.menu.get_width()/2)
         self.menu_top_left_y = int(self.game.menu_surface.get_height()/2 - self.menu.get_height()/2)
-              
+
+        # Cross Bar
         self.menu.blit(self.spritesheet[4],(0,mid_point*64))
         self.menu.blit(self.spritesheet[7],(frame_width*64-64,mid_point*64))
-        
-        # Cross Bar
         for i in range(1,frame_width-1):
             self.menu.blit(self.spritesheet[6],(i*64,mid_point*64))
         
@@ -89,18 +112,27 @@ class PlayerMenu:
         self.game.font.draw_text(self.game.data.farm_name+" Farm", self.menu, (448, 324))
     
     def generate_skill_menu(self):
-        pass
+        frame_width = 14
+        frame_height = 9
+        mid_point = int(frame_height/2)
+        self.menu = self.generate_menu_frame(frame_width,frame_height)
     
     def generate_relationship_menu(self):
-        pass
+        frame_width = 15
+        frame_height = 9
+        mid_point = int(frame_height/2)
+        self.menu = self.generate_menu_frame(frame_width,frame_height)
         
     def generate_craft_menu(self):
+        pass
+    
+    def generate_map_menu(self):
         pass
         
     def generate_item_menu(self):
         pass
         
-    def generate_settings_menu(self):
+    def generate_option_menu(self):
         pass
         
     def generate_quit_menu(self):
@@ -141,7 +173,8 @@ class PlayerMenu:
         pos = pygame.mouse.get_pos()
         if event.button == 1:
             if self.tabs_clickrect.collidepoint(pos):
-                print("Tabs clicked!")
+                new_tab = int((pos[0]-self.tabs_top_left_x)/self.tab_width)
+                self.change_tab(new_tab)
                 return
         
     def tick(self):
@@ -154,5 +187,3 @@ class PlayerMenu:
         screen.blit(self.menu,(self.menu_top_left_x,self.menu_top_left_y))
         screen.blit(self.tab_bar,(self.tabs_top_left_x,self.tabs_top_left_y))
     
-    def update_clickrect(self):
-        pass
