@@ -14,6 +14,9 @@ class PlayerMenu:
         self.menu_top_left_x = 0
         self.menu_top_left_y = 0
         
+        self.bg = []
+        self.bg.append(self.game.sprite.get_tiles("daybg")[0])
+        
         self.active_menu = 0
         self.tab_bar = None
         self.tab_selected = 0
@@ -45,7 +48,7 @@ class PlayerMenu:
         self.generate_menu_tabs()
         self.generate_inventory_menu()
         
-        # Draw them all to their own surfaces then just swap...eventually
+        # Draw them all to their own surfaces then just swap...eventually (maybe?)
         #self.generate_skill_menu()
         #self.generate_map_menu()
         #self.generate_relationship_menu()
@@ -107,6 +110,15 @@ class PlayerMenu:
             if self.game.player.inventory_limit < 36: inv_sprite = 57
             self.menu.blit(self.spritesheet[inv_sprite],(64+i*64,196)) 
             
+        #Player Equip Slots
+        self.menu.blit(self.spritesheet[41],(52,312))
+        self.menu.blit(self.spritesheet[41],(52,376))
+        self.menu.blit(self.spritesheet[40],(52,440))
+        self.menu.blit(self.bg[0],(124,312))
+        self.menu.blit(self.spritesheet[42],(260,312))
+        self.menu.blit(self.spritesheet[69],(260,376))
+        self.menu.blit(self.spritesheet[68],(260,440))
+            
         # Text
         self.game.font.set_font("spritefont1")
         self.game.font.draw_text(self.game.data.farm_name+" Farm", self.menu, (448, 324))
@@ -116,6 +128,10 @@ class PlayerMenu:
         frame_height = 9
         mid_point = int(frame_height/2)
         self.menu = self.generate_menu_frame(frame_width,frame_height)
+        
+    # Text
+        self.game.font.set_font("smallfont")
+        self.game.font.draw_text(self.game.data.farm_name+" Farm", self.menu, (448, 324))
     
     def generate_relationship_menu(self):
         frame_width = 15
@@ -124,19 +140,48 @@ class PlayerMenu:
         self.menu = self.generate_menu_frame(frame_width,frame_height)
         
     def generate_craft_menu(self):
-        pass
+        frame_width = 14
+        frame_height = 9
+        cross_bar = 4.5
+        self.menu = self.generate_menu_frame(frame_width,frame_height)
+        
+        # Cross Bar
+        self.menu.blit(self.spritesheet[4],(0,cross_bar*64))
+        self.menu.blit(self.spritesheet[7],(frame_width*64-64,cross_bar*64))
+        for i in range(1,frame_width-1):
+            self.menu.blit(self.spritesheet[6],(i*64,cross_bar*64))
+            
+        # Inventory Blocks
+        for i in range(12):
+            inv_sprite = 10
+            self.menu.blit(self.spritesheet[inv_sprite],(64+i*64,332))
+            
+            if self.game.player.inventory_limit < 24: inv_sprite = 57
+            self.menu.blit(self.spritesheet[inv_sprite],(64+i*64,396))
+            
+            if self.game.player.inventory_limit < 36: inv_sprite = 57
+            self.menu.blit(self.spritesheet[inv_sprite],(64+i*64,460)) 
     
     def generate_map_menu(self):
         pass
         
     def generate_item_menu(self):
-        pass
+        frame_width = 13
+        frame_height = 9
+        mid_point = int(frame_height/2)
+        self.menu = self.generate_menu_frame(frame_width,frame_height)
         
     def generate_option_menu(self):
-        pass
+        frame_width = 14
+        frame_height = 9
+        mid_point = int(frame_height/2)
+        self.menu = self.generate_menu_frame(frame_width,frame_height)
         
     def generate_quit_menu(self):
-        pass
+        frame_width = 13
+        frame_height = 9
+        mid_point = int(frame_height/2)
+        self.menu = self.generate_menu_frame(frame_width,frame_height)
         
     def generate_menu_frame(self,x,y):
         w = x * 64
