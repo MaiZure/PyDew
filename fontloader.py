@@ -75,14 +75,15 @@ class FontLoader:
             height = max(height, self.get_char_cropping(char)["height"])
         return height
         
-    def draw_text(self, str, screen, pos, scaling_cut = 1):
+    def draw_text(self, str, screen, pos, scaling_cut = 1, justify = "left"):
         chars = [c for c in str]
         width = self.get_line_width(chars)
         height = self.get_line_height(chars)
         cut = scaling_cut
         
         surf = pygame.Surface((width,height), pygame.SRCALPHA)
-        current_x, current_y = 0, 0
+        current_x = 0
+        current_y = 0
         for char in chars:
             current_y = self.get_char_cropping(char)["y"]
             char_data = self.get_char_glyph_data(char)
@@ -109,5 +110,10 @@ class FontLoader:
         
         
         # Main Draw
-        screen.blit(shadow_text, (pos[0]-2, pos[1]+2))
-        screen.blit(colored_text, (pos[0], pos[1]))
+        x = pos[0]
+        y = pos[1]
+        if justify == "right": 
+            x = pos[0]-width
+
+        screen.blit(shadow_text, (x-2, y+2))
+        screen.blit(colored_text, (x, y))

@@ -114,7 +114,7 @@ class PlayerMenu:
         self.menu.blit(self.spritesheet[41],(52,312))
         self.menu.blit(self.spritesheet[41],(52,376))
         self.menu.blit(self.spritesheet[40],(52,440))
-        self.menu.blit(self.bg[0],(124,312))
+        self.menu.blit(self.bg[0],(124,312))  # Portrait 
         self.menu.blit(self.spritesheet[42],(260,312))
         self.menu.blit(self.spritesheet[69],(260,376))
         self.menu.blit(self.spritesheet[68],(260,440))
@@ -129,9 +129,17 @@ class PlayerMenu:
         mid_point = int(frame_height/2)
         self.menu = self.generate_menu_frame(frame_width,frame_height)
         
+        
+        # Portrait
+        self.menu.blit(self.bg[0],(56,68))  
+        
     # Text
         self.game.font.set_font("smallfont")
-        self.game.font.draw_text(self.game.data.farm_name+" Farm", self.menu, (448, 324))
+        self.game.font.draw_text("Farming", self.menu, (350, 64), justify = "right")
+        self.game.font.draw_text("Mining", self.menu, (350, 116), justify = "right")
+        self.game.font.draw_text("Foraging", self.menu, (350, 168), justify = "right")
+        self.game.font.draw_text("Fishing", self.menu, (350, 220), justify = "right")
+        self.game.font.draw_text("Combat", self.menu, (350, 272), justify = "right")
     
     def generate_relationship_menu(self):
         frame_width = 15
