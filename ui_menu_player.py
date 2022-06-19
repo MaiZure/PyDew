@@ -9,6 +9,7 @@ class PlayerMenu:
         
         self.scaling = 4
         self.spritesheet = ui.spritesheet
+        self.cursors = self.game.sprite.get_spritesheet("Cursors")
         self.tabs = self.game.sprite.get_tiles("Cursors")[1012:1020]
         self.tabs = self.game.sprite.rescale_tiles(self.tabs,self.scaling)
         self.menu_top_left_x = 0
@@ -16,6 +17,43 @@ class PlayerMenu:
         
         self.bg = []
         self.bg.append(self.game.sprite.get_tiles("daybg")[0])
+        
+        rect = pygame.Rect(0, 428, 160, 10)
+        skill_symbols_sheet = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
+        skill_symbols_sheet.blit(self.cursors, (0,0), rect)
+        
+        self.skill_symbols = []
+        for i in range(16):
+            rect = pygame.Rect(i*10, 0, 10, 10)
+            surf = pygame.Surface((10,10), pygame.SRCALPHA)
+            surf.blit(skill_symbols_sheet, (0,0), rect)
+            surf = pygame.transform.scale(surf, (40,40))
+            self.skill_symbols.append(surf)
+            
+        self.pip_small = []
+        self.pip_large = []
+        
+        rect = pygame.Rect(129, 338, 7, 9)
+        surf = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
+        surf.blit(self.cursors, (0,0), rect)
+        surf = pygame.transform.scale(surf, (7*self.scaling,9*self.scaling))
+        self.pip_small.append(surf.copy())
+        surf = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
+        rect = pygame.Rect(137, 338, 7, 9)
+        surf.blit(self.cursors, (0,0), rect)
+        surf = pygame.transform.scale(surf, (7*self.scaling,9*self.scaling))
+        self.pip_small.append(surf.copy())
+        
+        rect = pygame.Rect(145, 338, 13, 9)
+        surf = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
+        surf.blit(self.cursors, (0,0), rect)
+        surf = pygame.transform.scale(surf, (13*self.scaling,9*self.scaling))
+        self.pip_large.append(surf.copy())
+        surf = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
+        rect = pygame.Rect(159, 338, 13, 9)
+        surf.blit(self.cursors, (0,0), rect)
+        surf = pygame.transform.scale(surf, (13*self.scaling,9*self.scaling))
+        self.pip_large.append(surf.copy())
         
         self.active_menu = 0
         self.tab_bar = None
@@ -121,8 +159,10 @@ class PlayerMenu:
             
         # Text
         self.game.font.set_font("spritefont1")
-        self.game.font.draw_text(self.game.data.farm_name+" Farm", self.menu, (448, 324))
-    
+        self.game.font.draw_text(self.game.data.farm_name+" Farm", self.menu, (580, 324), justify="center")
+        self.game.font.draw_text("Current Funds: 500g", self.menu, (580, 388), justify="center")
+        self.game.font.draw_text("Total Earnings: 0g", self.menu, (580, 452), justify="center")
+        
     def generate_skill_menu(self):
         frame_width = 14
         frame_height = 9
@@ -133,14 +173,48 @@ class PlayerMenu:
         # Portrait
         self.menu.blit(self.bg[0],(56,68))  
         
-    # Text
+        # Text
         self.game.font.set_font("smallfont")
-        self.game.font.draw_text("Farming", self.menu, (350, 64), justify = "right")
-        self.game.font.draw_text("Mining", self.menu, (350, 116), justify = "right")
-        self.game.font.draw_text("Foraging", self.menu, (350, 168), justify = "right")
-        self.game.font.draw_text("Fishing", self.menu, (350, 220), justify = "right")
-        self.game.font.draw_text("Combat", self.menu, (350, 272), justify = "right")
-    
+        self.game.font.draw_text("Farming", self.menu, (328, 64), justify = "right")
+        self.game.font.draw_text("Mining", self.menu, (328, 120), justify = "right")
+        self.game.font.draw_text("Foraging", self.menu, (328, 172), justify = "right")
+        self.game.font.draw_text("Fishing", self.menu, (328, 224), justify = "right")
+        self.game.font.draw_text("Combat", self.menu, (328, 276), justify = "right")
+        
+        # Skill symbols
+        self.menu.blit(self.skill_symbols[1],(336,56))
+        self.menu.blit(self.skill_symbols[3],(336,112))
+        self.menu.blit(self.skill_symbols[6],(336,164))
+        self.menu.blit(self.skill_symbols[2],(336,216))
+        self.menu.blit(self.skill_symbols[12],(336,268))
+        
+        # Skill pips
+        for x in range(4):
+            self.menu.blit(self.pip_small[x+1 <= self.game.data.farming_skill],(392 + 36*x,56))
+            self.menu.blit(self.pip_small[x+1 <= self.game.data.mining_skill],(392 + 36*x,112))
+            self.menu.blit(self.pip_small[x+1 <= self.game.data.foraging_skill],(392 + 36*x,164))
+            self.menu.blit(self.pip_small[x+1 <= self.game.data.fishing_skill],(392 + 36*x,216))
+            self.menu.blit(self.pip_small[x+1 <= self.game.data.combat_skill],(392 + 36*x,268))
+            
+        self.menu.blit(self.pip_large[5 <= self.game.data.farming_skill],(536, 56))
+        self.menu.blit(self.pip_large[5 <= self.game.data.mining_skill],(536, 112))
+        self.menu.blit(self.pip_large[5 <= self.game.data.foraging_skill],(536, 164))
+        self.menu.blit(self.pip_large[5 <= self.game.data.fishing_skill],(536, 216))
+        self.menu.blit(self.pip_large[5 <= self.game.data.combat_skill],(536, 268))
+        
+        self.menu.blit(self.pip_large[10 <= self.game.data.farming_skill],(740, 56))
+        self.menu.blit(self.pip_large[10 <= self.game.data.mining_skill],(740, 112))
+        self.menu.blit(self.pip_large[10 <= self.game.data.foraging_skill],(740, 164))
+        self.menu.blit(self.pip_large[10 <= self.game.data.fishing_skill],(740, 216))
+        self.menu.blit(self.pip_large[10 <= self.game.data.combat_skill],(740, 268))
+            
+        for x in range(4):
+            self.menu.blit(self.pip_small[x+6 <= self.game.data.farming_skill],(596 + 36*x,56))
+            self.menu.blit(self.pip_small[x+6 <= self.game.data.mining_skill],(596 + 36*x,112))
+            self.menu.blit(self.pip_small[x+6 <= self.game.data.foraging_skill],(596 + 36*x,164))
+            self.menu.blit(self.pip_small[x+6 <= self.game.data.fishing_skill],(596 + 36*x,216))
+            self.menu.blit(self.pip_small[x+6 <= self.game.data.combat_skill],(596 + 36*x,268))
+            
     def generate_relationship_menu(self):
         frame_width = 15
         frame_height = 9

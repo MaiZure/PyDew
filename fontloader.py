@@ -114,6 +114,8 @@ class FontLoader:
         y = pos[1]
         if justify == "right": 
             x = pos[0]-width
+        if justify == "center":
+            x = pos[0]-width/2
 
         screen.blit(shadow_text, (x-2, y+2))
         screen.blit(colored_text, (x, y))
