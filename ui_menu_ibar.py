@@ -11,7 +11,7 @@ class InventoryBar:
         self.last_selection = -1
         self.selection = 0
         self.scaling = 4
-        self.slot_pos = [[],[]]
+        self.slot_pos = [[],[]] # bottom vs top positions
         self.ibar_row = 0
         
         self.ibar_sprite = pygame.Surface((800,96), pygame.SRCALPHA).convert_alpha()
@@ -101,7 +101,7 @@ class InventoryBar:
         for i in range(self.ibar_row, self.ibar_row+12):
             item = self.game.player.inventory[i]
             if item:
-                item.render_inv_slot(screen, i)
+                item.render_inv(screen, i)
     
     def update_clickrect(self):
         self.ibar_clickrect = pygame.Rect(self.ibar_sprite_x+4*self.scaling,

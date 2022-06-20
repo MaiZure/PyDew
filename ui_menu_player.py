@@ -14,6 +14,8 @@ class PlayerMenu:
         self.tabs = self.game.sprite.rescale_tiles(self.tabs,self.scaling)
         self.menu_top_left_x = 0
         self.menu_top_left_y = 0
+        self.slot_pos = [[],[]] # Inventory Menu, vs Crafting Menu
+        self.selected_item = None
         
         self.bg = []
         self.bg.append(self.game.sprite.get_tiles("daybg")[0])
@@ -137,16 +139,19 @@ class PlayerMenu:
         for i in range(1,frame_width-1):
             self.menu.blit(self.spritesheet[6],(i*64,mid_point*64))
         
-        # Inventory Blocks
+        # Inventory Blocks - Done 3 separate times so positions can be appended properly
+        inv_sprite = 10
         for i in range(12):
-            inv_sprite = 10
             self.menu.blit(self.spritesheet[inv_sprite],(64+i*64,52))
-            
+            self.slot_pos[0].append((self.menu_top_left_x+64+i*64,self.menu_top_left_y+52))
+        for i in range(12):
             if self.game.player.inventory_limit < 24: inv_sprite = 57
             self.menu.blit(self.spritesheet[inv_sprite],(64+i*64,132))
-            
+            self.slot_pos[0].append((self.menu_top_left_x+64+i*64,self.menu_top_left_y+132))
+        for i in range(12):
             if self.game.player.inventory_limit < 36: inv_sprite = 57
             self.menu.blit(self.spritesheet[inv_sprite],(64+i*64,196)) 
+            self.slot_pos[0].append((self.menu_top_left_x+64+i*64,self.menu_top_left_y+196))
             
         #Player Equip Slots
         self.menu.blit(self.spritesheet[41],(52,312))
@@ -233,17 +238,20 @@ class PlayerMenu:
         for i in range(1,frame_width-1):
             self.menu.blit(self.spritesheet[6],(i*64,cross_bar*64))
             
-        # Inventory Blocks
+        # Inventory Blocks - Done 3 separate times so positions can be appended properly
+        inv_sprite = 10
         for i in range(12):
-            inv_sprite = 10
             self.menu.blit(self.spritesheet[inv_sprite],(64+i*64,332))
-            
+            self.slot_pos[1].append((self.menu_top_left_x+64+i*64,self.menu_top_left_y+332))
+        for i in range(12):
             if self.game.player.inventory_limit < 24: inv_sprite = 57
             self.menu.blit(self.spritesheet[inv_sprite],(64+i*64,396))
-            
+            self.slot_pos[1].append((self.menu_top_left_x+64+i*64,self.menu_top_left_y+396))
+        for i in range(12):
             if self.game.player.inventory_limit < 36: inv_sprite = 57
-            self.menu.blit(self.spritesheet[inv_sprite],(64+i*64,460)) 
-    
+            self.menu.blit(self.spritesheet[inv_sprite],(64+i*64,460))
+            self.slot_pos[1].append((self.menu_top_left_x+64+i*64,self.menu_top_left_y+460))
+
     def generate_map_menu(self):
         pass
         
@@ -313,4 +321,10 @@ class PlayerMenu:
             
         screen.blit(self.menu,(self.menu_top_left_x,self.menu_top_left_y))
         screen.blit(self.tab_bar,(self.tabs_top_left_x,self.tabs_top_left_y))
+        
+        if self.tab_selected == 0 or self.tab_selected == 4:
+            for i in range(len(self.game.player.inventory)):
+                item = self.game.player.inventory[i]
+                if item:
+                    item.render_inv(screen, i)
     

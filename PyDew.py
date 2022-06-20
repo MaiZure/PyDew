@@ -18,7 +18,7 @@ from gamedata import GameData
 class PyDew:
     def __init__(self):
         pygame.init()
-        self.version = "0.1.5.53"
+        self.version = "0.1.5.54"
         print("Hello PyDew "+str(self.version))
         self.config = Config()
         self.data = GameData()

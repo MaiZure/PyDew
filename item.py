@@ -23,10 +23,15 @@ class Item:
         top_left_x = self.game.world.top_left_x
         top_left_y = self.game.world.top_left_y
         screen.blit(self.sprite[self.spr_frame], (self.x-top_left_x,self.y-top_left_y), (0,0,16,16))
-    
-    def render_inv_slot(self, screen, slot_num):
-        top = self.game.ui.ibar.ibar_top
-        slot_pos = self.game.ui.ibar.slot_pos[top][slot_num]
+        
+    def render_inv(self, screen, slot_num):
+        # Only tab_selected 0 and 4 should enter this function
+        if self.game.ui.player_menu_enabled:
+            menu = 0 if self.game.ui.player_menu.tab_selected == 0 else 1 
+            slot_pos = self.game.ui.player_menu.slot_pos[menu][slot_num]
+        else:
+            top = self.game.ui.ibar.ibar_top # Bool - True if bar is at top. Used below
+            slot_pos = self.game.ui.ibar.slot_pos[top][slot_num]            
         sprite = self.sprite[self.inv_frame]
         scaled_item = pygame.transform.scale(sprite,(60,60))
         screen.blit(scaled_item, (slot_pos[0],slot_pos[1]))
@@ -36,7 +41,7 @@ class Item:
             digits.reverse()
             for i, d in enumerate(digits):
                 screen.blit(ui.tiny_numbers, (slot_pos[0]+55-15*i,slot_pos[1]+53),ui.tiny_numbers_rect[d]) 
-        
+                
     def create_at(self, x, y, count=1):
         self.x = x
         self.y = y
