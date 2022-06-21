@@ -33,7 +33,7 @@ class Item:
             top = self.game.ui.ibar.ibar_top # Bool - True if bar is at top. Used below
             slot_pos = self.game.ui.ibar.slot_pos[top][slot_num]            
         sprite = self.sprite[self.inv_frame]
-        scaled_item = pygame.transform.scale(sprite,(60,60))
+        scaled_item = pygame.transform.scale(sprite,(60,60))  # Get rid of this -- precompute scaled
         screen.blit(scaled_item, (slot_pos[0],slot_pos[1]))
         if self.count > 1:
             ui = self.game.ui
@@ -41,6 +41,12 @@ class Item:
             digits.reverse()
             for i, d in enumerate(digits):
                 screen.blit(ui.tiny_numbers, (slot_pos[0]+55-15*i,slot_pos[1]+53),ui.tiny_numbers_rect[d]) 
+                
+    def render_mouse(self, screen):
+        sprite = self.sprite[self.inv_frame]
+        pos = pygame.mouse.get_pos()
+        scaled_item = pygame.transform.scale(sprite,(60,60)) # Get rid of this -- precompute scaled
+        screen.blit(scaled_item, pos)
                 
     def create_at(self, x, y, count=1):
         self.x = x

@@ -15,7 +15,9 @@ class PlayerMenu:
         self.menu_top_left_x = 0
         self.menu_top_left_y = 0
         self.slot_pos = [[],[]] # Inventory Menu, vs Crafting Menu
+        self.slot_size = (64,64) # Get this auto-calced at gen-time
         self.selected_item = None
+        self.inv_rect = None
         
         self.bg = []
         self.bg.append(self.game.sprite.get_tiles("daybg")[0])
@@ -152,6 +154,13 @@ class PlayerMenu:
             if self.game.player.inventory_limit < 36: inv_sprite = 57
             self.menu.blit(self.spritesheet[inv_sprite],(64+i*64,196)) 
             self.slot_pos[0].append((self.menu_top_left_x+64+i*64,self.menu_top_left_y+196))
+            
+        inv_rect_x = self.menu_top_left_x+64
+        inv_rect_y = self.menu_top_left_y+52
+        inv_rect_w = 64+12*64+64
+        inv_rect_h = 196+64
+        
+        self.inv_rect = pygame.Rect(inv_rect_x,inv_rect_y,inv_rect_w,inv_rect_h) 
             
         #Player Equip Slots
         self.menu.blit(self.spritesheet[41],(52,312))
@@ -307,10 +316,30 @@ class PlayerMenu:
     def handle_input(self, event):
         pos = pygame.mouse.get_pos()
         if event.button == 1:
+            # Clicking on the tabs
             if self.tabs_clickrect.collidepoint(pos):
                 new_tab = int((pos[0]-self.tabs_top_left_x)/self.tab_width)
                 self.change_tab(new_tab)
                 return
+            # Clicking on the inventory menu
+            if self.tab_selected == 0 and self.inv_rect.collidepoint(pos):
+                slot_num = self.get_inv_slot_click(pos)
+                if slot_num > -1:
+                    tmp = self.selected_item
+                    self.selected_item = self.game.player.inventory[slot_num]
+                    self.game.player.inventory[slot_num] = tmp
+                    
+    def get_inv_slot_click(self, pos):
+        # Should probably change each slot to a real Rect if there's not other use for it...
+        num = 0
+        for slot in self.slot_pos[0]:
+            clickrect = pygame.Rect(slot[0],slot[1],self.slot_size[0],self.slot_size[1])
+            if clickrect.collidepoint(pos):
+                if num < self.game.player.inventory_limit:
+                    return num
+                break;
+            num += 1
+        return -1
         
     def tick(self):
         pass
@@ -327,4 +356,7 @@ class PlayerMenu:
                 item = self.game.player.inventory[i]
                 if item:
                     item.render_inv(screen, i)
+                    
+        if self.selected_item:
+           self.selected_item.render_mouse(screen)
     

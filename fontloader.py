@@ -21,7 +21,6 @@ class FontLoader:
         path = ".\\Font\\"
         files = os.listdir(path)
         for file in files:
-            print(file)
             split = file.split(".")
             name = (split[0]).lower()
             ext = (split[1]).lower()
