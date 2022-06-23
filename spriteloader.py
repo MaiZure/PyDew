@@ -42,6 +42,7 @@ class SpriteLoader:
             size = (16, 16)
             if name == "MenuTiles": size = (64,64)
             if name == "daybg": size = (128,192)
+            if name == "map": size = (300,180)
             self.sheet[name] = (pygame.image.load(open(path+file)).convert_alpha(), size[0], size[1])
     
     def load_character_spritesheets(self) -> None:

@@ -12,6 +12,7 @@ class PlayerMenu:
         self.cursors = self.game.sprite.get_spritesheet("Cursors")
         self.tabs = self.game.sprite.get_tiles("Cursors")[1012:1020]
         self.tabs = self.game.sprite.rescale_tiles(self.tabs,self.scaling)
+        self.map_bg = self.game.sprite.get_tiles("map")[0]
         self.menu_top_left_x = 0
         self.menu_top_left_y = 0
         self.slot_pos = [[],[]] # Inventory Menu, vs Crafting Menu
@@ -262,7 +263,14 @@ class PlayerMenu:
             self.slot_pos[1].append((self.menu_top_left_x+64+i*64,self.menu_top_left_y+460))
 
     def generate_map_menu(self):
-        pass
+        frame_width = 13
+        frame_height = 9
+        mid_point = int(frame_height/2)
+        
+        self.menu = self.generate_menu_frame(frame_width,frame_height, False)
+        self.menu.blit(pygame.transform.scale(self.map_bg,(12*64,(8*64))),(32,32))
+
+        
         
     def generate_item_menu(self):
         frame_width = 13
@@ -282,7 +290,7 @@ class PlayerMenu:
         mid_point = int(frame_height/2)
         self.menu = self.generate_menu_frame(frame_width,frame_height)
         
-    def generate_menu_frame(self,x,y):
+    def generate_menu_frame(self,x,y, background=True):
         w = x * 64
         h = y * 64
         menu = pygame.Surface((w,h), pygame.SRCALPHA).convert_alpha()
@@ -296,7 +304,8 @@ class PlayerMenu:
         vertical_right_frame = 11
         bg_frame = 9
         
-        menu.blit(pygame.transform.scale(self.spritesheet[bg_frame],(w-64,h-64)), (32,32))
+        if background:
+            menu.blit(pygame.transform.scale(self.spritesheet[bg_frame],(w-64,h-64)), (32,32))
         menu.blit(self.spritesheet[top_left_frame],(0,0))
         menu.blit(self.spritesheet[bottom_left_frame],(0,h-64))
         menu.blit(self.spritesheet[top_right_frame],(w-64,0))

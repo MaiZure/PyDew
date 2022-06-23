@@ -10,7 +10,6 @@ class World:
     def __init__(self, game):
         print("Initializing World")
         self.game = game
-        self.season = random.choice(["spring","summer","fall","winter"])
         self.top_left_x = 0
         self.top_left_y = 0
         self.top_left_x_last = 0
@@ -18,6 +17,9 @@ class World:
         self.optimized_render = False
         self.map_width = 0
         self.map_height = 0
+        self.hour = 6
+        self.minute = 0
+        self.tick_time = 0
         
         self.map_layers = []
         self.tiles = []
@@ -136,7 +138,7 @@ class World:
         
         
     def set_random_season(self):
-        self.season = random.choice(["spring","summer","fall","winter"])
+        self.game.config.season = random.choice(["spring","summer","fall","winter"])
         self.set_season()
         
     def init_npcs(self):
@@ -263,6 +265,7 @@ class World:
         self.map_height = h
         
     def tick(self):
+        self.update_time()
         if self.new_map:
             self.init_active_map()
         self.cycle_reel(self.bg_tile_update_reel, self.bg_layer)
@@ -280,6 +283,15 @@ class World:
             y = random.randint(0,self.map_height*16)
             item = Resource(self.game,random.choice(["wood","stone"]))
             item.create_at(x,y)
+            
+    def update_time(self):
+        self.tick_time += 1
+        if self.tick_time >= 360:
+            self.tick_time = 0
+            self.minute += 10
+            if self.minute >= 60:
+                self.minute = 0
+                self.hour += 1
     
     def update_ambient(self):
         # disable transitions for now

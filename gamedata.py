@@ -8,6 +8,10 @@ class GameData:
         self.player_name = "MaiZure"
         self.gold = 500
         self.total_earnings = 0
+        self.year = 1
+        self.season = "spring"
+        self.day = 1
+        self.weekday = 1
         
         self.farming_skill = 1
         self.mining_skill = 0

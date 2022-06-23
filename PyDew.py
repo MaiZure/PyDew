@@ -18,7 +18,7 @@ from gamedata import GameData
 class PyDew:
     def __init__(self):
         pygame.init()
-        self.version = "0.1.6.55"
+        self.version = "0.1.6.56"
         print("Hello PyDew "+str(self.version))
         self.config = Config()
         self.data = GameData()
@@ -90,7 +90,7 @@ class PyDew:
             
             self.render()
             
-            self.clock.tick(60) # ~60 FPS
+            self.clock.tick(self.config.fps) # ~60 FPS
         
         pygame.quit()
     
