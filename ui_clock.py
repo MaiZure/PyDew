@@ -15,23 +15,31 @@ class Clock:
         self.clock_sprite_x = 0
         self.clock_sprite_y = 0
         self.clock_sprite = None
+        self.text_layer = None
+        self.update_time = False
         
+        self.clock_rect = pygame.Rect(333, 432, 72, 57)
         self.generate_clock()
+        self.update_text()
         
     
     def generate_clock(self):
-        rect = pygame.Rect(333, 431, 72, 58)
-        self.clock_sprite = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
-        self.clock_sprite.blit(self.spritesheet, (0,0), rect)
-        self.clock_sprite_x = self.game.config.base_display_width - self.clock_sprite.get_width() - 2
+        self.clock_sprite = pygame.Surface(self.clock_rect.size, pygame.SRCALPHA).convert_alpha()
+        self.clock_sprite.blit(self.spritesheet, (0,0), self.clock_rect)
+        self.clock_sprite_x = self.game.config.base_ui_display_width - self.clock_sprite.get_width() - 2
         self.clock_sprite_y = 2
-        self.time_x = 110
-        self.time_y = 24
+        
+    def update_text(self):
+        self.text_layer = pygame.Surface((self.clock_rect.size[0]*4,self.clock_rect.size[1]*4), pygame.SRCALPHA)  
+        self.time_x = 168#1000
+        self.time_y = 42#88
         
         time = self.get_time_text()
-        #WIP
-        #self.game.font.set_font("smallfont")
-        #self.game.font.draw_text(time, self.clock_sprite, (self.time_x, self.time_y), scaling_cut = 2, justify="right")
+        self.game.font.set_font("SpriteFont1")
+        self.game.font.draw_text(time, self.text_layer, (self.time_x, self.time_y), scaling_cut = 1, justify="right")
+        
+        #self.text_layer = pygame.transform.scale(self.text_layer, (self.text_layer.get_width(),self.text_layer.get_height()))
+        
         
     def get_time_text(self) -> str:
         minute = self.game.world.minute
@@ -39,7 +47,7 @@ class Clock:
         meridian = "am" if hour < 12 else "pm"
         
         minute_text = "00" if minute == 0 else str(minute)
-        hour_text = str(hour) if hour < 12 else str(hour-12)
+        hour_text = str(hour) if hour < 13 else str(hour-12)
         return hour_text + ":"+minute_text+" "+meridian
         
     def get_day_text(self) -> str:
@@ -49,9 +57,16 @@ class Clock:
         
     
     def tick(self):
-        pass
+        if self.update_time:
+            self.update_text()
+            self.update_time = False
+            
+    def trigger_update(self):
+        self.update_time = True
     
     def render(self, screen):
         screen.blit(self.clock_sprite, (self.clock_sprite_x, self.clock_sprite_y))
         
+    def render_text(self, screen):
+        screen.blit(self.text_layer, (1235,72))
         

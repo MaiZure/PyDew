@@ -289,9 +289,12 @@ class World:
         if self.tick_time >= 360:
             self.tick_time = 0
             self.minute += 10
+            self.game.ui.clock.trigger_update()
             if self.minute >= 60:
                 self.minute = 0
                 self.hour += 1
+                if self.hour > 23:
+                    self.hour = 0
     
     def update_ambient(self):
         # disable transitions for now

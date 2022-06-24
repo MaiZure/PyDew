@@ -105,8 +105,7 @@ class FontLoader:
         
         # Shadow
         color_mask.fill((210,150,115))
-        shadow_text.blit(color_mask, (0,0), special_flags = pygame.BLEND_RGBA_MIN)
-        
+        shadow_text.blit(color_mask, (0,0), special_flags = pygame.BLEND_RGBA_MIN)     
         
         # Main Draw
         x = pos[0]

@@ -18,7 +18,7 @@ from gamedata import GameData
 class PyDew:
     def __init__(self):
         pygame.init()
-        self.version = "0.1.6.56"
+        self.version = "0.1.6.57"
         print("Hello PyDew "+str(self.version))
         self.config = Config()
         self.data = GameData()
@@ -27,6 +27,8 @@ class PyDew:
                                                pygame.HWSURFACE|pygame.DOUBLEBUF)
         self.unscaled_screen = pygame.Surface((self.config.screen_width/self.config.screen_scaling, 
                                                self.config.screen_height/self.config.screen_scaling))
+        self.unscaled_ui_screen = pygame.Surface((self.config.screen_width/self.config.ui_scaling, 
+                                               self.config.screen_height/self.config.ui_scaling), pygame.SRCALPHA)
         self.ambient_surface = pygame.Surface((self.config.screen_width/self.config.screen_scaling, 
                                                self.config.screen_height/self.config.screen_scaling),
                                                pygame.SRCALPHA)
@@ -41,8 +43,8 @@ class PyDew:
         self.npc_surface = pygame.Surface((self.config.screen_width/self.config.screen_scaling, 
                                                self.config.screen_height/self.config.screen_scaling),
                                                pygame.SRCALPHA)
-        self.ui_surface = pygame.Surface((self.config.screen_width/self.config.screen_scaling, 
-                                               self.config.screen_height/self.config.screen_scaling),
+        self.ui_surface = pygame.Surface((self.config.screen_width/self.config.ui_scaling, 
+                                               self.config.screen_height/self.config.ui_scaling),
                                                pygame.SRCALPHA)
         self.menu_surface = pygame.Surface((self.config.screen_width, self.config.screen_height),
                                                pygame.SRCALPHA)                       
@@ -129,7 +131,7 @@ class PyDew:
             self.world.render_back(self.bg_surface)
             self.world.render_mid(self.mid_surface)
             self.world.render_front(self.fg_surface)
-            self.ui.ui_render(self.ui_surface)        
+            self.ui.ui_render(self.ui_surface) 
         self.ui.menu_render(self.menu_surface)
 
         for light in self.world.lights:
@@ -139,10 +141,18 @@ class PyDew:
         self.unscaled_screen.blit(self.mid_surface,(0,0))
         self.unscaled_screen.blit(self.fg_surface,(0,0))
         self.unscaled_screen.blit(self.ambient_surface,(0,0), special_flags=pygame.BLEND_SUB)
-        self.unscaled_screen.blit(self.ui_surface,(0,0))
+        self.unscaled_ui_screen.blit(self.ui_surface,(0,0))
 
         scaled_screen = pygame.transform.scale(self.unscaled_screen,self.final_screen.get_rect().size)
-
+        scaled_ui_screen = pygame.transform.scale(self.unscaled_ui_screen,self.final_screen.get_rect().size)
+        
+        
+        
+        scaled_screen.blit(scaled_ui_screen,(0,0))
+        
+        # Post scaling text rendering
+        self.ui.ui_render_text(scaled_screen)
+        
         scaled_screen.blit(self.menu_surface, (0,0))
 
         self.final_screen.blit(scaled_screen,(0,0))

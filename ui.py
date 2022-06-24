@@ -47,10 +47,17 @@ class UI:
     def tick(self):
         for element in self.menu_elements:
             element.tick()
+        for element in self.ui_elements:
+            element.tick()
     
     def ui_render(self, screen):
         for element in self.ui_elements:
             element.render(screen)
+            
+    def ui_render_text(self, screen):
+        for element in self.ui_elements:
+            if hasattr(element, "render_text"):
+                element.render_text(screen)
             
     def menu_render(self, screen):
         screen.fill((0,0,0,0)) if not self.player_menu_enabled else screen.fill((0,0,0,128))
