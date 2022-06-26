@@ -98,6 +98,7 @@ class InventoryBar:
             self.last_selection = -1
         screen.blit(self.ibar_sprite, (self.ibar_sprite_x,self.ibar_sprite_y))
     
+        # Probably don't need to redraw items on every frame eh?
         for i in range(self.ibar_row, self.ibar_row+12):
             item = self.game.player.inventory[i]
             if item:

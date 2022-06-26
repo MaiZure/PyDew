@@ -37,6 +37,7 @@ class World:
         self.spawnable_map = []
         self.npcs = []
         self.lights = []
+        self.outdoor_ambient = (0,0,0)
         self.ambient_light = (0,0,0) #(0,0,0) - day/clear, (180,150, 0) - night, (50,50,0) - day/raining
         self.darkening = False
         
@@ -270,8 +271,8 @@ class World:
             self.init_active_map()
         self.cycle_reel(self.bg_tile_update_reel, self.bg_layer)
         self.cycle_reel(self.bldg_tile_update_reel, self.bldg_layer)
-        self.update_ambient()
         self.game.player.tick()
+        self.update_ambient()
         for item in self.items[self.current_map]:
             item.tick()
         for npc in self.npcs:
@@ -289,27 +290,23 @@ class World:
         if self.tick_time >= 360:
             self.tick_time = 0
             self.minute += 10
-            self.game.ui.clock.trigger_update()
+            self.game.ui.clock.trigger_update()            
             if self.minute >= 60:
                 self.minute = 0
                 self.hour += 1
                 if self.hour > 23:
                     self.hour = 0
+        self.darkening = True if self.hour >= 18 else False
     
     def update_ambient(self):
-        # disable transitions for now
-        if self.outdoors: self.ambient_light = (0,0,0)
-        return
-        r = self.ambient_light[0]; g=self.ambient_light[1]; b=self.ambient_light[2]
+        r = self.outdoor_ambient[0]; g=self.outdoor_ambient[1]; b=self.outdoor_ambient[2]
         if self.darkening:
-            r = min(180, r + 1)
-            g = min(150, g + 1)
-        else:
-            r = max(0, r - 1)
-            g = max(0, g - 1)
-        if r == 180 and g == 150: self.darkening = False
-        if r == 0 and g == 0: self.darkening = True
-        self.ambient_light = (r,g,b)
+            r = min(180, r+0.03)
+            g = min(150, g+0.03)
+        self.outdoor_ambient = (r,g,b)
+        
+        if self.outdoors: self.ambient_light = self.outdoor_ambient
+        
     
     def prerender(self, screen):
         self.top_left_x_last = self.top_left_x

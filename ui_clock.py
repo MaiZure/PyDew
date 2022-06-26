@@ -21,7 +21,7 @@ class Clock:
         self.clock_rect = pygame.Rect(333, 432, 72, 57)
         self.season_rect = pygame.Rect(406, 441+(self.game.data.season*8), 12, 8)
         self.weather_rect = pygame.Rect(329+(self.game.data.weather*12), 421, 12, 8)
-        self.arrow_rect = pygame.Rect(324,477,7,19) # Double length of surface to set origin for rotation
+        self.arrow_rect = pygame.Rect(324,477,7,19)
         
         self.season_icon = None
         self.season_icon_x = 53
@@ -31,14 +31,18 @@ class Clock:
         self.weather_icon_x = 29
         self.weather_icon_y = 16
         
-        self.arrow = None
+        self.arrow_base = None
+        self.arrow_base_rect = None
+        self.rotated_arrow = None
+        self.rotated_arrow_rect = None
         self.arrow_x = 22
         self.arrow_y = 19
+        self.arrow_pivot_x = 3
+        self.arrow_pivot_y = 17
+        self.arrow_angle = 180
         
-        self.generate_clock()
-        
-
-        
+        self.generate_clock()   
+        self.rotate_arrow(self.arrow_angle)
         
         self.update_text()
     
@@ -54,10 +58,11 @@ class Clock:
         self.weather_icon.blit(self.spritesheet, (0,0), self.weather_rect)
         self.clock_sprite.blit(self.weather_icon, (self.weather_icon_x, self.weather_icon_y))
         
-        arrow_surf_size = (self.arrow_rect[0], (self.arrow_rect[1]*2)-2)
-        self.arrow = pygame.Surface(arrow_surf_size, pygame.SRCALPHA).convert_alpha()
-        self.arrow.blit(self.spritesheet, (0,0), self.arrow_rect)
-        #self.arrow = pygame.transform.rotate(self.arrow,3)
+        arrow_surf_size = (self.arrow_rect[2], (self.arrow_rect[3]*2)-2)
+        
+        self.arrow_base = pygame.Surface(arrow_surf_size, pygame.SRCALPHA).convert_alpha()
+        self.arrow_base_rect = self.arrow_base.get_rect()
+        self.arrow_base.blit(self.spritesheet, (0,0), self.arrow_rect)
         
         
     def update_text(self):
@@ -103,14 +108,30 @@ class Clock:
     def tick(self):
         if self.update_time:
             self.update_text()
+            self.arrow_angle-=1.5
+            self.rotate_arrow(self.arrow_angle)
             self.update_time = False
             
     def trigger_update(self):
         self.update_time = True
     
+    def rotate_arrow(self,angle):
+        image=self.arrow_base
+        pos=(self.arrow_x,self.arrow_y)
+        originPos=(self.arrow_pivot_x,self.arrow_pivot_y)
+        
+        image_rect = image.get_rect(topleft = (pos[0] - originPos[0], pos[1]-originPos[1]))
+        offset_center_to_pivot = pygame.math.Vector2(pos) - image_rect.center
+        rotated_offset = offset_center_to_pivot.rotate(-angle)
+        rotated_image_center = (pos[0] - rotated_offset.x, pos[1] - rotated_offset.y)
+        rotated_image = pygame.transform.rotate(image, angle)
+        rotated_image_rect = rotated_image.get_rect(center = rotated_image_center)
+        self.rotated_arrow = rotated_image
+        self.rotated_arrow_rect = rotated_image_rect
+    
     def render(self, screen):
         screen.blit(self.clock_sprite, (self.clock_sprite_x, self.clock_sprite_y))
-        screen.blit(self.arrow, (self.clock_sprite_x+self.arrow_x-3, self.clock_sprite_y+self.arrow_y-16))
+        screen.blit(self.rotated_arrow, (self.clock_sprite_x + self.rotated_arrow_rect[0], self.clock_sprite_y + self.rotated_arrow_rect[1]))
         
     def render_text(self, screen):
         screen.blit(self.text_layer, (self.clock_sprite_x*4,self.clock_sprite_y*4))

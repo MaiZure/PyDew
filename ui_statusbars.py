@@ -20,12 +20,12 @@ class StatusBars:
         
         
         self.ebar_sprite.blit(self.spritesheet, (0,0), e_rect)
-        self.ebar_sprite_x = self.game.config.base_display_width - self.ebar_sprite.get_width() - 2
-        self.ebar_sprite_y = self.game.config.base_display_height - self.ebar_sprite.get_height() - 2
+        self.ebar_sprite_x = self.game.config.base_ui_display_width - self.ebar_sprite.get_width() - 2
+        self.ebar_sprite_y = self.game.config.base_ui_display_height - self.ebar_sprite.get_height() - 2
         
         self.hbar_sprite.blit(self.spritesheet, (0,0), h_rect)
-        self.hbar_sprite_x = self.game.config.base_display_width - self.hbar_sprite.get_width()*2 - 4
-        self.hbar_sprite_y = self.game.config.base_display_height - self.hbar_sprite.get_height() - 2
+        self.hbar_sprite_x = self.game.config.base_ui_display_width - self.hbar_sprite.get_width()*2 - 4
+        self.hbar_sprite_y = self.game.config.base_ui_display_height - self.hbar_sprite.get_height() - 2
         
 
     def tick(self):
