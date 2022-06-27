@@ -1,5 +1,6 @@
 import random
 import pygame
+import ctypes 
 
 from world import World
 from player import Player
@@ -17,8 +18,9 @@ from gamedata import GameData
 
 class PyDew:
     def __init__(self):
+        ctypes.windll.user32.SetProcessDPIAware()  # Ensure PyGame knows the real DPI in Windows (avoid OS-level scaling)
         pygame.init()
-        self.version = "0.1.8.59"
+        self.version = "0.1.8.60"
         print("Hello PyDew "+str(self.version))
         self.config = Config()
         self.data = GameData()

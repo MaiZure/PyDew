@@ -77,7 +77,8 @@ class InventoryBar:
     def tick(self):
         self.ibar_sprite_y = self.ibar_sprite_y_bottom
         self.ibar_top = False
-        if int(self.game.player.y - self.game.world.top_left_y) > 140:
+
+        if int(self.game.player.y - self.game.world.top_left_y) > (self.game.bg_surface.get_height()/2+5):
             self.ibar_sprite_y = self.ibar_sprite_y_top
             self.ibar_top = True
         self.update_clickrect()  # Should update on CHANGE, not every frame
