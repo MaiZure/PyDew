@@ -12,8 +12,9 @@ class GameData:
         self.season = 0
         self.day = 1
         self.weather = 1
-        self.player_hp = 100
-        self.player_max_energy = 270
+        self.player_max_hp = 100
+        self.player_max_ep = 270
+        self.player_tired = False
         
         self.farming_skill = 1
         self.mining_skill = 0

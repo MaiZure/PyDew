@@ -29,10 +29,10 @@ class Player:
         self.map_width = 0
         self.map_height = 0
         self.moving = False
-        self.hp = 100
-        self.max_hp = 100
-        self.energy = 270
-        self.max_energy = 270
+        self.max_hp = self.game.data.player_max_hp
+        self.hp = self.max_hp
+        self.ep = 270
+        self.max_ep = 270
         
         self.run_sequence_RL = (18,56,56,23,18,57,57,41)
         self.run_sequence_D = (0,1,54,1,0,2,55,2)

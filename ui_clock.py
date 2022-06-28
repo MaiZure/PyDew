@@ -133,6 +133,6 @@ class Clock:
         screen.blit(self.clock_sprite, (self.clock_sprite_x, self.clock_sprite_y))
         screen.blit(self.rotated_arrow, (self.clock_sprite_x + self.rotated_arrow_rect[0], self.clock_sprite_y + self.rotated_arrow_rect[1]))
         
-    def render_text(self, screen):
+    def render_scaled(self, screen):
         screen.blit(self.text_layer, (self.clock_sprite_x*4,self.clock_sprite_y*4))
         
