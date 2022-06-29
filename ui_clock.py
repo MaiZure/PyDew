@@ -23,6 +23,18 @@ class Clock:
         self.weather_rect = pygame.Rect(329+(self.game.data.weather*12), 421, 12, 8)
         self.arrow_rect = pygame.Rect(324,477,7,19)
         
+        
+        self.digits = []
+        self.digit_rect = pygame.Rect(286,502,5,7)
+        for i in range(10):
+            digit = pygame.Surface(self.digit_rect.size,pygame.SRCALPHA).convert_alpha()
+            color_mask = pygame.Surface(digit.get_size()).convert_alpha()
+            color_mask.fill((128,0,0))
+            digit.blit(self.spritesheet, (0,0), self.digit_rect)
+            digit.blit(color_mask, (0,0), special_flags = pygame.BLEND_RGBA_MIN)
+            self.digits.append(digit)
+            self.digit_rect[1]-=8
+        
         self.season_icon = None
         self.season_icon_x = 53
         self.season_icon_y = 16
@@ -132,6 +144,15 @@ class Clock:
     def render(self, screen):
         screen.blit(self.clock_sprite, (self.clock_sprite_x, self.clock_sprite_y))
         screen.blit(self.rotated_arrow, (self.clock_sprite_x + self.rotated_arrow_rect[0], self.clock_sprite_y + self.rotated_arrow_rect[1]))
+        
+        
+        digits = [int(x) for x in str(self.game.data.gold)]
+        digits.reverse()
+        slot_x = 59
+        slot_y = 46
+        for digit in digits:
+            screen.blit(self.digits[digit], (self.clock_sprite_x+slot_x, self.clock_sprite_y+slot_y))
+            slot_x -= 6
         
     def render_scaled(self, screen):
         screen.blit(self.text_layer, (self.clock_sprite_x*4,self.clock_sprite_y*4))
