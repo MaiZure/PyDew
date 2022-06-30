@@ -8,10 +8,18 @@ class Item:
         self.gy = None
         self.x = None
         self.y = None
-        self.name = ""
+        
         self.count = 1
         self.stackable = False
         self.player = self.game.player
+        
+        self.name = ""
+        self.type_str = ""
+        self.desc = ""
+      
+        self.spritesheet = self.game.sprite.get_tiles("MenuTiles")
+        self.hover = pygame.Surface((12*12,128),pygame.SRCALPHA)
+        self.generate_hover()
         
         
     def render(self, screen):
@@ -40,7 +48,28 @@ class Item:
             digits = [int(x) for x in str(self.count)]
             digits.reverse()
             for i, d in enumerate(digits):
-                screen.blit(ui.tiny_numbers, (slot_pos[0]+55-15*i,slot_pos[1]+53),ui.tiny_numbers_rect[d]) 
+                screen.blit(ui.tiny_numbers, (slot_pos[0]+55-15*i,slot_pos[1]+53),ui.tiny_numbers_rect[d])
+                
+                
+    def generate_hover(self):
+        left_bar = (0,16,16,32)
+        right_bar = (44,16,20,32)
+        top_bar = (16,0,32,16)
+        bottom_bar = (12,44,32,16)
+        
+        
+        self.hover.blit(self.spritesheet[16], (0,0), (0,0,64,64))
+        self.hover.blit(self.spritesheet[16], (0,36), (0,0,64,64))
+        self.hover.blit(self.spritesheet[16], (0,35), left_bar)
+        
+        self.hover.blit(self.spritesheet[16], (800-60,0), (0,0,64,64))
+        self.hover.blit(self.spritesheet[16], (800-60,36), (0,0,64,64))
+        self.hover.blit(self.spritesheet[16], (784,36), right_bar)
+        
+        for i in range(12):
+            self.hover.blit(self.spritesheet[16], (16+i*32,0), top_bar)
+            self.hover.blit(self.spritesheet[16], (16+i*32,80), bottom_bar)
+        
                 
     def render_mouse(self, screen):
         sprite = self.sprite[self.inv_frame]

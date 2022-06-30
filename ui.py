@@ -14,6 +14,7 @@ class UI:
         self.menu_elements = []
         self.tiny_numbers_rect=[]
         self.player_menu_enabled = False
+        self.item_hover = None
         #self.ibar = None
         
     @property
@@ -58,6 +59,11 @@ class UI:
         for element in self.ui_elements:
             if hasattr(element, "render_scaled"):
                 element.render_scaled(screen)
+        if self.item_hover:
+            mouse_pos = pygame.mouse.get_pos()
+            draw_pos = (mouse_pos[0],mouse_pos[1]-50)
+            screen.blit(self.item_hover.hover,draw_pos)
+            self.item_hover = None
             
     def menu_render(self, screen):
         screen.fill((0,0,0,0)) if not self.player_menu_enabled else screen.fill((0,0,0,128))

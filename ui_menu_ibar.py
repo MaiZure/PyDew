@@ -62,7 +62,7 @@ class InventoryBar:
     def handle_mouse(self, event):
         if event.button == 1:
             pos = pygame.mouse.get_pos()
-            inv_tile_num = int((pos[0] - self.ibar_clickrect[0]) / (16*self.scaling))
+            inv_tile_num = self.get_inventory_slot_num(pos)
             self.change_selection(inv_tile_num)
             return
         if event.button == 4:
@@ -82,6 +82,13 @@ class InventoryBar:
             self.ibar_sprite_y = self.ibar_sprite_y_top
             self.ibar_top = True
         self.update_clickrect()  # Should update on CHANGE, not every frame
+        
+        pos = pygame.mouse.get_pos()
+        if self.ibar_clickrect.collidepoint(pos):
+            inv_tile_num = self.get_inventory_slot_num(pos)
+            if self.game.player.inventory[inv_tile_num]:
+                self.ui.item_hover = self.game.player.inventory[inv_tile_num]
+            
         
     def change_selection(self, select):
         if select == self.selection: return
@@ -108,3 +115,6 @@ class InventoryBar:
     def update_clickrect(self):
         self.ibar_clickrect = pygame.Rect(self.ibar_sprite_x+4*self.scaling,
             self.ibar_sprite_y+4*self.scaling, 12*16*self.scaling,16*self.scaling)
+            
+    def get_inventory_slot_num(self, pos):
+        return int((pos[0] - self.ibar_clickrect[0]) / (16*self.scaling))

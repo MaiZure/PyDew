@@ -89,7 +89,7 @@ class Clock:
         
         time = self.get_time_text()
         day = self.get_day_text()
-        self.game.font.set_font("SpriteFont1")
+        self.game.font.set_font("spritefont1")
         
         #Day of season
         self.game.font.draw_text(day, self.text_layer, (self.day_x, self.day_y), scaling_cut = 1, justify="center")
