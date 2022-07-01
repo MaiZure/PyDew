@@ -60,8 +60,9 @@ class UI:
             if hasattr(element, "render_scaled"):
                 element.render_scaled(screen)
         if self.item_hover:
+            height = self.item_hover.hover.get_height()
             mouse_pos = pygame.mouse.get_pos()
-            draw_pos = (mouse_pos[0],mouse_pos[1]-50)
+            draw_pos = (mouse_pos[0],min(mouse_pos[1],screen.get_height()-height+4))
             screen.blit(self.item_hover.hover,draw_pos)
             self.item_hover = None
             
@@ -78,8 +79,8 @@ class UI:
         self.ibar.ibar_enabled = False
         self.player_menu_enabled = True
               
-    def deactivate_player_menu(self):
-        
+    def deactivate_player_menu(self):     
         self.player_menu_enabled = False
         self.ibar.ibar_enabled = True
         self.game.paused = False
+        

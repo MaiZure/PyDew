@@ -18,8 +18,7 @@ class Item:
         self.desc = ""
       
         self.spritesheet = self.game.sprite.get_tiles("MenuTiles")
-        self.hover = pygame.Surface((12*12,128),pygame.SRCALPHA)
-        self.generate_hover()
+        self.hover = self.generate_hover(256,124)
         
         
     def render(self, screen):
@@ -51,25 +50,41 @@ class Item:
                 screen.blit(ui.tiny_numbers, (slot_pos[0]+55-15*i,slot_pos[1]+53),ui.tiny_numbers_rect[d])
                 
                 
-    def generate_hover(self):
-        left_bar = (0,16,16,32)
-        right_bar = (44,16,20,32)
+    def generate_hover(self, width, height):
+        tl_corner = (0,0,16,16)
+        tr_corner = (47,0,16,16)
+        bl_corner = (0,47,16,16)
+        br_corner = (47,47,16,16)
+        left_bar = (0,16,12,32)
+        right_bar = (47,16,12,32)
         top_bar = (16,0,32,16)
         bottom_bar = (12,44,32,16)
         
+        hover = pygame.Surface((width,height),pygame.SRCALPHA)
         
-        self.hover.blit(self.spritesheet[16], (0,0), (0,0,64,64))
-        self.hover.blit(self.spritesheet[16], (0,36), (0,0,64,64))
-        self.hover.blit(self.spritesheet[16], (0,35), left_bar)
+        hover.blit(pygame.transform.scale(self.spritesheet[9],(width-16,height-16)), (8,8))
         
-        self.hover.blit(self.spritesheet[16], (800-60,0), (0,0,64,64))
-        self.hover.blit(self.spritesheet[16], (800-60,36), (0,0,64,64))
-        self.hover.blit(self.spritesheet[16], (784,36), right_bar)
+        hover.blit(self.spritesheet[16], (0,0), tl_corner)
+        hover.blit(self.spritesheet[16], (0,height-16), bl_corner)
         
-        for i in range(12):
-            self.hover.blit(self.spritesheet[16], (16+i*32,0), top_bar)
-            self.hover.blit(self.spritesheet[16], (16+i*32,80), bottom_bar)
+        hover.blit(self.spritesheet[16], (width-16,0), tr_corner)
+        hover.blit(self.spritesheet[16], (width-16,height-16), br_corner)
         
+        for i in range(16,width-16,32):
+            hover.blit(self.spritesheet[16], (i,0), top_bar)
+            hover.blit(self.spritesheet[16], (i,height-19), bottom_bar)
+            
+        for i in range(16,height-16,32):
+            hover.blit(self.spritesheet[16], (0,i), left_bar)
+            hover.blit(self.spritesheet[16], (width-16,i), right_bar)
+            
+        self.game.font.set_font("spritefont1")
+        self.game.font.draw_text("Some Item", hover, (18, 20), scaling_cut = 1, justify="left")
+        
+        self.game.font.set_font("smallfont")
+        self.game.font.draw_text("Tool", hover, (18, 68), scaling_cut = 1, justify="left")
+        
+        return hover
                 
     def render_mouse(self, screen):
         sprite = self.sprite[self.inv_frame]
