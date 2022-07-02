@@ -174,7 +174,7 @@ class PlayerMenu:
             
         # Text
         self.game.font.set_font("spritefont1")
-        self.game.font.draw_text(self.game.data.farm_name+" Farm", self.menu, (580, 324), justify="center")
+        self.game.font.draw_text(self.game.save.farm_name+" Farm", self.menu, (580, 324), justify="center")
         self.game.font.draw_text("Current Funds: 500g", self.menu, (580, 388), justify="center")
         self.game.font.draw_text("Total Earnings: 0g", self.menu, (580, 452), justify="center")
         
@@ -205,30 +205,30 @@ class PlayerMenu:
         
         # Skill pips
         for x in range(4):
-            self.menu.blit(self.pip_small[x+1 <= self.game.data.farming_skill],(392 + 36*x,56))
-            self.menu.blit(self.pip_small[x+1 <= self.game.data.mining_skill],(392 + 36*x,112))
-            self.menu.blit(self.pip_small[x+1 <= self.game.data.foraging_skill],(392 + 36*x,164))
-            self.menu.blit(self.pip_small[x+1 <= self.game.data.fishing_skill],(392 + 36*x,216))
-            self.menu.blit(self.pip_small[x+1 <= self.game.data.combat_skill],(392 + 36*x,268))
+            self.menu.blit(self.pip_small[x+1 <= self.game.save.farming_skill],(392 + 36*x,56))
+            self.menu.blit(self.pip_small[x+1 <= self.game.save.mining_skill],(392 + 36*x,112))
+            self.menu.blit(self.pip_small[x+1 <= self.game.save.foraging_skill],(392 + 36*x,164))
+            self.menu.blit(self.pip_small[x+1 <= self.game.save.fishing_skill],(392 + 36*x,216))
+            self.menu.blit(self.pip_small[x+1 <= self.game.save.combat_skill],(392 + 36*x,268))
             
-        self.menu.blit(self.pip_large[5 <= self.game.data.farming_skill],(536, 56))
-        self.menu.blit(self.pip_large[5 <= self.game.data.mining_skill],(536, 112))
-        self.menu.blit(self.pip_large[5 <= self.game.data.foraging_skill],(536, 164))
-        self.menu.blit(self.pip_large[5 <= self.game.data.fishing_skill],(536, 216))
-        self.menu.blit(self.pip_large[5 <= self.game.data.combat_skill],(536, 268))
+        self.menu.blit(self.pip_large[5 <= self.game.save.farming_skill],(536, 56))
+        self.menu.blit(self.pip_large[5 <= self.game.save.mining_skill],(536, 112))
+        self.menu.blit(self.pip_large[5 <= self.game.save.foraging_skill],(536, 164))
+        self.menu.blit(self.pip_large[5 <= self.game.save.fishing_skill],(536, 216))
+        self.menu.blit(self.pip_large[5 <= self.game.save.combat_skill],(536, 268))
         
-        self.menu.blit(self.pip_large[10 <= self.game.data.farming_skill],(740, 56))
-        self.menu.blit(self.pip_large[10 <= self.game.data.mining_skill],(740, 112))
-        self.menu.blit(self.pip_large[10 <= self.game.data.foraging_skill],(740, 164))
-        self.menu.blit(self.pip_large[10 <= self.game.data.fishing_skill],(740, 216))
-        self.menu.blit(self.pip_large[10 <= self.game.data.combat_skill],(740, 268))
+        self.menu.blit(self.pip_large[10 <= self.game.save.farming_skill],(740, 56))
+        self.menu.blit(self.pip_large[10 <= self.game.save.mining_skill],(740, 112))
+        self.menu.blit(self.pip_large[10 <= self.game.save.foraging_skill],(740, 164))
+        self.menu.blit(self.pip_large[10 <= self.game.save.fishing_skill],(740, 216))
+        self.menu.blit(self.pip_large[10 <= self.game.save.combat_skill],(740, 268))
             
         for x in range(4):
-            self.menu.blit(self.pip_small[x+6 <= self.game.data.farming_skill],(596 + 36*x,56))
-            self.menu.blit(self.pip_small[x+6 <= self.game.data.mining_skill],(596 + 36*x,112))
-            self.menu.blit(self.pip_small[x+6 <= self.game.data.foraging_skill],(596 + 36*x,164))
-            self.menu.blit(self.pip_small[x+6 <= self.game.data.fishing_skill],(596 + 36*x,216))
-            self.menu.blit(self.pip_small[x+6 <= self.game.data.combat_skill],(596 + 36*x,268))
+            self.menu.blit(self.pip_small[x+6 <= self.game.save.farming_skill],(596 + 36*x,56))
+            self.menu.blit(self.pip_small[x+6 <= self.game.save.mining_skill],(596 + 36*x,112))
+            self.menu.blit(self.pip_small[x+6 <= self.game.save.foraging_skill],(596 + 36*x,164))
+            self.menu.blit(self.pip_small[x+6 <= self.game.save.fishing_skill],(596 + 36*x,216))
+            self.menu.blit(self.pip_small[x+6 <= self.game.save.combat_skill],(596 + 36*x,268))
             
     def generate_relationship_menu(self):
         frame_width = 15

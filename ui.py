@@ -4,8 +4,8 @@ from ui_clock import Clock
 from ui_statusbars import StatusBars
 from ui_menu_ibar import InventoryBar
 from ui_menu_player import PlayerMenu
-class UI:
 
+class UI:
     def __init__(self, game):
         print("Initializing UI")
         self.game = game
@@ -15,7 +15,6 @@ class UI:
         self.tiny_numbers_rect=[]
         self.player_menu_enabled = False
         self.item_hover = None
-        #self.ibar = None
         
     @property
     def ibar(self): return self.menu_elements[0]
@@ -32,7 +31,6 @@ class UI:
         self.ui_elements.append(StatusBars(self.game,self))
         self.menu_elements.append(InventoryBar(self.game, self))
         self.menu_elements.append(PlayerMenu(self.game, self))
-        #self.ibar = self.menu_elements[0]
         
         #Get tiny inventory count numbers
         self.spritesheet = self.game.sprite.get_spritesheet("Cursors")
@@ -41,7 +39,6 @@ class UI:
         temp.blit(self.spritesheet, (0,0), rect)
         self.tiny_numbers = pygame.Surface((150,21), pygame.SRCALPHA).convert_alpha()
         self.tiny_numbers = pygame.transform.scale(temp,self.tiny_numbers.get_rect().size)
-        #self.tiny_numbers.blit(self.spritesheet, (0,0), rect)
         for i in range(10): self.tiny_numbers_rect.append(pygame.Rect(i*15,0,15,21))
         
         

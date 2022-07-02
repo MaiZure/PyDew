@@ -14,8 +14,8 @@ class StatusBars:
         self.hbar_enabled = True
         self.e_rect = pygame.Rect(256, 408, 12, 56)
         self.h_rect = pygame.Rect(268, 408, 12, 56)
-        self.hbar_px_per_hp = 168 / self.game.data.player_max_hp
-        self.ebar_px_per_ep = 168 / self.game.data.player_max_ep
+        self.hbar_px_per_hp = 168 / self.game.save.player_max_hp
+        self.ebar_px_per_ep = 168 / self.game.save.player_max_ep
         self.ebar_sprite = pygame.Surface(self.e_rect.size, pygame.SRCALPHA).convert_alpha()
         self.hbar_sprite = pygame.Surface(self.h_rect.size, pygame.SRCALPHA).convert_alpha()
         

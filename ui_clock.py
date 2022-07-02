@@ -19,8 +19,8 @@ class Clock:
         self.update_time = False
         
         self.clock_rect = pygame.Rect(333, 432, 72, 57)
-        self.season_rect = pygame.Rect(406, 441+(self.game.data.season*8), 12, 8)
-        self.weather_rect = pygame.Rect(329+(self.game.data.weather*12), 421, 12, 8)
+        self.season_rect = pygame.Rect(406, 441+(self.game.save.season*8), 12, 8)
+        self.weather_rect = pygame.Rect(329+(self.game.save.weather*12), 421, 12, 8)
         self.arrow_rect = pygame.Rect(324,477,7,19)
         
         
@@ -108,13 +108,13 @@ class Clock:
         return hour_text + ":"+minute_text+" "+meridian
         
     def get_weekday_text(self, day_num = 0) -> str:
-        day_num = self.game.data.day-1 if day_num == 0 else day_num-1
+        day_num = self.game.save.day-1 if day_num == 0 else day_num-1
         day_index = day_num % 7 
         return ["Mon.","Tue.","Wed.", "Thu.", "Fri.", "Sat.", "Sun."][day_index]  
         
     def get_day_text(self) -> str:
         weekday = self.get_weekday_text()
-        day_num = str(self.game.data.day)
+        day_num = str(self.game.save.day)
         return weekday + " " + day_num
     
     def tick(self):
@@ -146,7 +146,7 @@ class Clock:
         screen.blit(self.rotated_arrow, (self.clock_sprite_x + self.rotated_arrow_rect[0], self.clock_sprite_y + self.rotated_arrow_rect[1]))
         
         
-        digits = [int(x) for x in str(self.game.data.gold)]
+        digits = [int(x) for x in str(self.game.save.gold)]
         digits.reverse()
         slot_x = 59
         slot_y = 46

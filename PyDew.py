@@ -13,17 +13,18 @@ from audio import Audio
 from ui import UI
 from mouse import MouseHandler
 from item import ItemLoader
-from gamedata import GameData
+from savedata import SaveData
+from dataloader import DataLoader
 
 
 class PyDew:
     def __init__(self):
         ctypes.windll.user32.SetProcessDPIAware()  # Ensure PyGame knows the real DPI in Windows (avoid OS-level scaling)
         pygame.init()
-        self.version = "0.1.8.64"
+        self.version = "0.1.8.65"
         print("Hello PyDew "+str(self.version))
         self.config = Config()
-        self.data = GameData()
+        self.save = SaveData()
         self.final_screen = pygame.display.set_mode((self.config.screen_width, 
                                                self.config.screen_height),
                                                pygame.HWSURFACE|pygame.DOUBLEBUF)
@@ -55,6 +56,7 @@ class PyDew:
         pygame.display.set_caption("PyDew "+str(self.version))
         
         self.sprite = SpriteLoader(self)
+        self.data = DataLoader(self)
         self.map = MapLoader(self)
         self.font = FontLoader(self)
         self.item = ItemLoader(self)
@@ -64,11 +66,11 @@ class PyDew:
         self.audio = Audio(self)
         self.mouse = MouseHandler(self,self.ui)
         
-        self.paused = False
-        
+        self.paused = False    
         self.run = False
         
         self.sprite.init_second_stage()
+        self.data.init_second_stage()
         self.map.init_second_stage()
         self.font.init_second_stage()
         self.item.init_second_stage()

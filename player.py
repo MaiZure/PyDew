@@ -29,7 +29,7 @@ class Player:
         self.map_width = 0
         self.map_height = 0
         self.moving = False
-        self.max_hp = self.game.data.player_max_hp
+        self.max_hp = self.game.save.player_max_hp
         self.hp = self.max_hp
         self.ep = 270
         self.max_ep = 270
@@ -65,6 +65,7 @@ class Player:
         self.inventory[2] = Tool(self.game, "axe")
         self.inventory[3] = Tool(self.game, "wateringcan")
         self.inventory[4] = Weapon(self.game, "galaxysword")
+        self.inventory[7] = (Item(self.game)).init_item()
         
     def generate_pants(self):
         self.pants = pygame.Surface((288,672),pygame.SRCALPHA) ## TODO - Get first set of pants 192,672 of whole sheet
