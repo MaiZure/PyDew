@@ -15,7 +15,7 @@ class Item:
         self.sprite = None
         
         self.name = ""
-        self.type_str = ""
+        self.category_str = ""
         self.desc = ""
       
         self.spritesheet = self.game.sprite.get_tiles("MenuTiles")
@@ -64,6 +64,10 @@ class Item:
         top_bar = (16,0,32,16)
         bottom_bar = (12,44,32,16)
         
+        cross_bar_y = 105
+        if len(self.category_str) < 2:
+            cross_bar_y = 72
+        
         # Minimum hover size is 256x256
         self.game.font.set_font("spritefont1")
         w = self.game.font.get_line_width(self.name)
@@ -87,7 +91,7 @@ class Item:
         
         for i in range(16,width-16,32):
             hover.blit(self.spritesheet[16], (i,0), top_bar)
-            hover.blit(self.spritesheet[16], (i,105), bottom_bar)
+            hover.blit(self.spritesheet[16], (i,cross_bar_y), bottom_bar)
             hover.blit(self.spritesheet[16], (i,height-19), bottom_bar)
             
         for i in range(16,height-16,32):
@@ -95,11 +99,11 @@ class Item:
             hover.blit(self.spritesheet[16], (width-16,i), right_bar)
             
         hover.blit(self.spritesheet[16], (0,0), tl_corner)
-        hover.blit(self.spritesheet[16], (0,108), bl_corner)
+        hover.blit(self.spritesheet[16], (0,cross_bar_y+3), bl_corner)
         hover.blit(self.spritesheet[16], (0,height-16), bl_corner)
         
         hover.blit(self.spritesheet[16], (width-16,0), tr_corner)
-        hover.blit(self.spritesheet[16], (width-16,108), br_corner)
+        hover.blit(self.spritesheet[16], (width-16,cross_bar_y+3), br_corner)
         hover.blit(self.spritesheet[16], (width-16,height-16), br_corner)
         
         
@@ -108,10 +112,10 @@ class Item:
         self.game.font.draw_text(self.name, hover, (18, 20), scaling_cut = 1, justify="left")
         
         self.game.font.set_font("smallfont")
-        self.game.font.draw_text("Tool", hover, (18, 68), scaling_cut = 1, justify="left")
+        self.game.font.draw_text(self.category_str, hover, (18, 68), scaling_cut = 1, justify="left")
         
         for i in range(len(lines)):
-            self.game.font.draw_text(lines[i], hover, (18, 128+i*24), scaling_cut = 1, justify="left")
+            self.game.font.draw_text(lines[i], hover, (18, cross_bar_y+23+i*24), scaling_cut = 1, justify="left")
         
         
         return hover
@@ -169,9 +173,45 @@ class Item:
         datalist = data.split('/')
         self.inv_frame = int(datalist[0])
         self.name = datalist[1]
-        self.type_str = datalist[4]
+        self.category_str = self.get_category_label(datalist[4])
         self.desc = datalist[6]
         return datalist
+        
+    def get_category_label(self, data) -> str:
+        split = data.split(" ")
+        if len(split) < 2:
+            if split[0] == "Arch": return "Artifact"
+            if split[0] == "Ring": return "Ring"
+            return ""
+        
+        cat_num = int(split[1])
+        
+        if cat_num == -2: return "Mineral"
+        if cat_num == -4: return "Fish"
+        if cat_num == -5: return "Animal Product"
+        if cat_num == -6: return "Animal Product"
+        if cat_num == -7: return "Cooking"
+        if cat_num == -8: return "Crafting"
+        if cat_num == -12: return "Mineral"
+        if cat_num == -14: return "Animal Product"
+        if cat_num == -15: return "Resource"
+        if cat_num == -16: return "Resource"
+        if cat_num == -18: return "Animal Product"
+        if cat_num == -19: return "Fertilizer"
+        if cat_num == -20: return "Trash"
+        if cat_num == -21: return "Bait"
+        if cat_num == -22: return "Fishing Tackle"
+        if cat_num == -24: return "Decor"
+        if cat_num == -25: return "Cooking"
+        if cat_num == -26: return "Artisan Goods"
+        if cat_num == -27: return "Artisan Goods"
+        if cat_num == -28: return "Monster Loot"
+        if cat_num == -74: return "Seed"
+        if cat_num == -75: return "Vegetable"
+        if cat_num == -79: return "Fruit"
+        if cat_num == -80: return "Flower"
+        if cat_num == -81: return "Forage"
+        return ""
         
     def get_description_lines(self, desc, width_limit):
         lines = []
