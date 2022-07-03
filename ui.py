@@ -59,7 +59,7 @@ class UI:
         if self.item_hover:
             height = self.item_hover.hover.get_height()
             mouse_pos = pygame.mouse.get_pos()
-            draw_pos = (mouse_pos[0],min(mouse_pos[1],screen.get_height()-height+4))
+            draw_pos = (mouse_pos[0]+24,min(mouse_pos[1],screen.get_height()-height+4))
             screen.blit(self.item_hover.hover,draw_pos)
             self.item_hover = None
             

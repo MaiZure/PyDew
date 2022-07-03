@@ -20,7 +20,10 @@ class DataLoader:
             self.file[name] = json.load(open(path+file))
             
     def get_object_by_num(self,num):
-        return self.file["objectinformation"]["content"][str(num)]
+        dict = self.file["objectinformation"]["content"]
+        result = dict[str(num)]
+        result = str(num)+"/"+result
+        return result
         
     def get_random_object(self):
         dict = self.file["objectinformation"]["content"]

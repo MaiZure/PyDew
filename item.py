@@ -19,7 +19,8 @@ class Item:
         self.desc = ""
       
         self.spritesheet = self.game.sprite.get_tiles("MenuTiles")
-        self.hover = self.generate_hover(256,256)
+        
+        self.hover = self.generate_hover(256,192)
         
         
     def render(self, screen):
@@ -63,6 +64,22 @@ class Item:
         top_bar = (16,0,32,16)
         bottom_bar = (12,44,32,16)
         
+        # Minimum hover size is 256x256
+        self.game.font.set_font("spritefont1")
+        w = self.game.font.get_line_width(self.name)
+        width = max(256,w+36)
+        
+        width += 24*int((len(self.desc)/25))
+        
+        self.game.font.set_font("smallfont")
+        lines = self.get_description_lines(self.desc,width-48)
+        
+        h = 0
+        for line in lines:
+            h += 24#self.game.font.get_line_height(line)
+            
+        height = max(192, h+160)
+        
         hover = pygame.Surface((width,height),pygame.SRCALPHA)
         
         hover.blit(pygame.transform.scale(self.spritesheet[9],(width-16,height-16)), (8,8))
@@ -92,6 +109,10 @@ class Item:
         
         self.game.font.set_font("smallfont")
         self.game.font.draw_text("Tool", hover, (18, 68), scaling_cut = 1, justify="left")
+        
+        for i in range(len(lines)):
+            self.game.font.draw_text(lines[i], hover, (18, 128+i*24), scaling_cut = 1, justify="left")
+        
         
         return hover
                 
@@ -141,6 +162,7 @@ class Item:
             data = self.game.data.get_random_object()
         self.parse_item_data(data)
         self.sprite = self.game.sprite.get_tiles("springobjects")
+        self.hover = self.generate_hover(256,192)
         return self
         
     def parse_item_data(self, data) -> None:
@@ -149,9 +171,28 @@ class Item:
         self.name = datalist[1]
         self.type_str = datalist[4]
         self.desc = datalist[6]
-        
-        self.hover = self.generate_hover(256,256)
         return datalist
+        
+    def get_description_lines(self, desc, width_limit):
+        lines = []
+        start = 0
+        current = 0
+        last_space = 0
+        current_line = ""
+        while current < len(desc):
+            if desc[current] == " ":
+                last_space = current
+            current_line += desc[current]
+            if self.game.font.get_line_width(current_line) > width_limit or current >= len(desc)-1:              
+                if current < len(desc)-1:
+                    lines.append(desc[start:last_space])
+                    current = last_space
+                    start = last_space+1
+                else:
+                    lines.append(desc[start:])
+                current_line = ""
+            current += 1
+        return lines
 
 class Resource(Item):
     def __init__(self, game, type):
