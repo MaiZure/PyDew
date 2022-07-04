@@ -31,5 +31,11 @@ class DataLoader:
         result = dict[choice]
         result = choice+"/"+result
         return result
-   
+        
+    def get_random_weapon(self):
+        dict = self.file["weapons"]["content"]
+        choice = random.choice(list(dict))
+        result = dict[choice]
+        result = choice+"/"+result
+        return result
     

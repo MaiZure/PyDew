@@ -54,7 +54,7 @@ class Item:
                 screen.blit(ui.tiny_numbers, (slot_pos[0]+55-15*i,slot_pos[1]+53),ui.tiny_numbers_rect[d])
                 
                 
-    def generate_hover(self, width, height):
+    def generate_hover(self, width=0, height=0):
         tl_corner = (0,0,16,16)
         tr_corner = (47,0,16,16)
         bl_corner = (0,47,16,16)
@@ -213,6 +213,13 @@ class Item:
         if cat_num == -81: return "Forage"
         return ""
         
+    def quality_name(self, quality):
+        if quality == 0: return ""
+        if quality == 1: return "Copper"
+        if quality == 2: return "Steel"
+        if quality == 3: return "Gold"
+        if quality == 4: return "Iridium"
+        
     def get_description_lines(self, desc, width_limit):
         lines = []
         start = 0
@@ -248,11 +255,17 @@ class Tool(Item):
     def __init__(self, game, type):
         super().__init__(game)
         tool = game.item.tool[type]
-        self.name = tool["name"]
+        self.name = ""
         self.quality = random.choice([0,1,2,3,4])
+        if self.quality > 0:
+            self.name += self.quality_name(self.quality) + " " 
+        self.name += tool["name"]
+        self.desc = tool["desc"]
         self.sprite = self.game.sprite.get_tiles("tools")
+        self.category_str = "Tool"
         self.inv_frame = tool["inv_frame"][self.quality]
         self.stackable = True
+        self.hover = self.generate_hover()
         
 class Food(Item):
     def __init__(self, game, type):
@@ -268,9 +281,37 @@ class Weapon(Item):
         super().__init__(game)
         weapon = game.item.weapon[type]
         self.name = weapon["name"]
+        
+        #Overrides specific weapon for now
+        self.init_item()
         self.sprite = self.game.sprite.get_tiles("weapons")
-        self.inv_frame = weapon["inv_frame"][0]
+        #self.inv_frame = weapon["inv_frame"][0]
+        
         self.stackable = False
+        
+    def init_item(self, data=None):
+        if not data:
+            data = self.game.data.get_random_weapon()
+        self.parse_item_data(data)
+        self.hover = self.generate_hover(256,192)
+        return self
+    
+    def parse_item_data(self, data) -> None:
+        datalist = data.split('/')
+        self.inv_frame = int(datalist[0])
+        self.name = datalist[1]
+        self.category_str = self.get_category_label(datalist[9])
+        self.desc = datalist[2]
+        return datalist
+        
+    def get_category_label(self, data) -> None:        
+        if int(data) == 0: return "Sword"
+        if int(data) == 1: return "Dagger"
+        if int(data) == 2: return "Hammer"
+        if int(data) == 3: return "Sword"
+        if int(data) == 4: return ""
+        return ""
+        
         
 class ItemLoader:
     def __init__(self,game):
@@ -284,22 +325,27 @@ class ItemLoader:
     def init_second_stage(self):
         self.tool["hoe"] = {
             "name": "Hoe",
+            "desc": "Used to dig and till soil",
             "inv_frame": [47, 54, 61, 89, 96]  # Each quality level
         }
         self.tool["pickaxe"] = {
             "name": "Pickaxe",
+            "desc": "Used to break stones",
             "inv_frame": [131, 138, 145, 173, 180]  # Each quality level
         }
         self.tool["axe"] = {
             "name": "Axe",
+            "desc": "Used to chop wood",
             "inv_frame": [215, 222, 229, 257, 264]  # Each quality level
         }
         self.tool["wateringcan"] = {
             "name": "Watering Can",
+            "desc": "Used to water crops. It can be refilled at any water source",
             "inv_frame": [296, 303, 310, 338, 345]  # Each quality level
         }       
         self.weapon["galaxysword"] = {
             "name": "Galaxy Sword",
+            "desc": "",
             "inv_frame": [4]  # Each quality level
         }
         self.resource["wood"] = {
