@@ -351,8 +351,17 @@ class PlayerMenu:
         return -1
         
     def tick(self):
-        pass
-    
+        if not self.ui.player_menu_enabled:
+            return
+            
+        pos = pygame.mouse.get_pos()
+        
+        if self.tab_selected == 0 and self.inv_rect.collidepoint(pos):
+            slot_num = self.get_inv_slot_click(pos)
+            if slot_num > -1:                    
+                if self.game.player.inventory[slot_num]:
+                    self.ui.item_hover = self.game.player.inventory[slot_num]
+            
     def render(self, screen):
         if not self.ui.player_menu_enabled:
             return
