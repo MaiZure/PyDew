@@ -256,7 +256,8 @@ class World:
     def init_active_map(self):
         self.set_map_width(self.map_width)
         self.set_map_height(self.map_height)
-        self.new_map = False
+        self.redraw_front = True
+        self.optimized_render = False
         
     def set_map_width(self,w) -> None:
         assert w >= 0 <= 120
@@ -269,6 +270,7 @@ class World:
     def tick(self):
         self.update_time()
         if self.new_map:
+            self.new_map = False
             self.init_active_map()
         self.cycle_reel(self.bg_tile_update_reel, self.bg_layer)
         self.cycle_reel(self.bldg_tile_update_reel, self.bldg_layer)
@@ -316,7 +318,7 @@ class World:
         self.top_left_y = min(max(self.game.player.y-screen.get_height()/2,0),self.map_height*16-screen.get_height())
         
         self.optimized_render = False
-        if self.top_left_x == self.top_left_x_last and self.top_left_y == self.top_left_y_last:
+        if self.top_left_x == self.top_left_x_last and self.top_left_y == self.top_left_y_last and not self.redraw_front:
             self.optimized_render = True
             
         # Centers the screen in the case of rooms smaller than the whole screen
@@ -349,23 +351,22 @@ class World:
         self.game.player.render(screen) # Find a way to partition the MO around the player rather than O(2n)
         
         # Render remaining map items 'after' the player
-        for obj_num in range(obj_num, len(self.current_map_path_objects)):
-            mapobject = self.current_map_path_objects[obj_num]
-            if mapobject.gy > self.game.player.gy:
-                mapobject.render_mid(screen)
+        if len(self.current_map_path_objects):
+            for obj_num in range(obj_num, len(self.current_map_path_objects)):
+                mapobject = self.current_map_path_objects[obj_num]
+                if mapobject.gy > self.game.player.gy:
+                    mapobject.render_mid(screen)
                 
         screen.blit(self.mid, (0,screen.get_height()/2), (self.top_left_x,self.top_left_y+screen.get_height()/2,screen.get_width(),screen.get_height()/2))
         
     def render_front(self, screen):
         if self.optimized_render: return
-        
         screen.fill(pygame.Color(0,0,0,0))
         if self.redraw_front:
             self.redraw_front = False
             for mapobject in self.current_map_path_objects:
                 mapobject.render_front(self.fg)
         screen.blit(self.fg, (0,0), (self.top_left_x,self.top_left_y,screen.get_width(),screen.get_height()))
-        
         
     def get_tile_x(self, tile_num):
         return tile_num % self.map_width
