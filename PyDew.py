@@ -21,7 +21,7 @@ class PyDew:
     def __init__(self):
         ctypes.windll.user32.SetProcessDPIAware()  # Ensure PyGame knows the real DPI in Windows (avoid OS-level scaling)
         pygame.init()
-        self.version = "0.1.9.69"
+        self.version = "0.1.9.70"
         print("Hello PyDew "+str(self.version))
         self.config = Config()
         self.save = SaveData()
@@ -150,12 +150,7 @@ class PyDew:
         scaled_screen = pygame.transform.scale(self.unscaled_screen,self.final_screen.get_rect().size)
         scaled_ui_screen = pygame.transform.scale(self.unscaled_ui_screen,self.final_screen.get_rect().size)
         
-        
-        
-        scaled_screen.blit(scaled_ui_screen,(0,0))
-        
-        
-        
+        scaled_screen.blit(scaled_ui_screen,(0,0))    
         scaled_screen.blit(self.menu_surface, (0,0))
         
         # Post scaling rendering (text, some UI elements like health bars, clock hand rotation [future])

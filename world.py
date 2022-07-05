@@ -15,6 +15,7 @@ class World:
         self.top_left_x_last = 0
         self.top_left_y_last = 0
         self.optimized_render = False
+        self.redraw_front = True
         self.map_width = 0
         self.map_height = 0
         self.hour = 6
@@ -330,7 +331,9 @@ class World:
     def render_mid(self, screen):
         screen.fill(pygame.Color(0,0,0,0))
         
-        for mapobject in self.current_map_path_objects:
+        # Render part of all map items 'before' the player -- exit at player and start later
+        for obj_num in range(len(self.current_map_path_objects)):
+            mapobject = self.current_map_path_objects[obj_num]
             if mapobject.gy <= self.game.player.gy:
                 mapobject.render_mid(screen)
             else: break;
@@ -345,17 +348,22 @@ class World:
         
         self.game.player.render(screen) # Find a way to partition the MO around the player rather than O(2n)
         
-        for mapobject in self.current_map_path_objects:
+        # Render remaining map items 'after' the player
+        for obj_num in range(obj_num, len(self.current_map_path_objects)):
+            mapobject = self.current_map_path_objects[obj_num]
             if mapobject.gy > self.game.player.gy:
                 mapobject.render_mid(screen)
-            
-        #screen.blit(self.mid, (0,0), (self.top_left_x,self.top_left_y,screen.get_width(),screen.get_height()))      
+                
         screen.blit(self.mid, (0,screen.get_height()/2), (self.top_left_x,self.top_left_y+screen.get_height()/2,screen.get_width(),screen.get_height()/2))
         
     def render_front(self, screen):
-        screen.fill(pygame.Color(0,0,0,0))    
-        for mapobject in self.current_map_path_objects:
-            mapobject.render_front(screen)
+        if self.optimized_render: return
+        
+        screen.fill(pygame.Color(0,0,0,0))
+        if self.redraw_front:
+            self.redraw_front = False
+            for mapobject in self.current_map_path_objects:
+                mapobject.render_front(self.fg)
         screen.blit(self.fg, (0,0), (self.top_left_x,self.top_left_y,screen.get_width(),screen.get_height()))
         
         

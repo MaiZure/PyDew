@@ -16,6 +16,8 @@ class InventoryBar:
         
         self.ibar_sprite = pygame.Surface((800,96), pygame.SRCALPHA).convert_alpha()
         self.ibar_enabled = True
+        self.redraw_inventory = True
+        self.redraw_ibar_selection = True
         
         self.ibar_top = False
         self.ibar_sprite_x = int(self.game.menu_surface.get_width()/2 - self.ibar_sprite.get_width()/2)
@@ -51,8 +53,8 @@ class InventoryBar:
         for i in range(12):
             slot_x = (4*self.scaling)+(self.tile_width*i)
             slot_y = (4*self.scaling)
-            self.slot_pos[False].append((self.ibar_sprite_x+slot_x,self.ibar_sprite_y_bottom+slot_y))
-            self.slot_pos[True].append((self.ibar_sprite_x+slot_x,self.ibar_sprite_y_top+slot_y))
+            self.slot_pos[False].append((slot_x,slot_y))
+            self.slot_pos[True].append((slot_x,slot_y))
             self.ibar_sprite.blit(self.spritesheet[9], (slot_x, slot_y), (0,0,64,64))
             self.ibar_sprite.blit(self.spritesheet[10], (slot_x, slot_y), (0,0,64,64))
         
@@ -94,23 +96,31 @@ class InventoryBar:
         if select == self.selection: return
         self.last_selection = self.selection
         self.selection = select
+        self.redraw_ibar_selection = True
+        self.redraw_inventory = True
     
     def render(self, screen):
         if not self.ibar_enabled:
             return
             
-        self.ibar_sprite.blit(self.spritesheet[56], (16+self.tile_width*self.selection,16), (0,0,64,64))
-        if self.last_selection > -1:
-            self.ibar_sprite.blit(self.spritesheet[9], (16+self.tile_width*self.last_selection,16), (0,0,64,64))
-            self.ibar_sprite.blit(self.spritesheet[10], (16+self.tile_width*self.last_selection,16), (0,0,64,64))
-            self.last_selection = -1
-        screen.blit(self.ibar_sprite, (self.ibar_sprite_x,self.ibar_sprite_y))
-    
+        
+        if self.redraw_ibar_selection:
+            self.redraw_ibar_selection = False
+            self.ibar_sprite.blit(self.spritesheet[56], (16+self.tile_width*self.selection,16), (0,0,64,64))
+            if self.last_selection > -1:
+                self.ibar_sprite.blit(self.spritesheet[9], (16+self.tile_width*self.last_selection,16), (0,0,64,64))
+                self.ibar_sprite.blit(self.spritesheet[10], (16+self.tile_width*self.last_selection,16), (0,0,64,64))
+                self.last_selection = -1        
+            
         # Probably don't need to redraw items on every frame eh?
-        for i in range(self.ibar_row, self.ibar_row+12):
-            item = self.game.player.inventory[i]
-            if item:
-                item.render_inv(screen, i)
+        if self.redraw_inventory:
+            self.redraw_inventory = False
+            for i in range(self.ibar_row, self.ibar_row+12):
+                item = self.game.player.inventory[i]
+                if item:
+                    item.render_inv(self.ibar_sprite, i)
+                
+        screen.blit(self.ibar_sprite, (self.ibar_sprite_x,self.ibar_sprite_y))
     
     def update_clickrect(self):
         self.ibar_clickrect = pygame.Rect(self.ibar_sprite_x+4*self.scaling,
