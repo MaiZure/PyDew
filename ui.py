@@ -76,7 +76,8 @@ class UI:
         self.ibar.ibar_enabled = False
         self.player_menu_enabled = True
               
-    def deactivate_player_menu(self):     
+    def deactivate_player_menu(self):
+        if self.player_menu.selected_item: return
         self.player_menu_enabled = False
         self.ibar.ibar_enabled = True
         self.game.paused = False

@@ -1,4 +1,5 @@
 import pygame, random
+from item import *
 
 class PlayerMenu:
 
@@ -60,6 +61,24 @@ class PlayerMenu:
         surf = pygame.transform.scale(surf, (13*self.scaling,9*self.scaling))
         self.pip_large.append(surf.copy())
         
+        
+        
+        self.trash_can = []
+        self.trash_lid = []
+        for i in range(5):
+            rect = pygame.Rect(564+18*i, 102, 18, 26)
+            surf = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
+            surf.blit(self.cursors, (0,0), rect)
+            surf = pygame.transform.scale(surf, (18*self.scaling,26*self.scaling))
+            self.trash_can.append(surf.copy())
+            
+            rect = pygame.Rect(564+18*i, 129, 18, 10)
+            surf = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
+            surf.blit(self.cursors, (0,0), rect)
+            surf = pygame.transform.scale(surf, (18*self.scaling,10*self.scaling))
+            self.trash_lid.append(surf.copy())
+        
+        
         self.active_menu = 0
         self.tab_bar = None
         self.tab_selected = 0
@@ -70,6 +89,7 @@ class PlayerMenu:
         self.tile_width = self.scaling*16
         self.menu_clickrect = pygame.Rect(0,0,0,0)
         self.tabs_clickrect = pygame.Rect(0,0,0,0)
+        self.trash_clickrect = pygame.Rect(0,0,0,0)
         
         self.menu = None
         self.generate_menus() 
@@ -130,11 +150,16 @@ class PlayerMenu:
         
     def generate_inventory_menu(self):
         frame_width = 14
-        frame_height = 9
-        mid_point = int(frame_height/2)
+        frame_height = 9.5
+        mid_point = 4
+        
+        
         self.menu = self.generate_menu_frame(frame_width,frame_height)
         self.menu_top_left_x = int(self.game.menu_surface.get_width()/2 - self.menu.get_width()/2)
         self.menu_top_left_y = int(self.game.menu_surface.get_height()/2 - self.menu.get_height()/2)
+        self.trash_can_x = self.menu_top_left_x + self.menu.get_width() + 32
+        self.trash_can_y = self.menu_top_left_y + self.menu.get_height()/2
+        self.trash_clickrect = pygame.Rect(self.trash_can_x,self.trash_can_y,self.trash_can[0].get_width(),self.trash_can[0].get_height())
 
         # Cross Bar
         self.menu.blit(self.spritesheet[4],(0,mid_point*64))
@@ -171,16 +196,18 @@ class PlayerMenu:
         self.menu.blit(self.spritesheet[42],(260,312))
         self.menu.blit(self.spritesheet[69],(260,376))
         self.menu.blit(self.spritesheet[68],(260,440))
-            
+                
+        
         # Text
         self.game.font.set_font("spritefont1")
         self.game.font.draw_text(self.game.save.farm_name+" Farm", self.menu, (580, 324), justify="center")
         self.game.font.draw_text("Current Funds: 500g", self.menu, (580, 388), justify="center")
         self.game.font.draw_text("Total Earnings: 0g", self.menu, (580, 452), justify="center")
+        self.game.font.draw_text(self.game.save.player_name, self.menu, (188, 520), justify="center")
         
     def generate_skill_menu(self):
         frame_width = 14
-        frame_height = 9
+        frame_height = 9.5
         mid_point = int(frame_height/2)
         self.menu = self.generate_menu_frame(frame_width,frame_height)
         
@@ -232,13 +259,13 @@ class PlayerMenu:
             
     def generate_relationship_menu(self):
         frame_width = 15
-        frame_height = 9
+        frame_height = 9.5
         mid_point = int(frame_height/2)
         self.menu = self.generate_menu_frame(frame_width,frame_height)
         
     def generate_craft_menu(self):
         frame_width = 14
-        frame_height = 9
+        frame_height = 9.5
         cross_bar = 4.5
         self.menu = self.generate_menu_frame(frame_width,frame_height)
         
@@ -271,22 +298,21 @@ class PlayerMenu:
         self.menu.blit(pygame.transform.scale(self.map_bg,(12*64,(8*64))),(32,32))
 
         
-        
     def generate_item_menu(self):
         frame_width = 13
-        frame_height = 9
+        frame_height = 9.5
         mid_point = int(frame_height/2)
         self.menu = self.generate_menu_frame(frame_width,frame_height)
         
     def generate_option_menu(self):
         frame_width = 14
-        frame_height = 9
+        frame_height = 9.5
         mid_point = int(frame_height/2)
         self.menu = self.generate_menu_frame(frame_width,frame_height)
         
     def generate_quit_menu(self):
         frame_width = 13
-        frame_height = 9
+        frame_height = 9.5
         mid_point = int(frame_height/2)
         self.menu = self.generate_menu_frame(frame_width,frame_height)
         
@@ -337,6 +363,11 @@ class PlayerMenu:
                     tmp = self.selected_item
                     self.selected_item = self.game.player.inventory[slot_num]
                     self.game.player.inventory[slot_num] = tmp
+            # Clicking the trash can
+            if self.tab_selected == 0 and self.trash_clickrect.collidepoint(pos):
+                if self.selected_item:
+                    if not isinstance(self.selected_item, Tool):
+                        self.selected_item = None
                     
     def get_inv_slot_click(self, pos):
         # Should probably change each slot to a real Rect if there's not other use for it...
@@ -375,6 +406,10 @@ class PlayerMenu:
                 if item:
                     item.render_inv(screen, i)
                     
+        if self.tab_selected == 0:
+            screen.blit(self.trash_can[self.game.save.trash_level], (self.trash_can_x, self.trash_can_y))
+            screen.blit(self.trash_lid[self.game.save.trash_level], (self.trash_can_x-4, self.trash_can_y))
+            
         if self.selected_item:
            self.selected_item.render_mouse(screen)
     

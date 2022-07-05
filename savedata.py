@@ -24,4 +24,6 @@ class SaveData:
         
         self.farmer_title = 10
         
+        self.trash_level = 0
+        
         
