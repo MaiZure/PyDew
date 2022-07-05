@@ -45,12 +45,14 @@ class Clock:
         
         self.arrow_base = None
         self.arrow_base_rect = None
+        self.scaled_arrow = None
+        self.scaled_arrow_rect = None
         self.rotated_arrow = None
         self.rotated_arrow_rect = None
-        self.arrow_x = 22
-        self.arrow_y = 19
-        self.arrow_pivot_x = 3
-        self.arrow_pivot_y = 17
+        self.arrow_x = 23
+        self.arrow_y = 21
+        self.arrow_pivot_x = 3.5
+        self.arrow_pivot_y = 17.5
         self.arrow_angle = 180
         
         self.generate_clock()   
@@ -75,6 +77,9 @@ class Clock:
         self.arrow_base = pygame.Surface(arrow_surf_size, pygame.SRCALPHA).convert_alpha()
         self.arrow_base_rect = self.arrow_base.get_rect()
         self.arrow_base.blit(self.spritesheet, (0,0), self.arrow_rect)
+        
+        self.arrow_scaled = pygame.transform.scale(self.arrow_base, (self.arrow_base_rect[2]*4, self.arrow_base_rect[3]*4))
+        self.arrow_base_rect = self.arrow_scaled.get_rect()
         
         
     def update_text(self):
@@ -128,9 +133,10 @@ class Clock:
         self.update_time = True
     
     def rotate_arrow(self,angle):
-        image=self.arrow_base
-        pos=(self.arrow_x,self.arrow_y)
-        originPos=(self.arrow_pivot_x,self.arrow_pivot_y)
+        image=self.arrow_scaled
+        scale = self.game.config.ui_scaling
+        pos=(self.arrow_x*scale,self.arrow_y*scale)
+        originPos=(self.arrow_pivot_x*scale,self.arrow_pivot_y*scale)
         
         image_rect = image.get_rect(topleft = (pos[0] - originPos[0], pos[1]-originPos[1]))
         offset_center_to_pivot = pygame.math.Vector2(pos) - image_rect.center
@@ -143,7 +149,7 @@ class Clock:
     
     def render(self, screen):
         screen.blit(self.clock_sprite, (self.clock_sprite_x, self.clock_sprite_y))
-        screen.blit(self.rotated_arrow, (self.clock_sprite_x + self.rotated_arrow_rect[0], self.clock_sprite_y + self.rotated_arrow_rect[1]))
+        #screen.blit(self.rotated_arrow, (self.clock_sprite_x + self.rotated_arrow_rect[0], self.clock_sprite_y + self.rotated_arrow_rect[1]))
         
         
         digits = [int(x) for x in str(self.game.save.gold)]
@@ -155,5 +161,7 @@ class Clock:
             slot_x -= 6
         
     def render_scaled(self, screen):
-        screen.blit(self.text_layer, (self.clock_sprite_x*4,self.clock_sprite_y*4))
+        scale = self.game.config.ui_scaling
+        screen.blit(self.rotated_arrow, (self.clock_sprite_x*scale + self.rotated_arrow_rect[0], self.clock_sprite_y*scale + self.rotated_arrow_rect[1]))
+        screen.blit(self.text_layer, (self.clock_sprite_x*scale,self.clock_sprite_y*scale))
         

@@ -21,7 +21,7 @@ class PyDew:
     def __init__(self):
         ctypes.windll.user32.SetProcessDPIAware()  # Ensure PyGame knows the real DPI in Windows (avoid OS-level scaling)
         pygame.init()
-        self.version = "0.2.0.72"
+        self.version = "0.2.0.73"
         print("Hello PyDew "+str(self.version))
         self.config = Config()
         self.save = SaveData()
@@ -119,6 +119,8 @@ class PyDew:
                     self.world.init_map("forest")
                 if e.key == pygame.K_v:
                     self.world.litterbug()
+                if e.key == pygame.K_l:
+                    self.world.speed_time = not self.world.speed_time
                 if e.key == pygame.K_ESCAPE:
                     self.ui.toggle_player_menu()
             if e.type == pygame.MOUSEBUTTONDOWN:

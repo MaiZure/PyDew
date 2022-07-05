@@ -21,6 +21,7 @@ class World:
         self.hour = 6
         self.minute = 0
         self.tick_time = 0
+        self.speed_time = False
         
         self.map_layers = []
         self.tiles = []
@@ -289,7 +290,7 @@ class World:
             item.create_at(x,y)
             
     def update_time(self):
-        self.tick_time += 1
+        self.tick_time = self.tick_time + 1 if not self.speed_time else self.tick_time + 60
         if self.tick_time >= 360:
             self.tick_time = 0
             self.minute += 10
