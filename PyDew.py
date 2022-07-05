@@ -21,7 +21,7 @@ class PyDew:
     def __init__(self):
         ctypes.windll.user32.SetProcessDPIAware()  # Ensure PyGame knows the real DPI in Windows (avoid OS-level scaling)
         pygame.init()
-        self.version = "0.1.9.70"
+        self.version = "0.2.0.71"
         print("Hello PyDew "+str(self.version))
         self.config = Config()
         self.save = SaveData()
@@ -29,28 +29,34 @@ class PyDew:
                                                self.config.screen_height),
                                                pygame.HWSURFACE|pygame.DOUBLEBUF)
         self.unscaled_screen = pygame.Surface((self.config.screen_width/self.config.screen_scaling, 
-                                               self.config.screen_height/self.config.screen_scaling))
+                                               self.config.screen_height/self.config.screen_scaling)).convert_alpha()
         self.unscaled_ui_screen = pygame.Surface((self.config.screen_width/self.config.ui_scaling, 
-                                               self.config.screen_height/self.config.ui_scaling), pygame.SRCALPHA)
+                                               self.config.screen_height/self.config.ui_scaling),
+                                               pygame.SRCALPHA).convert_alpha()
+        self.scaled_screen = pygame.Surface((self.config.screen_width, self.config.screen_height),
+                                               pygame.SRCALPHA).convert_alpha()
+        self.scaled_ui_screen = pygame.Surface((self.config.screen_width, self.config.screen_height),
+                                               pygame.SRCALPHA).convert_alpha()
         self.ambient_surface = pygame.Surface((self.config.screen_width/self.config.screen_scaling, 
                                                self.config.screen_height/self.config.screen_scaling),
-                                               pygame.SRCALPHA)
+                                               pygame.SRCALPHA).convert_alpha()
         self.bg_surface = pygame.Surface((self.config.screen_width/self.config.screen_scaling, 
-                                               self.config.screen_height/self.config.screen_scaling))
+                                               self.config.screen_height/self.config.screen_scaling)).convert()
         self.mid_surface = pygame.Surface((self.config.screen_width/self.config.screen_scaling, 
                                                self.config.screen_height/self.config.screen_scaling),
-                                               pygame.SRCALPHA)
+                                               pygame.SRCALPHA).convert_alpha()
         self.fg_surface = pygame.Surface((self.config.screen_width/self.config.screen_scaling, 
                                                self.config.screen_height/self.config.screen_scaling),
-                                               pygame.SRCALPHA)
+                                               pygame.SRCALPHA).convert_alpha()
         self.npc_surface = pygame.Surface((self.config.screen_width/self.config.screen_scaling, 
                                                self.config.screen_height/self.config.screen_scaling),
-                                               pygame.SRCALPHA)
+                                               pygame.SRCALPHA).convert_alpha()
         self.ui_surface = pygame.Surface((self.config.screen_width/self.config.ui_scaling, 
                                                self.config.screen_height/self.config.ui_scaling),
-                                               pygame.SRCALPHA)
+                                               pygame.SRCALPHA).convert_alpha()
         self.menu_surface = pygame.Surface((self.config.screen_width, self.config.screen_height),
-                                               pygame.SRCALPHA)                       
+                                               pygame.SRCALPHA).convert_alpha()
+
         
         self.clock = pygame.time.Clock()
         pygame.display.set_caption("PyDew "+str(self.version))
@@ -147,16 +153,16 @@ class PyDew:
         self.unscaled_screen.blit(self.ambient_surface,(0,0), special_flags=pygame.BLEND_SUB)
         self.unscaled_ui_screen.blit(self.ui_surface,(0,0))
 
-        scaled_screen = pygame.transform.scale(self.unscaled_screen,self.final_screen.get_rect().size)
-        scaled_ui_screen = pygame.transform.scale(self.unscaled_ui_screen,self.final_screen.get_rect().size)
+        pygame.transform.scale(self.unscaled_screen,self.final_screen.get_rect().size, self.scaled_screen)
+        pygame.transform.scale(self.unscaled_ui_screen,self.final_screen.get_rect().size, self.scaled_ui_screen)
         
-        scaled_screen.blit(scaled_ui_screen,(0,0))    
-        scaled_screen.blit(self.menu_surface, (0,0))
+        self.scaled_screen.blit(self.scaled_ui_screen,(0,0))    
+        self.scaled_screen.blit(self.menu_surface, (0,0))
         
         # Post scaling rendering (text, some UI elements like health bars, clock hand rotation [future])
-        self.ui.ui_render_scaled(scaled_screen)
+        self.ui.ui_render_scaled(self.scaled_screen)
 
-        self.final_screen.blit(scaled_screen,(0,0))
+        self.final_screen.blit(self.scaled_screen,(0,0))
         pygame.display.update()
 
 
