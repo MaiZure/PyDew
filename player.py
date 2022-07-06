@@ -12,7 +12,7 @@ class Player:
         self.pants_num = 0
         self.skin_num = 23
         self.inventory = [None] * 36
-        self.inventory_limit = 12
+        self.inventory_limit = 36
         self.hair_color = (192,32,32)
         self.pants_color = (0,0,224)
                
@@ -201,14 +201,20 @@ class Player:
                 slot = self.find_free_inventory_slot()
                 self.inventory[slot] = item
             item.remove_from_world()
-            
-        
 
     def get_shirt_dir(self, dir):
         if dir == 0: return (0,0,8,8)
         if dir == 1: return (0,8,8,8)
         if dir == 2: return (0,24,8,8)
         if dir == 3: return (0,16,8,8)
+        
+    def cycle_inventory(self):
+        if self.inventory_limit == 12: return
+        if self.game.ui.player_menu_enabled: return
+        for i in range(12):
+            Item = self.inventory.pop(0)
+            self.inventory.insert(self.inventory_limit-1, Item)
+        self.game.ui.ibar.generate_ibar()
         
     def render(self, screen):
         top_left_x = self.game.world.top_left_x

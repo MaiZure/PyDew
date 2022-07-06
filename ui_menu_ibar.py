@@ -59,6 +59,7 @@ class InventoryBar:
             self.ibar_sprite.blit(self.spritesheet[10], (slot_x, slot_y), (0,0,64,64))
         
         self.update_clickrect()
+        self.redraw_inventory = True
         
     
     def handle_mouse(self, event):
