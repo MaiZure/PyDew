@@ -143,7 +143,8 @@ class Item:
             return
             
         if self.distance_to_player() < 10:
-            self.move_towards_player()
+            if self.player.can_pickup(self):
+                self.move_towards_player()
                 
         if self.game.player.hitrect.collidepoint(self.x,self.y):
             self.game.player.pickup_item(self)

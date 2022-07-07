@@ -12,7 +12,7 @@ class Player:
         self.pants_num = 0
         self.skin_num = 23
         self.inventory = [None] * 36
-        self.inventory_limit = 36
+        self.inventory_limit = 12
         self.hair_color = (192,32,32)
         self.pants_color = (0,0,224)
                
@@ -201,6 +201,23 @@ class Player:
                 slot = self.find_free_inventory_slot()
                 self.inventory[slot] = item
             item.remove_from_world()
+        self.game.ui.ibar.redraw_inventory = True
+        
+    def can_pickup(self, item) -> bool:
+        if not item.stackable:
+            if not self.has_inventory_space():
+                return False
+            else:
+                return True
+        else: # Item is stackable
+            slot = self.find_inventory_item_slot(item)
+            if type(slot) is int:
+                return True
+            else:
+                if not self.has_inventory_space():
+                    return False
+                return True
+    
 
     def get_shirt_dir(self, dir):
         if dir == 0: return (0,0,8,8)
