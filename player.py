@@ -37,6 +37,10 @@ class Player:
         self.run_sequence_RL = (18,56,56,23,18,57,57,41)
         self.run_sequence_D = (0,1,54,1,0,2,55,2)
         self.run_sequence_U = (36,37,58,37,36,38,59,38)
+        self.scythe_sequence_D = (72,73,74,75,76,77,78)
+        self.scythe_sequence_U = (108,109,110,111,112,113) # swing +12
+        self.axe_sequence_D = (198,199,200,201,201,202)
+        self.axe_sequence_U = (108,109,110,182,182,183)
         self.frame_sequence = self.run_sequence_D
         self.hair_yoff_rl = (0,-1,-1,-1,0,-1,-1,-1)
         self.hair_yoff_ud = (0,-1,-2,-1,0,-1,-2,-1)
