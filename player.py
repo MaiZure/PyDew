@@ -15,6 +15,8 @@ class Player:
         self.inventory_limit = 12
         self.hair_color = (192,32,32)
         self.pants_color = (0,0,224)
+        self.action_locked = False
+        self.action_sequence = []
                
         self.gx = 64  #78
         self.gy = 67  #16
@@ -24,6 +26,8 @@ class Player:
         self.dir = 0 # 0 = down, 1 = right, 2 = up, 3 = left
         self.frametimer = 0
         self.frame = 0
+        self.actiontimer = 0
+        self.action_frame = 0
         self.walking = False
         self.m_up = self.m_down = self.m_right = self.m_left = False
         self.map_width = 0
@@ -34,19 +38,23 @@ class Player:
         self.ep = 270
         self.max_ep = 270
         
-        self.run_sequence_RL = (18,56,56,23,18,57,57,41)
-        self.run_sequence_D = (0,1,54,1,0,2,55,2)
-        self.run_sequence_U = (36,37,58,37,36,38,59,38)
+        self.run_sequence = ((0,1,54,1,0,2,55,2),        #D
+                             (18,56,56,23,18,57,57,41),  #R
+                             (36,37,58,37,36,38,59,38),  #U
+                             (18,56,56,23,18,57,57,41))  #L
+        self.item_sequence = ()
         self.scythe_sequence_D = (72,73,74,75,76,77,78)
         self.scythe_sequence_U = (108,109,110,111,112,113) # swing +12
         self.axe_sequence_D = (198,199,200,201,201,202)
         self.axe_sequence_U = (108,109,110,182,182,183)
-        self.frame_sequence = self.run_sequence_D
-        self.hair_yoff_rl = (0,-1,-1,-1,0,-1,-1,-1)
-        self.hair_yoff_ud = (0,-1,-2,-1,0,-1,-2,-1)
+        self.frame_sequence = self.run_sequence[self.dir]
+        self.hair_yoff_base = ((0,-1,-2,-1,0,-1,-2,-1),
+                          (0,-1,-1,-1,0,-1,-1,-1),
+                          (0,-1,-2,-1,0,-1,-2,-1),
+                          (0,-1,-1,-1,0,-1,-1,-1))
+        self.hair_yoff = self.hair_yoff_base[self.dir]
         self.shirt_yoff = (0,-1,-1,-1,0,-1,-1,-1)
         
-        self.hair_yoff = self.hair_yoff_ud
         self.hair_frame_off = 0
     
     # Because pants are weird....
@@ -67,11 +75,12 @@ class Player:
         self.inventory[0] = Tool(self.game, "hoe")
         self.inventory[1] = Tool(self.game, "pickaxe")
         self.inventory[2] = Tool(self.game, "axe")
-        self.inventory[3] = Tool(self.game, "wateringcan")
-        self.inventory[4] = Weapon(self.game, "galaxysword")
+        self.inventory[3] = Tool(self.game, "scythe")
+        self.inventory[4] = Tool(self.game, "wateringcan")
+        self.inventory[5] = Weapon(self.game, "galaxysword")
         
         #self.inventory[7] = (Item(self.game)).init_item()
-        for i in range(5,12):
+        for i in range(6,12):
             self.inventory[i] = (Item(self.game)).init_item()
         
     def generate_pants(self):
@@ -83,6 +92,7 @@ class Player:
         self.pants = self.game.sprite.get_tiles("player_pants")
 
     def handle_input(self, input):
+        if self.action_locked: return
         if input[pygame.K_s]: self.m_down = True
         if input[pygame.K_d]: self.m_right = True
         if input[pygame.K_w]: self.m_up = True
@@ -133,13 +143,35 @@ class Player:
         
         if (self.gx, self.gy) in self.game.world.edge_warp_points:
             self.game.world.warp_player(self.game.world.edge_warp_points[(self.gx, self.gy)])
+                
+        if self.action_locked:
+            self.moving = False
+            if not self.action_sequence:
+                self.action_locked = False
+                self.hair_yoff = self.hair_yoff_base[self.dir]
+                self.frame_sequence = self.run_sequence[self.dir]
+                self.item_sequence = ()
+            else:
+                # Tool usage actions
+                self.frame_sequence = self.action_sequence
+                self.actiontimer += 2
+                self.frame = int((self.actiontimer/10)%8)
+                if self.frame >= len(self.action_sequence):
+                    self.frame = 0
+                    self.action_locked = False
+                    self.frame_sequence = self.run_sequence[self.dir]
+                    self.hair_yoff = self.hair_yoff_base[self.dir]
+                    self.item_sequence = ()
+        else:
+            self.actiontimer = 0
+            self.action_frame = 0
             
-        
-        if self.m_down: self.move_down()
-        if self.m_right: self.move_right()
-        if self.m_up: self.move_up()
-        if self.m_left: self.move_left()
-        
+            if self.m_down: self.move_down()
+            if self.m_right: self.move_right()
+            if self.m_up: self.move_up()
+            if self.m_left: self.move_left()
+                
+     
     def set_gx(self, gx):
         self.gx = gx
         self.x = self.gx*16 
@@ -160,7 +192,18 @@ class Player:
         self.game.world.do_action((target_x, target_y))
     
     def use_item(self):
+        item = self.current_item
+        if not item: return
+        
+        self.action_locked = True
+        self.action_sequence = item.player_sequence[self.dir]
+        self.hair_yoff = item.hair_yoff
+        self.item_sequence = item.item_sequence
         pass
+        
+    @property
+    def current_item(self):
+        return self.inventory[self.game.ui.ibar.selection]
         
     def has_inventory_space(self):
         return None in self.inventory[:self.inventory_limit]
@@ -250,6 +293,9 @@ class Player:
         hair_pos = (self.x-top_left_x,self.y-15-top_left_y-self.hair_yoff[self.frame])
         arms_pos = (self.x-top_left_x,self.y-16-top_left_y)
         pants_pos = (self.x-top_left_x,self.y-16-top_left_y)
+        if self.item_sequence:
+            item = self.current_item
+            item_pos = (self.x-top_left_x+item.item_xoff[self.frame],self.y-16-top_left_y+item.item_yoff[self.frame])
         
         body_sprite = self.sprite[frame]
         arms_sprite = self.sprite[frame+6]
@@ -257,6 +303,9 @@ class Player:
         pants_sprite = self.pants[frame]
         hair_frame = (self.hair_num % 8) + int(self.hair_num/8)*24
         hair_sprite = self.hair[hair_frame+self.hair_frame_off]
+        if self.item_sequence:
+            item_frame = self.item_sequence[self.frame]
+            item_sprite = self.current_item.sprite[item_frame]
         
         if self.dir == 3:
             body_sprite = pygame.transform.flip(body_sprite,True,False)
@@ -268,10 +317,15 @@ class Player:
         screen.blit(shirt_sprite, shirt_pos, self.get_shirt_dir(self.dir))
         screen.blit(arms_sprite, arms_pos, (0,0,16,32))
         screen.blit(hair_sprite, hair_pos, (0,0,16,32))
+        if self.item_sequence:
+            screen.blit(item_sprite, item_pos, (0,0,16,32))
 
     def move_down(self):
         self.moving = True
-        self.dir = 0; self.frame_sequence = self.run_sequence_D; self.hair_frame_off = 0; self.hair_yoff = self.hair_yoff_ud
+        self.dir = 0; 
+        self.frame_sequence = self.run_sequence[self.dir];
+        self.hair_yoff = self.hair_yoff_base[self.dir]
+        self.hair_frame_off = 0; 
         gx = int((self.x+6)/16)
         gy = int((self.y+16)/16)
         if self.game.world.is_movable(gx,gy):
@@ -280,7 +334,10 @@ class Player:
         
     def move_right(self):
         self.moving = True
-        self.dir = 1; self.frame_sequence = self.run_sequence_RL; self.hair_frame_off = 8; self.hair_yoff = self.hair_yoff_rl
+        self.dir = 1; 
+        self.frame_sequence = self.run_sequence[self.dir];
+        self.hair_yoff = self.hair_yoff_base[self.dir]        
+        self.hair_frame_off = 8; 
         gy1 = int((self.y+8)/16)
         gy2 = int((self.y+15)/16)
         gx = int((self.x+15)/16)
@@ -290,7 +347,10 @@ class Player:
         
     def move_up(self):
         self.moving = True
-        self.dir = 2; self.frame_sequence = self.run_sequence_U; self.hair_frame_off = 16; self.hair_yoff = self.hair_yoff_ud
+        self.dir = 2; 
+        self.frame_sequence = self.run_sequence[self.dir];
+        self.hair_yoff = self.hair_yoff_base[self.dir]
+        self.hair_frame_off = 16; 
         gx = int((self.x+6)/16)
         gy = int((self.y+6)/16)
         if self.game.world.is_movable(gx,gy):
@@ -299,7 +359,10 @@ class Player:
         
     def move_left(self):
         self.moving = True
-        self.dir = 3; self.frame_sequence = self.run_sequence_RL; self.hair_frame_off = 8; self.hair_yoff = self.hair_yoff_rl
+        self.dir = 3; 
+        self.frame_sequence = self.run_sequence[self.dir];
+        self.hair_yoff = self.hair_yoff_base[self.dir]
+        self.hair_frame_off = 8; 
         gy1 = int((self.y+8)/16)
         gy2 = int((self.y+15)/16)
         gx = int((self.x)/16)

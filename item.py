@@ -42,7 +42,7 @@ class Item:
             slot_pos = self.game.ui.player_menu.slot_pos[menu][slot_num]
         else:
             top = self.game.ui.ibar.ibar_top # Bool - True if bar is at top. Used below
-            slot_pos = self.game.ui.ibar.slot_pos[top][slot_num]            
+            slot_pos = self.game.ui.ibar.slot_pos[top][slot_num]
         sprite = self.sprite[self.inv_frame]
         scaled_item = pygame.transform.scale(sprite,(60,60))  # Get rid of this -- precompute scaled
         screen.blit(scaled_item, (slot_pos[0],slot_pos[1]))
@@ -80,7 +80,7 @@ class Item:
         
         h = 0
         for line in lines:
-            h += 24#self.game.font.get_line_height(line)
+            h += 24
             
         height = max(192, h+160)
         
@@ -257,14 +257,19 @@ class Tool(Item):
         super().__init__(game)
         tool = game.item.tool[type]
         self.name = ""
-        self.quality = random.choice([0,1,2,3,4])
+        self.desc = tool["desc"]
+        self.sprite = self.game.sprite.get_tiles(tool["sprite"])
+        self.category_str = "Tool"
+        self.quality = random.randint(0,len(tool["inv_frame"])-1)
         if self.quality > 0:
             self.name += self.quality_name(self.quality) + " " 
         self.name += tool["name"]
-        self.desc = tool["desc"]
-        self.sprite = self.game.sprite.get_tiles("tools")
-        self.category_str = "Tool"
         self.inv_frame = tool["inv_frame"][self.quality]
+        self.player_sequence = tool["player_sequence"]
+        self.item_sequence = tool["item_sequence"]
+        self.hair_yoff = tool["hair_yoff"]
+        self.item_xoff = tool["item_xoff"]
+        self.item_yoff = tool["item_yoff"]
         self.stackable = True
         self.hover = self.generate_hover()
         
@@ -286,7 +291,6 @@ class Weapon(Item):
         #Overrides specific weapon for now
         self.init_item()
         self.sprite = self.game.sprite.get_tiles("weapons")
-        #self.inv_frame = weapon["inv_frame"][0]
         
         self.stackable = False
         
@@ -327,22 +331,86 @@ class ItemLoader:
         self.tool["hoe"] = {
             "name": "Hoe",
             "desc": "Used to dig and till soil",
-            "inv_frame": [47, 54, 61, 89, 96]  # Each quality level
+            "sprite": "tools",
+            "inv_frame": [47, 54, 61, 89, 96],  # Each quality level
+            "player_sequence": ((),
+                                (),
+                                (),
+                                ()),
+            "item_sequence": (),
+            "item_xoff": (),
+            "item_yoff": (),
+            "hair_yoff": (-1,0,1,2,2,1)
         }
         self.tool["pickaxe"] = {
             "name": "Pickaxe",
             "desc": "Used to break stones",
-            "inv_frame": [131, 138, 145, 173, 180]  # Each quality level
+            "sprite": "tools",
+            "inv_frame": [131, 138, 145, 173, 180],  # Each quality level
+            "player_sequence": ((),
+                                (),
+                                (),
+                                ()),
+            "item_sequence": (),
+            "item_xoff": (),
+            "item_yoff": (),
+            "hair_yoff": (-1,0,1,2,2,1)
         }
         self.tool["axe"] = {
             "name": "Axe",
             "desc": "Used to chop wood",
-            "inv_frame": [215, 222, 229, 257, 264]  # Each quality level
+            "sprite": "tools",
+            "inv_frame": [215, 222, 229, 257, 264],  # Each quality level
+            "player_sequence": ((198,199,200,201,201,202),
+                                (),
+                                (),
+                                ()),
+            "item_sequence": (224,224,225,225,225,265), # Use quality offset
+            "item_xoff": (-3,-2,-1,0,0,0),
+            "item_yoff": (-1,5,8,14,14,14),
+            "hair_yoff": (-1,0,1,2,2,1)
+        }
+        self.tool["scythe"] = {
+            "name": "Scythe",
+            "desc": "It can cut grass in to hay, if you've built a silo",
+            "sprite": "weapons",
+            "inv_frame": [47],
+            "player_sequence": ((),
+                                (),
+                                (),
+                                ()),
+            "item_sequence": (),
+            "item_xoff": (),
+            "item_yoff": (),
+            "hair_yoff": (-1,0,1,2,2,1)
+        }
+        self.tool["gscythe"] = {
+            "name": "Golden Scythe",
+            "desc": "It's more powerful than a normal scythe",
+            "sprite": "weapons",
+            "inv_frame": [53],
+            "player_sequence": ((),
+                                (),
+                                (),
+                                ()),
+            "item_sequence": (),
+            "item_xoff": (),
+            "item_yoff": (),
+            "hair_yoff": (-1,0,1,2,2,1)
         }
         self.tool["wateringcan"] = {
             "name": "Watering Can",
             "desc": "Used to water crops. It can be refilled at any water source",
-            "inv_frame": [296, 303, 310, 338, 345]  # Each quality level
+            "sprite": "tools",
+            "inv_frame": [296, 303, 310, 338, 345],  # Each quality level
+            "player_sequence": ((),
+                                (),
+                                (),
+                                ()),
+            "item_sequence": (),
+            "item_xoff": (),
+            "item_yoff": (),
+            "hair_yoff": (-1,0,1,2,2,1)
         }       
         self.weapon["galaxysword"] = {
             "name": "Galaxy Sword",
