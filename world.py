@@ -44,6 +44,7 @@ class World:
         self.darkening = False
         
         self.items = {}
+        self.objects = {}
         
         self.bg_tile_update_reel = [[] for a in range(60)]   # Maintan 60 frames
         self.bldg_tile_update_reel = [[] for a in range(60)]

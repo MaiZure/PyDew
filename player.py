@@ -16,7 +16,8 @@ class Player:
         self.hair_color = (192,32,32)
         self.pants_color = (0,0,224)
         self.action_locked = False
-        self.action_sequence = []
+        self.player_sequence = ()
+        self.action_sequence = ()
                
         self.gx = 64  #78
         self.gy = 67  #16
@@ -72,9 +73,9 @@ class Player:
         self.hair = self.game.sprite.colorize_tiles(self.hair, self.hair_color)
         self.sprite = self.game.sprite.colorize_tiles(self.sprite, self.skin_color)
     
-        self.inventory[0] = Tool(self.game, "hoe")
+        self.inventory[0] = Tool(self.game, "axe")
         self.inventory[1] = Tool(self.game, "pickaxe")
-        self.inventory[2] = Tool(self.game, "axe")
+        self.inventory[2] = Tool(self.game, "hoe")
         self.inventory[3] = Tool(self.game, "scythe")
         self.inventory[4] = Tool(self.game, "wateringcan")
         self.inventory[5] = Weapon(self.game, "galaxysword")
@@ -146,22 +147,35 @@ class Player:
                 
         if self.action_locked:
             self.moving = False
-            if not self.action_sequence:
+            if not self.player_sequence: # Not executing an action
                 self.action_locked = False
                 self.hair_yoff = self.hair_yoff_base[self.dir]
                 self.frame_sequence = self.run_sequence[self.dir]
                 self.item_sequence = ()
+                self.action_sequence = ()
             else:
                 # Tool usage actions
-                self.frame_sequence = self.action_sequence
+                self.frame_sequence = self.player_sequence
                 self.actiontimer += 2
                 self.frame = int((self.actiontimer/10)%8)
-                if self.frame >= len(self.action_sequence):
+                
+                if self.frame >= len(self.player_sequence): # End of sequence check
                     self.frame = 0
                     self.action_locked = False
                     self.frame_sequence = self.run_sequence[self.dir]
                     self.hair_yoff = self.hair_yoff_base[self.dir]
                     self.item_sequence = ()
+                    self.action_sequence = []
+                else:
+                    # Still in a sequence, so check for an action
+                    if self.action_sequence[self.frame]:  # Check for world interaction (chop,hit,etc)
+                        action = self.action_sequence[self.frame]
+                        action_xy = (action[1][0]+self.gx,action[1][1]+self.gy)
+                        print("Do a " + str(action[0]) + " at " + str(action_xy))
+                        if action_xy in self.game.world.objects:
+                            object = self.game.world.objects[action_xy]
+                            object.destroy()
+                        self.action_sequence[self.frame] = None # Overwrite after first check
         else:
             self.actiontimer = 0
             self.action_frame = 0
@@ -196,9 +210,10 @@ class Player:
         if not item: return
         
         self.action_locked = True
-        self.action_sequence = item.player_sequence[self.dir]
-        self.hair_yoff = item.hair_yoff
+        self.player_sequence = item.player_sequence[self.dir]
         self.item_sequence = item.item_sequence
+        self.action_sequence = list(item.action_sequence[self.dir])
+        self.hair_yoff = item.hair_yoff
         pass
         
     @property

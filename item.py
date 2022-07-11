@@ -270,6 +270,7 @@ class Tool(Item):
         self.hair_yoff = tool["hair_yoff"]
         self.item_xoff = tool["item_xoff"]
         self.item_yoff = tool["item_yoff"]
+        self.action_sequence = tool["action_sequence"]
         self.stackable = True
         self.hover = self.generate_hover()
         
@@ -291,8 +292,20 @@ class Weapon(Item):
         #Overrides specific weapon for now
         self.init_item()
         self.sprite = self.game.sprite.get_tiles("weapons")
-        
         self.stackable = False
+        
+        self.player_sequence = ((),
+                                (),
+                                (),
+                                ())
+        self.action_sequence = ((None,None,None,None,None,None),
+                                (),
+                                (),
+                                ())
+        self.item_sequence = ()
+        self.item_xoff = ()
+        self.item_yoff = ()
+        self.hair_yoff = (-1,0,1,2,2,1)
         
     def init_item(self, data=None):
         if not data:
@@ -337,6 +350,10 @@ class ItemLoader:
                                 (),
                                 (),
                                 ()),
+            "action_sequence": ((None,None,None,None,None,None),
+                                (),
+                                (),
+                                ()),
             "item_sequence": (),
             "item_xoff": (),
             "item_yoff": (),
@@ -348,6 +365,10 @@ class ItemLoader:
             "sprite": "tools",
             "inv_frame": [131, 138, 145, 173, 180],  # Each quality level
             "player_sequence": ((),
+                                (),
+                                (),
+                                ()),
+            "action_sequence": ((None,None,None,None,None,None),
                                 (),
                                 (),
                                 ()),
@@ -365,6 +386,10 @@ class ItemLoader:
                                 (),
                                 (),
                                 ()),
+            "action_sequence": ((None,None,None,("chop",(0,1)),None,None),
+                                (),
+                                (),
+                                ()),
             "item_sequence": (224,224,225,225,225,265), # Use quality offset
             "item_xoff": (-3,-2,-1,0,0,0),
             "item_yoff": (-1,5,8,14,14,14),
@@ -376,6 +401,10 @@ class ItemLoader:
             "sprite": "weapons",
             "inv_frame": [47],
             "player_sequence": ((),
+                                (),
+                                (),
+                                ()),
+            "action_sequence": ((None,None,None,None,None,None),
                                 (),
                                 (),
                                 ()),
@@ -393,6 +422,10 @@ class ItemLoader:
                                 (),
                                 (),
                                 ()),
+            "action_sequence": ((None,None,None,None,None,None),
+                                (),
+                                (),
+                                ()),
             "item_sequence": (),
             "item_xoff": (),
             "item_yoff": (),
@@ -404,6 +437,10 @@ class ItemLoader:
             "sprite": "tools",
             "inv_frame": [296, 303, 310, 338, 345],  # Each quality level
             "player_sequence": ((),
+                                (),
+                                (),
+                                ()),
+            "action_sequence": ((None,None,None,None,None,None),
                                 (),
                                 (),
                                 ()),
