@@ -1,6 +1,7 @@
 import random
 import pygame
 from light import Light
+from item import *
 
 class MapObject:
     """ 'type' is matched to 'path' TileIDs (caller must compute path base)"""
@@ -30,9 +31,11 @@ class MapObject:
         self.large_sprite_front = None
         self.ogx = 0
         self.ogy = 0
-        self.hp = 0
+        self.hp = 1
         self.type = type
         self.reverse = False
+        self.action_list = ()
+        self.spr_name = ""
         
         
         # Object is valid -- register with world tracker
@@ -43,32 +46,20 @@ class MapObject:
         if self.collision_height and self.collision_width:
             self.world.collision_map[self.tile_num] = 1
         self.reverse = random.choice((True,False))
-        spr_name = ""
-        if self.type == 9: spr_name = "spr_oak"
-        if self.type == 10: spr_name = "spr_maple"
-        if self.type == 11: spr_name = "spr_pine"
-        if self.type == 13: spr_name = "spr_weed"
-        if self.type == 14: spr_name = "spr_weed"
-        if self.type == 15: spr_name = "spr_weed"
-        if self.type == 16: spr_name = "spr_rock_small"
-        if self.type == 17: spr_name = "spr_rock_small"
-        if self.type == 18: spr_name = "spr_stick" #Not a large sprite -- fix later
-        if self.type == 19: spr_name = "spr_log"
-        if self.type == 20: spr_name = "spr_rock_large"
-        if self.type == 21: spr_name = "spr_stump_large"
-        if self.type == 24: spr_name = "spr_bush_large"
-        if self.type == 25: spr_name = "spr_bush_medium"
-        if self.type == 26: spr_name = "spr_bush_small"
-        if spr_name:
+        self.spr_name = ""
+        
+        self.set_constants(self.type)
+        
+        if self.spr_name:
             if self.reverse:
-                self.large_sprite = self.game.sprite.get_large_sprite(spr_name)
+                self.large_sprite = self.game.sprite.get_large_sprite(self.spr_name)
             else:
-                self.large_sprite = self.game.sprite.get_large_sprite_reverse(spr_name)
+                self.large_sprite = self.game.sprite.get_large_sprite_reverse(self.spr_name)
                 
             self.large_sprite_mid = self.large_sprite[0]
             self.large_sprite_front = self.large_sprite[1]
-            self.set_large_collision_box(spr_name)
-            self.ogx, self.ogy = self.game.sprite.get_large_sprite_origin(spr_name)
+            self.set_large_collision_box(self.spr_name)
+            self.ogx, self.ogy = self.game.sprite.get_large_sprite_origin(self.spr_name)
          
     def set_large_collision_box(self, spr_name):
         # Collisions start from the front/bottom of a sprite and work backward
@@ -83,11 +74,15 @@ class MapObject:
         self.world.current_map_path_objects.pop(self.world.current_map_path_objects.index(self))
         del self.world.objects[(self.gx,self.gy)]
         
-        #TODO - Maybe an object shouldn't ALWAYS clear collisions...?
+        # Maybe an object shouldn't ALWAYS clear collisions...?
         tile_num = self.world.get_tile_num(self.gx,self.gy)
         self.world.collision_map[tile_num] = 0
+       
         
-        #TODO - generate items from destruction
+        # Generate items from destruction
+        item = Resource(self.game,"wood")
+        item.create_at(self.gx*16,self.gy*16)
+        item.count = random.choice((1,2))
         
     def render_mid(self, screen):
         if not self.game.world.is_visible(self.gx, self.gy): return
@@ -106,3 +101,53 @@ class MapObject:
             screen.blit(self.large_sprite_front, (self.x-self.ogx*16,self.y-self.ogy*16), (0,0,3*16,6*16))
         else:
             screen.blit(self.sprite[self.type], (self.x,self.y), (0,0,16,16))
+            
+    def set_constants(self,type):
+        if self.type == 9: 
+            self.spr_name = "spr_oak"
+            self.action_list = ("axe", "bomb", "tap")
+            self.hp = 300
+        if self.type == 10: 
+            self.spr_name = "spr_maple";
+            self.action_list = ("axe", "bomb", "tap")
+            self.hp = 300
+        if self.type == 11: 
+            self.spr_name = "spr_pine"
+            self.action_list = ("axe", "bomb", "tap")
+            self.hp = 300
+        if self.type == 13: 
+            self.spr_name = "spr_weed"
+            self.action_list = ("axe", "scythe", "bomb")
+        if self.type == 14: 
+            self.spr_name = "spr_weed"
+            self.action_list = ("axe", "scythe", "bomb")
+        if self.type == 15: 
+            self.spr_name = "spr_weed"
+            self.action_list = ("axe", "scythe", "bomb")
+        if self.type == 16:
+            self.spr_name = "spr_rock_small"
+            self.action_list = ("pickaxe", "bomb")
+        if self.type == 17:
+            self.spr_name = "spr_rock_small"; 
+            self.action_list = ("pickaxe", "bomb")
+        if self.type == 18: 
+            self.spr_name = "spr_stick"
+            self.action_list = ("axe", "scythe", "bomb")
+        if self.type == 19: 
+            self.spr_name = "spr_log"
+            self.action_list = ("axe")
+            self.hp = 100
+        if self.type == 20:
+            self.spr_name = "spr_rock_large"
+            self.action_list = ("pick")
+            self.hp = 100
+        if self.type == 21:
+            self.spr_name = "spr_stump_large"
+            self.action_list = ("axe")
+            self.hp = 100
+        if self.type == 24:
+            self.spr_name = "spr_bush_large";
+        if self.type == 25: 
+            self.spr_name = "spr_bush_medium";
+        if self.type == 26: 
+            self.spr_name = "spr_bush_small";

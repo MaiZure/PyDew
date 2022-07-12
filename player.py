@@ -147,6 +147,7 @@ class Player:
                 
         if self.action_locked:
             self.moving = False
+            item = self.current_item
             if not self.player_sequence: # Not executing an action
                 self.action_locked = False
                 self.hair_yoff = self.hair_yoff_base[self.dir]
@@ -170,11 +171,15 @@ class Player:
                     # Still in a sequence, so check for an action
                     if self.action_sequence[self.frame]:  # Check for world interaction (chop,hit,etc)
                         action = self.action_sequence[self.frame]
+                        action_item = action[0]
                         action_xy = (action[1][0]+self.gx,action[1][1]+self.gy)
-                        print("Do a " + str(action[0]) + " at " + str(action_xy))
+                        print("Use " + str(action[0]) + " at " + str(action_xy))
                         if action_xy in self.game.world.objects:
                             object = self.game.world.objects[action_xy]
-                            object.destroy()
+                            if action_item in object.action_list:
+                                object.hp -= (item.quality+1)*30
+                                if object.hp < 1: # Should consider queueing an item event
+                                    object.destroy()
                         self.action_sequence[self.frame] = None # Overwrite after first check
         else:
             self.actiontimer = 0
@@ -256,7 +261,7 @@ class Player:
         else: # Item is stackable
             slot = self.find_inventory_item_slot(item)
             if type(slot) is int:
-                self.inventory[slot].count += 1
+                self.inventory[slot].count += item.count
             else:
                 if not self.has_inventory_space():
                     return

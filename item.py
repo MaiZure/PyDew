@@ -17,6 +17,8 @@ class Item:
         self.name = ""
         self.category_str = ""
         self.desc = ""
+        self.life_timer = 30
+        self.quality = 0
       
         self.spritesheet = self.game.sprite.get_tiles("MenuTiles")
         
@@ -142,13 +144,17 @@ class Item:
         if not self.game.world.is_visible(self.gx,self.gy):
             return
             
+        if self.life_timer:
+            self.life_timer -= 1
+            return
+        
         if self.distance_to_player() < 10:
             if self.player.can_pickup(self):
                 self.move_towards_player()
                 
         if self.game.player.hitrect.collidepoint(self.x,self.y):
             self.game.player.pickup_item(self)
-            
+                
     def distance_to_player(self) -> int:
         return ((self.gx-self.player.gx)**2 + (self.gy-self.player.gy)**2)
 
@@ -386,7 +392,7 @@ class ItemLoader:
                                 (),
                                 (),
                                 ()),
-            "action_sequence": ((None,None,None,("chop",(0,1)),None,None),
+            "action_sequence": ((None,None,None,("axe",(0,1)),None,None),
                                 (),
                                 (),
                                 ()),
