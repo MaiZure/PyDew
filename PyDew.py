@@ -21,7 +21,7 @@ class PyDew:
     def __init__(self):
         ctypes.windll.user32.SetProcessDPIAware()  # Inform PyGame of real DPI (avoid OS-level scaling)
         pygame.init()
-        self.version = "0.2.1.79"
+        self.version = "0.2.1.80"
         print("Hello PyDew "+str(self.version))
         self.config = Config()
         self.save = SaveData()

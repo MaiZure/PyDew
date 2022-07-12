@@ -250,8 +250,12 @@ class Item:
 
 class Resource(Item):
     def __init__(self, game, type):
-        super().__init__(game)
+    
+        if not type in game.item.resource: return
+    
+        super().__init__(game)    
         resource = game.item.resource[type]
+             
         self.name = resource["name"]
         self.sprite = self.game.sprite.get_tiles("springobjects")
         self.inv_frame = resource["inv_frame"][0]

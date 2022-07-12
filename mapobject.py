@@ -36,6 +36,7 @@ class MapObject:
         self.reverse = False
         self.action_list = ()
         self.spr_name = ""
+        self.loot = []
         
         
         # Object is valid -- register with world tracker
@@ -80,10 +81,13 @@ class MapObject:
        
         
         # Generate items from destruction
-        item = Resource(self.game,"wood")
-        item.create_at(self.gx*16,self.gy*16)
-        item.count = random.choice((1,2))
-        
+        for loot in self.loot:
+            name = loot[0]
+            max_count = loot[1]
+            item = Resource(self.game,name)
+            item.create_at(self.gx*16+random.randint(-8,8),self.gy*16+random.randint(-8,8))
+            item.count = random.randint(1,max_count)
+            
     def render_mid(self, screen):
         if not self.game.world.is_visible(self.gx, self.gy): return
         top_left_x = self.game.world.top_left_x
@@ -107,14 +111,17 @@ class MapObject:
             self.spr_name = "spr_oak"
             self.action_list = ("axe", "bomb", "tap")
             self.hp = 300
+            self.loot = [("wood",2),("wood",2),("wood",2)]
         if self.type == 10: 
             self.spr_name = "spr_maple";
             self.action_list = ("axe", "bomb", "tap")
             self.hp = 300
+            self.loot = [("wood",2),("wood",2),("wood",2)]
         if self.type == 11: 
             self.spr_name = "spr_pine"
             self.action_list = ("axe", "bomb", "tap")
             self.hp = 300
+            self.loot = [("wood",2),("wood",2),("wood",2)]
         if self.type == 13: 
             self.spr_name = "spr_weed"
             self.action_list = ("axe", "scythe", "bomb")
@@ -127,24 +134,30 @@ class MapObject:
         if self.type == 16:
             self.spr_name = "spr_rock_small"
             self.action_list = ("pickaxe", "bomb")
+            self.loot = [("stone",2)]
         if self.type == 17:
             self.spr_name = "spr_rock_small"; 
             self.action_list = ("pickaxe", "bomb")
+            self.loot = [("stone",2)]
         if self.type == 18: 
             self.spr_name = "spr_stick"
             self.action_list = ("axe", "scythe", "bomb")
+            self.loot = [("wood",2)]
         if self.type == 19: 
             self.spr_name = "spr_log"
             self.action_list = ("axe")
+            self.loot = [("wood",2), ("hardwood",2), ("hardwood",2), ("hardwood",2)]
             self.hp = 100
         if self.type == 20:
             self.spr_name = "spr_rock_large"
             self.action_list = ("pick")
             self.hp = 100
+            self.loot = [("stone",2), ("stone",2), ("stone",2)]
         if self.type == 21:
             self.spr_name = "spr_stump_large"
             self.action_list = ("axe")
             self.hp = 100
+            self.loot = [("wood",2), ("hardwood",2), ("hardwood",2), ("hardwood",2)]
         if self.type == 24:
             self.spr_name = "spr_bush_large";
         if self.type == 25: 
