@@ -43,8 +43,8 @@ class World:
         self.ambient_light = (0,0,0) #(0,0,0) - day/clear, (180,150, 0) - night, (50,50,0) - day/raining
         self.darkening = False
         
-        self.items = {}
-        self.objects = {}
+        self.items = {}      # Items in the world
+        self.objects = {}    # Objects on the map 
         
         self.bg_tile_update_reel = [[] for a in range(60)]   # Maintan 60 frames
         self.bldg_tile_update_reel = [[] for a in range(60)]

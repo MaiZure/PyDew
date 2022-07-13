@@ -8,9 +8,11 @@ class DataLoader:
         # Load all maps in to a library (dictionary)
         self.file = {}        
         self.game = game
+        self.items = {}
         
     def init_second_stage(self):
         self.load_data()
+        self.parse_object_data(self.file["objectinformation"]["content"])
         
     def load_data(self) -> None:
         path = ".\\Data\\"
@@ -25,6 +27,10 @@ class DataLoader:
         result = str(num)+"/"+result
         return result
         
+    def get_object_by_name(self,name):
+        dict = self.file["objectinformation"]["content"]
+        pass
+        
     def get_random_object(self):
         dict = self.file["objectinformation"]["content"]
         choice = random.choice(list(dict))
@@ -38,4 +44,15 @@ class DataLoader:
         result = dict[choice]
         result = choice+"/"+result
         return result
+        
+    def parse_object_data(self, dict):
+        for key in dict:
+            data = dict[key]
+            result = key+"/"+data
+            datalist = result.split('/')
+            self.items[int(key)] = datalist
+            self.items[key] = datalist
+            self.items[datalist[1].lower()] = datalist
+            self.items[datalist[1]] = datalist
+            
     
