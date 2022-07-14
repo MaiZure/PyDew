@@ -172,10 +172,11 @@ class Player:
                     if self.action_sequence[self.frame]:  # Check for world interaction (chop,hit,etc)
                         action = self.action_sequence[self.frame]
                         action_item = action[0]
-                        action_xy = (action[1][0]+self.gx,action[1][1]+self.gy)
-                        print("Use " + str(action[0]) + " at " + str(action_xy))
-                        if action_xy in self.game.world.objects:
-                            object = self.game.world.objects[action_xy]
+                        current_map = self.game.world.current_map
+                        action_mxy = (current_map,action[1][0]+self.gx,action[1][1]+self.gy)
+                        print("Use " + str(action[0]) + " at " + str(action_mxy))
+                        if action_mxy in self.game.world.objects:
+                            object = self.game.world.objects[action_mxy]
                             if action_item in object.action_list:
                                 object.hp -= (item.quality+1)*30
                                 if object.hp < 1: # Should consider queueing an item event

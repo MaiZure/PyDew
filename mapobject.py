@@ -41,7 +41,7 @@ class MapObject:
         
         # Object is valid -- register with world tracker
         world.current_map_path_objects.append(self)   # Linear list tracker
-        world.objects[(gx,gy)] = self                 # gx,gy O(1) lookup by position
+        world.objects[(world.current_map,gx,gy)] = self                 # gx,gy O(1) lookup by position
         
     def init_second_stage(self):
         if self.collision_height and self.collision_width:
@@ -71,9 +71,9 @@ class MapObject:
                 tile_num = self.world.get_tile_num(self.gx+i,self.gy-j)
                 self.world.collision_map[tile_num] = 1
                 
-    def destroy(self):
+    def destroy(self):       
         self.world.current_map_path_objects.pop(self.world.current_map_path_objects.index(self))
-        del self.world.objects[(self.gx,self.gy)]
+        del self.world.objects[(self.world.current_map,self.gx,self.gy)]
         
         # Maybe an object shouldn't ALWAYS clear collisions...?
         tile_num = self.world.get_tile_num(self.gx,self.gy)
