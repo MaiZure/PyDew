@@ -9,10 +9,11 @@ class DataLoader:
         self.file = {}        
         self.game = game
         self.items = {}
+        self.weapons = {}
         
     def init_second_stage(self):
         self.load_data()
-        self.parse_object_data(self.file["objectinformation"]["content"])
+        self.parse_object_data()
         
     def load_data(self) -> None:
         path = ".\\Data\\"
@@ -28,8 +29,7 @@ class DataLoader:
         return result
         
     def get_object_by_name(self,name):
-        dict = self.file["objectinformation"]["content"]
-        pass
+        return self.items[name]
         
     def get_random_object(self):
         dict = self.file["objectinformation"]["content"]
@@ -45,14 +45,18 @@ class DataLoader:
         result = choice+"/"+result
         return result
         
-    def parse_object_data(self, dict):
+    def parse_object_data(self):
+        self.items = self.build_lookup_dict(self.file["objectinformation"]["content"])
+        self.weapons = self.build_lookup_dict(self.file["weapons"]["content"])
+            
+    def build_lookup_dict(self, dict):
+        output = {}
         for key in dict:
             data = dict[key]
             result = key+"/"+data
             datalist = result.split('/')
-            self.items[int(key)] = datalist
-            self.items[key] = datalist
-            self.items[datalist[1].lower()] = datalist
-            self.items[datalist[1]] = datalist
-            
-    
+            output[int(key)] = datalist
+            output[key] = datalist
+            output[datalist[1].lower()] = datalist
+            output[datalist[1]] = datalist
+        return output

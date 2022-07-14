@@ -22,7 +22,7 @@ class Item:
       
         self.spritesheet = self.game.sprite.get_tiles("MenuTiles")
         
-        self.hover = self.generate_hover(256,192)
+        #self.hover = self.generate_hover(256,192)
         
         
     def render(self, screen):
@@ -171,7 +171,15 @@ class Item:
     def init_item(self, data=None):
         if not data:
             data = self.game.data.get_random_object()
-        self.parse_item_data(data)
+            self.parse_item_data(data)
+            self.sprite = self.game.sprite.get_tiles("springobjects")
+            self.hover = self.generate_hover(256,192)
+            return self
+        self.inv_frame = int(data[0])
+        self.spr_frame = self.inv_frame
+        self.name = data[1]
+        self.category_str = self.get_category_label(data[4])
+        self.desc = data[6]
         self.sprite = self.game.sprite.get_tiles("springobjects")
         self.hover = self.generate_hover(256,192)
         return self
@@ -251,14 +259,11 @@ class Item:
 class Resource(Item):
     def __init__(self, game, type):
     
-        if not type in game.item.resource: return
+        #if not type in game.item.resource: return
     
         super().__init__(game)    
-        resource = game.item.resource[type]
-             
-        self.name = resource["name"]
-        self.sprite = self.game.sprite.get_tiles("springobjects")
-        self.inv_frame = resource["inv_frame"][0]
+        self.init_item(self.game.data.get_object_by_name(type))         
+        self.sprite = game.sprite.get_tiles("springobjects")
         self.spr_frame = self.inv_frame
         self.stackable = True
         
@@ -464,11 +469,11 @@ class ItemLoader:
             "desc": "",
             "inv_frame": [4]  # Each quality level
         }
-        self.resource["wood"] = {
-            "name": "Wood",
-            "inv_frame": [388]  # Each quality level
-        }
-        self.resource["stone"] = {
-            "name": "Stone",
-            "inv_frame": [390]  # Each quality level
-        }
+        #self.resource["wood"] = {
+        #    "name": "Wood",
+        #    "inv_frame": [388]  # Each quality level
+        #}
+        #self.resource["stone"] = {
+        #    "name": "Stone",
+        #    "inv_frame": [390]  # Each quality level
+        #}

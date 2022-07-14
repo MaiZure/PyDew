@@ -84,7 +84,7 @@ class MapObject:
         for loot in self.loot:
             name = loot[0]
             max_count = loot[1]
-            item = Resource(self.game,name)
+            item = Resource(self.game, name)#.init_item(self.game.data.get_object_by_name(name))#Resource(self.game,name)
             item.create_at(self.gx*16+random.randint(-8,8),self.gy*16+random.randint(-8,8))
             item.count = random.randint(1,max_count)
             
