@@ -61,6 +61,10 @@ class World:
         self.outdoors = True
         self.night = False
         
+    @property
+    def speed_factor(self):
+        return 60 if self.speed_time else 1
+        
     def init_second_stage(self):
         for key in self.game.map.map:
             self.items[key] = []
@@ -291,7 +295,7 @@ class World:
             item.create_at(x,y)
             
     def update_time(self):
-        self.tick_time = self.tick_time + 1 if not self.speed_time else self.tick_time + 60
+        self.tick_time = self.tick_time + self.speed_factor
         if self.tick_time >= 360:
             self.tick_time = 0
             self.minute += 10
@@ -306,8 +310,8 @@ class World:
     def update_ambient(self):
         r = self.outdoor_ambient[0]; g=self.outdoor_ambient[1]; b=self.outdoor_ambient[2]
         if self.darkening:
-            r = min(180, r+0.03)
-            g = min(150, g+0.03)
+            r = min(180, r+(0.03*self.speed_factor))
+            g = min(150, g+(0.03*self.speed_factor))
         self.outdoor_ambient = (r,g,b)
         
         if self.outdoors: self.ambient_light = self.outdoor_ambient

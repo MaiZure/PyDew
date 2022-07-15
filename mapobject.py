@@ -44,13 +44,13 @@ class MapObject:
         world.objects[(world.current_map,gx,gy)] = self                 # gx,gy O(1) lookup by position
         
     def init_second_stage(self):
+        self.set_constants(self.type)
+        
         if self.collision_height and self.collision_width:
             self.world.collision_map[self.tile_num] = 1
         self.reverse = random.choice((True,False))
-        self.spr_name = ""
-        
-        self.set_constants(self.type)
-        
+        #self.spr_name = ""
+             
         if self.spr_name:
             if self.reverse:
                 self.large_sprite = self.game.sprite.get_large_sprite(self.spr_name)
@@ -158,6 +158,9 @@ class MapObject:
             self.action_list = ("axe")
             self.hp = 100
             self.loot = [("wood",2), ("hardwood",2), ("hardwood",2), ("hardwood",2)]
+        if self.type == 22:
+            self.collision_width = 0
+            self.collision_height = 0
         if self.type == 24:
             self.spr_name = "spr_bush_large";
         if self.type == 25: 
