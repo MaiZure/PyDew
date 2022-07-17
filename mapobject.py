@@ -167,3 +167,28 @@ class MapObject:
             self.spr_name = "spr_bush_medium";
         if self.type == 26: 
             self.spr_name = "spr_bush_small";
+            
+class Farmhouse:
+    def __init__(self, game, world):        
+        self.game = game
+        self.world = world
+        self.gx = 58
+        self.gy = 8
+        self.x = self.gx*16
+        self.y = self.gy*16
+        self.always_front_layer_height = 3
+        self.sprite = game.sprite.get_tiles("houses")
+        self.spr_name = ""
+        self.level = 0
+        
+    def render_back(self, screen):
+        print("Drawing House BG")
+        w = self.sprite[self.level].get_width()
+        h = self.sprite[self.level].get_height()
+        spr_top = self.always_front_layer_height*16
+        screen.blit(self.sprite[self.level], (self.x,self.y+spr_top), (0,spr_top,w,h-(self.always_front_layer_height*16)))
+        
+    def render_front(self,screen):
+        w = self.sprite[self.level].get_width()
+        h = self.sprite[self.level].get_height()
+        screen.blit(self.sprite[self.level], (self.x,self.y), (0,0,w,self.always_front_layer_height*16))

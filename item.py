@@ -285,6 +285,7 @@ class Tool(Item):
         self.hair_yoff = tool["hair_yoff"]
         self.item_xoff = tool["item_xoff"]
         self.item_yoff = tool["item_yoff"]
+        self.ecost = tool["ecost"]
         self.action_sequence = tool["action_sequence"]
         self.stackable = True
         self.hover = self.generate_hover()
@@ -359,6 +360,7 @@ class ItemLoader:
         self.tool["hoe"] = {
             "name": "Hoe",
             "desc": "Used to dig and till soil",
+            "ecost": 2,
             "sprite": "tools",
             "inv_frame": [47, 54, 61, 89, 96],  # Each quality level
             "player_sequence": ((),
@@ -377,6 +379,7 @@ class ItemLoader:
         self.tool["pickaxe"] = {
             "name": "Pickaxe",
             "desc": "Used to break stones",
+            "ecost": 2,
             "sprite": "tools",
             "inv_frame": [131, 138, 145, 173, 180],  # Each quality level
             "player_sequence": ((),
@@ -395,6 +398,7 @@ class ItemLoader:
         self.tool["axe"] = {
             "name": "Axe",
             "desc": "Used to chop wood",
+            "ecost": 2,
             "sprite": "tools",
             "inv_frame": [215, 222, 229, 257, 264],  # Each quality level
             "player_sequence": ((198,199,200,201,201,202),
@@ -413,6 +417,7 @@ class ItemLoader:
         self.tool["scythe"] = {
             "name": "Scythe",
             "desc": "It can cut grass in to hay, if you've built a silo",
+            "ecost": 2,
             "sprite": "weapons",
             "inv_frame": [47],
             "player_sequence": ((),
@@ -431,6 +436,7 @@ class ItemLoader:
         self.tool["gscythe"] = {
             "name": "Golden Scythe",
             "desc": "It's more powerful than a normal scythe",
+            "ecost": 2,
             "sprite": "weapons",
             "inv_frame": [53],
             "player_sequence": ((),
@@ -449,6 +455,7 @@ class ItemLoader:
         self.tool["wateringcan"] = {
             "name": "Watering Can",
             "desc": "Used to water crops. It can be refilled at any water source",
+            "ecost": 2,
             "sprite": "tools",
             "inv_frame": [296, 303, 310, 338, 345],  # Each quality level
             "player_sequence": ((),

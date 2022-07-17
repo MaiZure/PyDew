@@ -19,8 +19,8 @@ class Player:
         self.player_sequence = ()
         self.action_sequence = ()
                
-        self.gx = 64  #78
-        self.gy = 67  #16
+        self.gx = 72#64  #78
+        self.gy = 17#67  #16
         self.x = self.gx*16 
         self.y = self.gy*16 
         
@@ -220,6 +220,7 @@ class Player:
         self.item_sequence = item.item_sequence
         self.action_sequence = list(item.action_sequence[self.dir])
         self.hair_yoff = item.hair_yoff
+        self.ep -= item.ecost
         pass
         
     @property
@@ -317,6 +318,7 @@ class Player:
         if self.item_sequence:
             item = self.current_item
             item_pos = (self.x-top_left_x+item.item_xoff[self.frame],self.y-16-top_left_y+item.item_yoff[self.frame])
+            item_pos_top = (self.x-top_left_x+item.item_xoff[self.frame],self.y-32-top_left_y+item.item_yoff[self.frame])
         
         body_sprite = self.sprite[frame]
         arms_sprite = self.sprite[frame+6]
@@ -327,6 +329,7 @@ class Player:
         if self.item_sequence:
             item_frame = self.item_sequence[self.frame]
             item_sprite = self.current_item.sprite[item_frame]
+            item_sprite_top = self.current_item.sprite[item_frame-21]
         
         if self.dir == 3:
             body_sprite = pygame.transform.flip(body_sprite,True,False)
@@ -335,11 +338,13 @@ class Player:
 
         screen.blit(body_sprite, body_pos, (0,0,16,32))
         screen.blit(pants_sprite, pants_pos, (0,0,16,32))
-        screen.blit(shirt_sprite, shirt_pos, self.get_shirt_dir(self.dir))
-        screen.blit(arms_sprite, arms_pos, (0,0,16,32))
+        screen.blit(shirt_sprite, shirt_pos, self.get_shirt_dir(self.dir))        
         screen.blit(hair_sprite, hair_pos, (0,0,16,32))
+        screen.blit(arms_sprite, arms_pos, (0,0,16,32))
         if self.item_sequence:
-            screen.blit(item_sprite, item_pos, (0,0,16,32))
+            if item_frame >= 3 :
+                screen.blit(item_sprite_top, item_pos_top, (0,0,16,32))
+                screen.blit(item_sprite, item_pos, (0,0,16,32))
 
     def move_down(self):
         self.moving = True

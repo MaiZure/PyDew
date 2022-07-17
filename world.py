@@ -3,7 +3,7 @@ import pygame
 from npc import NPC
 from item import *
 
-from mapobject import MapObject
+from mapobject import *
 
 class World:
 
@@ -28,6 +28,7 @@ class World:
         self.tiles_index = {}
         self.current_map = "" #town
         self.current_map_path_objects = []
+        self.special_objects = {}
         self.edge_warp_points = {}  # Map edge warps
         self.warp_points = {}       # (legacy) object warp points (doors)
         self.action_points = {}     # General map action list
@@ -69,7 +70,7 @@ class World:
         for key in self.game.map.map:
             self.items[key] = []
             
-        self.init_map("town") #normally forest
+        self.init_map("farm") #normally forest
         
     def init_map(self, map_name) -> bool:
         
@@ -118,6 +119,8 @@ class World:
             self.ambient_light = (0,0,0)
         else: 
             self.ambient_light = self.game.map.get_ambient_light(self.current_map)
+            
+        self.init_specials()
         
         self.tiles = self.game.map.get_map_tiles(self.current_map)
         self.tiles_index = self.game.map.get_map_tiles_index(self.current_map)
@@ -151,6 +154,7 @@ class World:
         
     def init_npcs(self):
         if self.npcs: return
+        if self.current_map != "forest": return
         
         self.npcs.append(NPC(self.game))
         
@@ -169,7 +173,8 @@ class World:
                         self.bg.blit(self.tiles[bldg_tile], (i*16,j*16))
                     if type(bldg_tile) == list:
                         self.bg.blit(self.tiles[bg_tile[0][1]], (i*16,j*16))
-                
+        for object in self.special_objects[self.current_map]:
+            object.render_back(self.bg)
                     
     def generate_foreground_layers(self):   ## Refactor this fxn somehow
         paths_tile_base = self.tiles_index["paths"]
@@ -372,6 +377,8 @@ class World:
             self.redraw_front = False
             for mapobject in self.current_map_path_objects:
                 mapobject.render_front(self.fg)
+            for object in self.special_objects[self.current_map]:
+                object.render_front(self.fg)
         screen.blit(self.fg, (0,0), (self.top_left_x,self.top_left_y,screen.get_width(),screen.get_height()))
         
     def get_tile_x(self, tile_num):
@@ -439,6 +446,13 @@ class World:
         if self.init_map(new_map):
             self.game.player.set_gx(new_gx)
             self.game.player.set_gy(new_gy)
+            
+    def init_specials(self):
+        if self.current_map not in self.special_objects:
+            self.special_objects[self.current_map] = []
+                       
+            if self.current_map == "farm":
+                self.special_objects[self.current_map].append(Farmhouse(self.game, self))
         
         
         
