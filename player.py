@@ -80,9 +80,7 @@ class Player:
         self.inventory[4] = Tool(self.game, "wateringcan")
         self.inventory[5] = Weapon(self.game, "galaxysword")
         
-        #self.inventory[7] = (Item(self.game)).init_item()
-        for i in range(6,12):
-            self.inventory[i] = (Item(self.game)).init_item()
+        self.inventory[9] = (Item(self.game)).init_item()
         
     def generate_pants(self):
         self.pants = pygame.Surface((288,672),pygame.SRCALPHA) ## TODO - Get first set of pants 192,672 of whole sheet

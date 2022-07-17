@@ -6,7 +6,7 @@ from item import *
 class MapObject:
     """ 'type' is matched to 'path' TileIDs (caller must compute path base)"""
     def __init__(self, game, world, type, gx, gy):
-        if type < 8 or type > 33:
+        if type < 8 or type > 28:
             # This effectively removes the object as no reference is built
             return None
         
@@ -49,7 +49,6 @@ class MapObject:
         if self.collision_height and self.collision_width:
             self.world.collision_map[self.tile_num] = 1
         self.reverse = random.choice((True,False))
-        #self.spr_name = ""
              
         if self.spr_name:
             if self.reverse:
@@ -84,7 +83,7 @@ class MapObject:
         for loot in self.loot:
             name = loot[0]
             max_count = loot[1]
-            item = Resource(self.game, name)#.init_item(self.game.data.get_object_by_name(name))#Resource(self.game,name)
+            item = Resource(self.game, name)
             item.create_at(self.gx*16+random.randint(-8,8),self.gy*16+random.randint(-8,8))
             item.count = random.randint(1,max_count)
             
@@ -161,6 +160,11 @@ class MapObject:
         if self.type == 22:
             self.collision_width = 0
             self.collision_height = 0
+        if self.type == 23:
+            self.spr_name = "spr_little_tree"
+            self.action_list = ("axe")
+            self.hp = 1
+            self.loot = [("wood",2)]
         if self.type == 24:
             self.spr_name = "spr_bush_large";
         if self.type == 25: 

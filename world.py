@@ -248,7 +248,7 @@ class World:
         action_type = action[0]
         print(action)
         if action_type == "Message": pass
-        if action_type == "LockedDoorWarp":  # [type, tx, ty, dest_map, open time, close time, person, relation]
+        if action_type in ("LockedDoorWarp","Warp"):  # [type, tx, ty, dest_map, open time, close time, person, relation]
             target_gx = int(action[1])
             target_gy = int(action[2])
             target_map = action[3].lower()

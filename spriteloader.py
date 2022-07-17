@@ -44,6 +44,7 @@ class SpriteLoader:
             if name == "daybg": size = (128,192)
             if name == "map": size = (300,180)
             if name == "houses": size = (272,144)
+            #if name == "walls_and_floors": size = (16,32)
             self.sheet[name] = (pygame.image.load(open(path+file)).convert_alpha(), size[0], size[1])
     
     def load_character_spritesheets(self) -> None:
@@ -298,6 +299,15 @@ class SpriteLoader:
             "sprite_origin": (0,0),
             "collision_width": 2,
             "collision_height": 2
+        }
+        self.large_sprites["spr_little_tree"] = {
+            "sheet": "paths",
+            "tiles": [[(23,1)]],
+            "sprite_height": 1,
+            "sprite_width": 1,
+            "sprite_origin": (0,0),
+            "collision_width": 1,
+            "collision_height": 1
         }
         self.large_sprites["spr_stump_large"] = {
             "sheet": "springobjects",
