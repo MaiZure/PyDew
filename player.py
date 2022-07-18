@@ -325,7 +325,7 @@ class Player:
         hair_frame = (self.hair_num % 8) + int(self.hair_num/8)*24
         hair_sprite = self.hair[hair_frame+self.hair_frame_off]
         if self.item_sequence:
-            item_frame = self.item_sequence[self.frame]
+            item_frame = self.item_sequence[self.dir][self.frame]
             item_sprite = self.current_item.sprite[item_frame]
             item_sprite_top = self.current_item.sprite[item_frame-21]
         

@@ -402,14 +402,17 @@ class ItemLoader:
             "sprite": "tools",
             "inv_frame": [215, 222, 229, 257, 264],  # Each quality level
             "player_sequence": ((198,199,200,201,201,202),
-                                (),
-                                (),
-                                ()),
+                                (144,145,146,147,147,148),
+                                (108,109,110,111,111,112),
+                                (144,145,146,147,147,148)),
             "action_sequence": ((None,None,None,("axe",(0,1)),None,None),
-                                (),
-                                (),
-                                ()),
-            "item_sequence": (224,224,225,225,225,265), # Use quality offset
+                                ((None,None,None,("axe",(1,0)),None,None)),
+                                ((None,None,None,("axe",(0,-1)),None,None)),
+                                ((None,None,None,("axe",(-1,0)),None,None))),
+            "item_sequence": ((224,224,225,225,225,265),
+                             (226,226,226,226,226,226),
+                             (228,228,228,228,228,228),
+                             (226,226,226,226,226,226)),# Use quality offset
             "item_xoff": (-3,-2,-1,0,0,0),
             "item_yoff": (-1,5,8,14,14,14),
             "hair_yoff": (-1,0,1,2,2,1)
@@ -476,11 +479,3 @@ class ItemLoader:
             "desc": "",
             "inv_frame": [4]  # Each quality level
         }
-        #self.resource["wood"] = {
-        #    "name": "Wood",
-        #    "inv_frame": [388]  # Each quality level
-        #}
-        #self.resource["stone"] = {
-        #    "name": "Stone",
-        #    "inv_frame": [390]  # Each quality level
-        #}

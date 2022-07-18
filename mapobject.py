@@ -61,14 +61,14 @@ class MapObject:
             self.set_large_collision_box(self.spr_name)
             self.ogx, self.ogy = self.game.sprite.get_large_sprite_origin(self.spr_name)
          
-    def set_large_collision_box(self, spr_name):
+    def set_large_collision_box(self, spr_name, value=1):
         # Collisions start from the front/bottom of a sprite and work backward
         self.collision_width = self.game.sprite.get_collision_width(spr_name)
         self.collision_height = self.game.sprite.get_collision_height(spr_name)
         for j in range(self.collision_height):
             for i in range(self.collision_width):
-                tile_num = self.world.get_tile_num(self.gx+i,self.gy-j)
-                self.world.collision_map[tile_num] = 1
+                tile_num = self.world.get_tile_num(self.gx+i,self.gy+j)
+                self.world.collision_map[tile_num] = value
                 
     def destroy(self):       
         self.world.current_map_path_objects.pop(self.world.current_map_path_objects.index(self))
@@ -77,6 +77,7 @@ class MapObject:
         # Maybe an object shouldn't ALWAYS clear collisions...?
         tile_num = self.world.get_tile_num(self.gx,self.gy)
         self.world.collision_map[tile_num] = 0
+        self.set_large_collision_box(self.spr_name, 0)
        
         
         # Generate items from destruction
