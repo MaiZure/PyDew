@@ -44,6 +44,7 @@ class SpriteLoader:
             if name == "daybg": size = (128,192)
             if name == "map": size = (300,180)
             if name == "houses": size = (272,144)
+            if name == "grass": size = (15,20)
             #if name == "walls_and_floors": size = (16,32)
             self.sheet[name] = (pygame.image.load(open(path+file)).convert_alpha(), size[0], size[1])
     
@@ -210,6 +211,7 @@ class SpriteLoader:
         
     def build_large_sprites(self) -> None:
         # 1 and 2 in 'mid' and 3 in front
+        season = self.game.save.season
         self.large_sprites["spr_oak"] = {
             "sheet": "spring_outdoorsTileSheet",
             "tiles": [(0,3), (1,3), (2,3), (25, 3), (26, 3), (27,3), (50, 3), (51, 3), (52, 3), (75, 3), (76, 3), (77, 3), None, (101,1), None, None, (126,1), None],
@@ -299,6 +301,15 @@ class SpriteLoader:
             "sprite_origin": (0,0),
             "collision_width": 2,
             "collision_height": 2
+        }
+        self.large_sprites["spr_grass"] = {
+            "sheet": "grass",
+            "tiles": [[(0+(season*4),1)],[(1+(season*4),1)],[(2+(season*4),1)]],
+            "sprite_height": 1,
+            "sprite_width": 1,
+            "sprite_origin": (0,0),
+            "collision_width": 0,
+            "collision_height": 0
         }
         self.large_sprites["spr_little_tree"] = {
             "sheet": "paths",

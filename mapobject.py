@@ -160,6 +160,8 @@ class MapObject:
             self.hp = 100
             self.loot = [("wood",2), ("hardwood",2), ("hardwood",2), ("hardwood",2)]
         if self.type == 22:
+            self.spr_name = "spr_grass"
+            self.action_list = ("scythe")
             self.collision_width = 0
             self.collision_height = 0
         if self.type == 23:
