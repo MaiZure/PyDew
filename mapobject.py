@@ -78,6 +78,7 @@ class MapObject:
         tile_num = self.world.get_tile_num(self.gx,self.gy)
         self.world.collision_map[tile_num] = 0
         self.set_large_collision_box(self.spr_name, 0)
+        self.world.redraw_front = True
        
         
         # Generate items from destruction

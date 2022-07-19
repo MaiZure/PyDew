@@ -375,6 +375,7 @@ class World:
         screen.fill(pygame.Color(0,0,0,0))
         if self.redraw_front:
             self.redraw_front = False
+            self.fg.fill(pygame.Color(0,0,0,0))
             for mapobject in self.current_map_path_objects:
                 mapobject.render_front(self.fg)
             for object in self.special_objects[self.current_map]:

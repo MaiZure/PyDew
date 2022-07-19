@@ -142,7 +142,7 @@ class Player:
         
         if (self.gx, self.gy) in self.game.world.edge_warp_points:
             self.game.world.warp_player(self.game.world.edge_warp_points[(self.gx, self.gy)])
-                
+
         if self.action_locked:
             self.moving = False
             item = self.current_item
@@ -160,6 +160,7 @@ class Player:
                 
                 if self.frame >= len(self.player_sequence): # End of sequence check
                     self.frame = 0
+                    self.actiontimer = 0  # Fix for energy drain bug
                     self.action_locked = False
                     self.frame_sequence = self.run_sequence[self.dir]
                     self.hair_yoff = self.hair_yoff_base[self.dir]
@@ -212,14 +213,13 @@ class Player:
     def use_item(self):
         item = self.current_item
         if not item: return
-        
+
         self.action_locked = True
         self.player_sequence = item.player_sequence[self.dir]
         self.item_sequence = item.item_sequence
         self.action_sequence = list(item.action_sequence[self.dir])
         self.hair_yoff = item.hair_yoff
         self.ep -= item.ecost
-        pass
         
     @property
     def current_item(self):
