@@ -41,7 +41,6 @@ class MapObject:
         
         # Object is valid -- register with world tracker
         world.current_map_path_objects.append(self)   # Linear list tracker
-        world.objects[(world.current_map,gx,gy)] = self                 # gx,gy O(1) lookup by position
         
     def init_second_stage(self):
         self.set_constants(self.type)
@@ -69,7 +68,13 @@ class MapObject:
             for i in range(self.collision_width):
                 tile_num = self.world.get_tile_num(self.gx+i,self.gy+j)
                 self.world.collision_map[tile_num] = value
-                
+                if value:  # add the large object to the O(1) object tracker
+                    self.world.objects[(self.world.current_map,self.gx+i,self.gy+j)] = self # O(1) lookup by position
+                else:      # Remove the large object from O(1) object tracker
+                    key = (self.world.current_map,self.gx+i,self.gy+j)
+                    if key in self.world.objects and self.world.objects[key] == self:
+                        del self.world.objects[key]
+                    
     def destroy(self):       
         self.world.current_map_path_objects.pop(self.world.current_map_path_objects.index(self))
         del self.world.objects[(self.world.current_map,self.gx,self.gy)]
