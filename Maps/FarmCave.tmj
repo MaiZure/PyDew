@@ -4,7 +4,7 @@
  "layers":[
         {
          "compression":"zlib",
-         "data":"eJxjYBgFo2DwAgACoAAB",
+         "data":"eJzrZmBg6B6E+DYZeDcQv8aCdyGp6UYSfwPlr0Kz+xWSHphYD5qaXig9G0nPayL8tRqI1+CRn41H7jYaH93d6G4kJ8wHOt7RMQDeamYp",
          "encoding":"base64",
          "height":14,
          "id":1,
@@ -29,7 +29,7 @@
         }, 
         {
          "compression":"zlib",
-         "data":"eJxjYBgFo2DwAgACoAAB",
+         "data":"eJyNzisLwmAUh\/F9ORW8RBW8g4jgHUQE70VtarGqxW6xW8yalq0Gv4MP+A9jbHhe+HF2toeXOc7vRBFDEinEkdBeQhkVtRFkkEUBReSQ195BFz31aVRRRwttNNDUPsMcC\/U19DHEBFOMMNa+wRY79QOssHaCzwFHnLQvQzr\/uWjujf1N82zsn5pXY\/\/SvBv7h+fZ\/dMGfXd93nr\/MdznvdPShv3HF+wsJgM=",
          "encoding":"base64",
          "height":14,
          "id":3,
@@ -54,7 +54,7 @@
         }, 
         {
          "compression":"zlib",
-         "data":"eJxjYBgFwwVwotGk6KGVekoBABrQACU=",
+         "data":"eJxjYBgFwwVoMqLSpOihlXpKAQBzfACp",
          "encoding":"base64",
          "height":14,
          "id":5,
@@ -79,7 +79,7 @@
         }, 
         {
          "compression":"zlib",
-         "data":"eJxjYBgFo2DwAgACoAAB",
+         "data":"eJzzY2Bg8GMgDviRoBZZDzHAhET1pJo\/3NQfI6DuHJJ6mJ7rQHwDib4JFb8LxPeQ1OLCL6Hq3xKhFoSvQe0hxmxcGAA4nxnT",
          "encoding":"base64",
          "height":14,
          "id":7,
@@ -121,28 +121,28 @@
  "tileheight":16,
  "tilesets":[
         {
-         "columns":0,
+         "columns":16,
          "firstgid":1,
-         "image":"Mines\/mine",
-         "imageheight":-1,
-         "imagewidth":-1,
+         "image":"mine",
+         "imageheight":288,
+         "imagewidth":256,
          "margin":0,
          "name":"cave",
          "spacing":0,
-         "tilecount":0,
+         "tilecount":288,
          "tileheight":16,
          "tilewidth":16
         }, 
         {
-         "columns":0,
-         "firstgid":1,
+         "columns":4,
+         "firstgid":289,
          "image":"paths",
-         "imageheight":-1,
-         "imagewidth":-1,
+         "imageheight":144,
+         "imagewidth":64,
          "margin":0,
          "name":"paths",
          "spacing":0,
-         "tilecount":0,
+         "tilecount":36,
          "tileheight":16,
          "tilewidth":16
         }],

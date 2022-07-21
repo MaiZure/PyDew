@@ -125,11 +125,15 @@ class MapLoader:
         return index
         
     def get_map_outdoors(self, name) -> bool:
-        outdoors = False  # nested tuple ( (gx,gy), (newmap, gx, gy) )
+        outdoors = False  
         for map_properties in self.map[name]["properties"]:
             if map_properties["name"].lower() == "outdoors":
-                if map_properties["value"].lower() == "t":
-                    return True
+                if map_properties["value"] == True:
+                    outdoors = True
+                elif map_properties["value"].lower() == "t":
+                    # Crash bug still exists here if property is boolean False
+                    outdoors = True
+        return outdoors
                     
     def get_ambient_light(self, name) -> bool:
         outdoors = False  # nested tuple ( (gx,gy), (newmap, gx, gy) )
