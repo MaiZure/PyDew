@@ -115,6 +115,7 @@ class MapObject:
             screen.blit(self.sprite[self.type], (self.x,self.y), (0,0,16,16))
             
     def render_all(self, screen):
+        if not self.game.world.is_visible(self.gx, self.gy): return
         top_left_x = self.game.world.top_left_x
         top_left_y = self.game.world.top_left_y
             
