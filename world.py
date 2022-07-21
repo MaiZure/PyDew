@@ -348,7 +348,7 @@ class World:
         for obj_num in range(len(self.current_map_path_objects)):
             mapobject = self.current_map_path_objects[obj_num]
             if mapobject.gy <= self.game.player.gy:
-                mapobject.render_mid(screen)
+                mapobject.render_all(screen)
             else: break;
             
         screen.blit(self.mid, (0,0), (self.top_left_x,self.top_left_y,screen.get_width(),screen.get_height()/2))
@@ -366,7 +366,7 @@ class World:
             for obj_num in range(obj_num, len(self.current_map_path_objects)):
                 mapobject = self.current_map_path_objects[obj_num]
                 if mapobject.gy > self.game.player.gy:
-                    mapobject.render_mid(screen)
+                    mapobject.render_all(screen)
                 
         screen.blit(self.mid, (0,screen.get_height()/2), (self.top_left_x,self.top_left_y+screen.get_height()/2,screen.get_width(),screen.get_height()/2))
         
@@ -375,9 +375,9 @@ class World:
         screen.fill(pygame.Color(0,0,0,0))
         if self.redraw_front:
             self.redraw_front = False
-            self.fg.fill(pygame.Color(0,0,0,0))
-            for mapobject in self.current_map_path_objects:
-                mapobject.render_front(self.fg)
+            #self.fg.fill(pygame.Color(0,0,0,0))
+            #for mapobject in self.current_map_path_objects:
+            #    mapobject.render_front(self.mid)
             for object in self.special_objects[self.current_map]:
                 object.render_front(self.fg)
         screen.blit(self.fg, (0,0), (self.top_left_x,self.top_left_y,screen.get_width(),screen.get_height()))

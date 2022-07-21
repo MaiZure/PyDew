@@ -29,6 +29,7 @@ class MapObject:
         self.large_sprite = None
         self.large_sprite_mid = None
         self.large_sprite_front = None
+        self.large_sprite_all = None
         self.ogx = 0
         self.ogy = 0
         self.hp = 1
@@ -57,6 +58,7 @@ class MapObject:
                 
             self.large_sprite_mid = self.large_sprite[0]
             self.large_sprite_front = self.large_sprite[1]
+            self.large_sprite_all = self.large_sprite[2]
             self.set_large_collision_box(self.spr_name)
             self.ogx, self.ogy = self.game.sprite.get_large_sprite_origin(self.spr_name)
          
@@ -109,6 +111,15 @@ class MapObject:
             
         if self.large_sprite:
             screen.blit(self.large_sprite_front, (self.x-self.ogx*16,self.y-self.ogy*16), (0,0,3*16,6*16))
+        else:
+            screen.blit(self.sprite[self.type], (self.x,self.y), (0,0,16,16))
+            
+    def render_all(self, screen):
+        top_left_x = self.game.world.top_left_x
+        top_left_y = self.game.world.top_left_y
+            
+        if self.large_sprite:
+            screen.blit(self.large_sprite_all, (self.x-top_left_x-self.ogx*16,self.y-top_left_y-self.ogy*16), (0,0,3*16,6*16))
         else:
             screen.blit(self.sprite[self.type], (self.x,self.y), (0,0,16,16))
             

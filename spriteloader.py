@@ -188,6 +188,7 @@ class SpriteLoader:
         rect = pygame.Rect(0, 0, sprite_width*16, sprite_height*16)
         new_sprite_mid = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
         new_sprite_front = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
+        new_sprite_all = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
         
         for column in range(sprite_height):
             for row in range(sprite_width):
@@ -198,15 +199,19 @@ class SpriteLoader:
                         new_sprite_mid.blit(sheet_tiles[src_tile[0]], rect)
                     if src_tile[1] > 1 :
                         new_sprite_front.blit(sheet_tiles[src_tile[0]], rect)
-        return new_sprite_mid, new_sprite_front
+        new_sprite_all.blit(new_sprite_mid, (0,0))
+        new_sprite_all.blit(new_sprite_front, (0,0))
+        return new_sprite_mid, new_sprite_front, new_sprite_all
      
     def get_large_sprite_reverse(self, name) -> pygame.Surface:
-        base_sprite = self.get_large_sprite(name) #This is a tuple
+        base_sprite = self.get_large_sprite(name) #This is a 3-tuple
         rect = pygame.Rect(0, 0, base_sprite[0].get_width(), base_sprite[0].get_height())
         new_sprite = (pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha(),
+            pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha(),
             pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha())
         new_sprite[0].blit(pygame.transform.flip(base_sprite[0], True, False), rect)
         new_sprite[1].blit(pygame.transform.flip(base_sprite[1], True, False), rect)
+        new_sprite[2].blit(pygame.transform.flip(base_sprite[2], True, False), rect)
         return new_sprite
         
     def build_large_sprites(self) -> None:
@@ -214,7 +219,7 @@ class SpriteLoader:
         season = self.game.save.season
         self.large_sprites["spr_oak"] = {
             "sheet": "spring_outdoorsTileSheet",
-            "tiles": [(0,3), (1,3), (2,3), (25, 3), (26, 3), (27,3), (50, 3), (51, 3), (52, 3), (75, 3), (76, 3), (77, 3), None, (101,1), None, None, (126,1), None],
+            "tiles": [(0,2), (1,2), (2,2), (25, 2), (26, 2), (27,2), (50, 2), (51, 2), (52, 2), (75, 2), (76, 2), (77, 2), None, (101,1), None, None, (126,1), None],
             "sprite_height": 6,
             "sprite_width": 3,
             "sprite_origin": (1,5),
@@ -223,7 +228,7 @@ class SpriteLoader:
         }
         self.large_sprites["spr_maple"] = {
             "sheet": "spring_outdoorsTileSheet",
-            "tiles": [(3,3), (4,3), (5,3), (28, 3), (29, 3), (30,3), (53, 3), (54, 3), (55, 3), (78, 3), (79, 3), (80, 3), None, (104,1), None, None, (129,1), None],
+            "tiles": [(3,2), (4,2), (5,2), (28, 2), (29, 2), (30,2), (53, 2), (54, 2), (55, 2), (78, 2), (79, 2), (80, 2), None, (104,1), None, None, (129,1), None],
             "sprite_height": 6,
             "sprite_width": 3,
             "sprite_origin": (1,5),
@@ -232,7 +237,7 @@ class SpriteLoader:
         }
         self.large_sprites["spr_pine"] = {
             "sheet": "spring_outdoorsTileSheet",
-            "tiles": [(10,3), (11,3), (12,3), (35, 3), (36, 3), (37,3), (60, 3), (61, 3), (62, 3), (85, 3), (86, 3), (87, 3), None, (111,1), None, None, (136,1), None],
+            "tiles": [(10,2), (11,2), (12,2), (35, 2), (36, 2), (37,2), (60, 2), (61, 2), (62, 2), (85, 2), (86, 2), (87, 2), None, (111,1), None, None, (136,1), None],
             "sprite_height": 6,
             "sprite_width": 3,
             "sprite_origin": (1,5),

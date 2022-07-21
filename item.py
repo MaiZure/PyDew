@@ -282,6 +282,13 @@ class Tool(Item):
         self.inv_frame = tool["inv_frame"][self.quality]
         self.player_sequence = tool["player_sequence"]
         self.item_sequence = tool["item_sequence"]
+        
+        
+        self.item_sequence = self.quality_item_sequence(self.item_sequence, self.quality)
+        # Alter item sequence based on quality right here
+        # Iterate through tuple and genereate new tuples = (base + 7*quality)
+        
+        
         self.hair_yoff = tool["hair_yoff"]
         self.item_xoff = tool["item_xoff"]
         self.item_yoff = tool["item_yoff"]
@@ -289,6 +296,20 @@ class Tool(Item):
         self.action_sequence = tool["action_sequence"]
         self.stackable = True
         self.hover = self.generate_hover()
+        
+    def quality_item_sequence(self, base_tuple, quality):
+        outer = []
+        if quality == 0: offset = 0
+        if quality == 1: offset = 7
+        if quality == 2: offset = 14
+        if quality == 3: offset = 42
+        if quality == 4: offset = 49
+        for i in range(len(base_tuple)):
+            inner = []
+            for j in range(len(base_tuple[i])):
+                inner.append(base_tuple[i][j]+offset)
+            outer.append(tuple(inner))
+        return tuple(outer)
         
 class Food(Item):
     def __init__(self, game, type):
@@ -409,10 +430,10 @@ class ItemLoader:
                                 ((None,None,None,("axe",(1,0)),None,None)),
                                 ((None,None,None,("axe",(0,-1)),None,None)),
                                 ((None,None,None,("axe",(-1,0)),None,None))),
-            "item_sequence": ((224,224,225,225,225,265),
-                             (226,226,226,226,226,226),
-                             (228,228,228,228,228,228),
-                             (226,226,226,226,226,226)),# Use quality offset
+            "item_sequence": ((210,210,211,211,211,265),
+                             (212,212,212,212,212,212),
+                             (214,214,214,214,214,214),
+                             (212,212,212,212,212,212)),# Use quality offset
             "item_xoff": (-3,-2,-1,0,0,0),
             "item_yoff": (-1,5,8,14,14,14),
             "hair_yoff": (-1,0,1,2,2,1)
