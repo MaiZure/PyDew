@@ -164,9 +164,15 @@ class SpriteLoader:
         output_tiles = []
         for tile in tiles:
             base_size = tile.get_size()
-            new_tile = pygame.transform.scale(tile, (int(base_size[0]*factor),int(base_size[0]*factor)))
+            new_tile = pygame.transform.scale(tile, (int(base_size[0]*factor),int(base_size[1]*factor)))
             output_tiles.append(new_tile)
         return output_tiles
+        
+    def rescale_sprite(self, src, factor) -> pygame.Surface:
+        base_size = src.get_size()
+        dest = pygame.Surface(base_size, pygame.SRCALPHA)
+        dest = pygame.transform.scale(src, (int(base_size[0]*factor),int(base_size[1]*factor)))
+        return dest
         
     def get_large_sprite_origin(self,name) -> tuple:
         return self.large_sprites[name]["sprite_origin"]

@@ -21,10 +21,7 @@ class Item:
         self.quality = 0
       
         self.spritesheet = self.game.sprite.get_tiles("MenuTiles")
-        
-        #self.hover = self.generate_hover(256,192)
-        
-        
+
     def render(self, screen):
         if not self.x or not self.y:
             return
@@ -494,7 +491,7 @@ class ItemLoader:
                          (5,0,-25,-28,-28,0)),
             "item_yoff": ((-1,4,10,16,16,16),
                          (-2,-3,1,25,25,0),
-                         (-10,-8,-6,-4,0,0),
+                         (-10,-5,2,2,2,0),
                          (-2,-3,1,25,25,0)),
             "item_rot": ((5,3,0,0,0,0),
                          (10,0,-45,-100,-100,0),

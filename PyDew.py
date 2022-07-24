@@ -21,7 +21,7 @@ class PyDew:
     def __init__(self):
         ctypes.windll.user32.SetProcessDPIAware()  # Inform PyGame of real DPI (avoid OS-level scaling)
         pygame.init()
-        self.version = "0.2.3.93"
+        self.version = "0.2.3.94"
         print("Hello PyDew "+str(self.version))
         self.config = Config()
         self.save = SaveData()
@@ -87,12 +87,12 @@ class PyDew:
         self.mouse.init_second_stage()
         
         
-    #do some more start stuff - like a main menu
+    # Eventually do more start stuff - like a main menu
     def start(self):
         self.run = True
         self.game_loop()
         
-    #The game loop
+    # The game loop
     def game_loop(self):
         while self.run:
             self.check_input()
@@ -105,7 +105,7 @@ class PyDew:
         
         pygame.quit()
     
-    #Check/Dispatch user input
+    # Check/Dispatch user input
     def check_input(self):
         for e in pygame.event.get():
             if e.type == pygame.QUIT:

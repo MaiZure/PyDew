@@ -70,6 +70,14 @@ class Player:
         self.pants = self.game.sprite.colorize_tiles(self.pants, self.pants_color)
         self.hair = self.game.sprite.colorize_tiles(self.hair, self.hair_color)
         self.sprite = self.game.sprite.colorize_tiles(self.sprite, self.skin_color)
+        
+        # Cache scaled hair/shirt to draw over up facing tools/weapons
+        hair_frame = (self.hair_num % 8) + int(self.hair_num/8)*24
+        hair_sprite = self.hair[hair_frame+self.hair_frame_off+16]
+        self.scaled_hair = self.game.sprite.rescale_sprite(hair_sprite, self.game.config.screen_scaling)
+        shirt_sprite = pygame.Surface((8,8),pygame.SRCALPHA)
+        shirt_sprite.blit(self.shirt[self.shirt_num], (0,0),self.get_shirt_dir(2))
+        self.scaled_shirt = self.game.sprite.rescale_sprite(shirt_sprite, self.game.config.screen_scaling)
     
         self.inventory[0] = Tool(self.game, "axe")
         self.inventory[1] = Tool(self.game, "pickaxe")
@@ -311,10 +319,6 @@ class Player:
         hair_pos = (self.x-top_left_x,self.y-15-top_left_y-self.hair_yoff[self.frame])
         arms_pos = (self.x-top_left_x,self.y-16-top_left_y)
         pants_pos = (self.x-top_left_x,self.y-16-top_left_y)
-        if self.item_sequence:
-            item = self.current_item
-            item_pos = (self.x-top_left_x+item.item_xoff[self.dir][self.frame],self.y-16-top_left_y+item.item_yoff[self.dir][self.frame])
-            item_pos_top = (self.x-top_left_x+item.item_xoff[self.dir][self.frame],self.y-32-top_left_y+item.item_yoff[self.dir][self.frame])
         
         body_sprite = self.sprite[frame]
         arms_sprite = self.sprite[frame+6]
@@ -348,23 +352,19 @@ class Player:
         
         item_x = (x - top_left_x + self.current_item.item_xoff[self.dir][frame]) * scale
         item_y = (y - top_left_y + self.current_item.item_yoff[self.dir][frame] - 32) * scale            
-        item_sprite = self.current_item.sprite_sequence[self.dir][frame]    
-        
+        item_sprite = self.current_item.sprite_sequence[self.dir][frame]         
         
         screen.blit(item_sprite, (item_x, item_y))
         
         # Draw hair over sprite
         if self.dir == 2:
+            shirt_pos = ((self.x-top_left_x+4)*scale,(self.y-top_left_y-1-self.hair_yoff[self.frame])*scale)
             hair_pos = ((self.x-top_left_x)*scale,(self.y-15-top_left_y-self.hair_yoff[self.frame])*scale)
             hair_frame = (self.hair_num % 8) + int(self.hair_num/8)*24
             hair_sprite = self.hair[hair_frame+self.hair_frame_off]
-            
-            
-            dest_width = hair_sprite.get_width()*scale
-            dest_height = hair_sprite.get_height()*scale
-            scaled_hair_sprite = pygame.Surface((dest_width,dest_height), pygame.SRCALPHA)
-            pygame.transform.scale(hair_sprite, (dest_width, dest_height), scaled_hair_sprite)          
-            screen.blit(scaled_hair_sprite, hair_pos)
+                    
+            screen.blit(self.scaled_hair, hair_pos)
+            screen.blit(self.scaled_shirt, shirt_pos)
 
     def move_down(self):
         self.moving = True
