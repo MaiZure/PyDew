@@ -78,7 +78,8 @@ class Clock:
         self.arrow_base_rect = self.arrow_base.get_rect()
         self.arrow_base.blit(self.spritesheet, (0,0), self.arrow_rect)
         
-        self.arrow_scaled = pygame.transform.scale(self.arrow_base, (self.arrow_base_rect[2]*4, self.arrow_base_rect[3]*4))
+        scale = self.game.config.ui_scaling
+        self.arrow_scaled = pygame.transform.scale(self.arrow_base, (self.arrow_base_rect[2]*scale, self.arrow_base_rect[3]*scale))
         self.arrow_base_rect = self.arrow_scaled.get_rect()
         
         
@@ -149,8 +150,6 @@ class Clock:
     
     def render(self, screen):
         screen.blit(self.clock_sprite, (self.clock_sprite_x, self.clock_sprite_y))
-        #screen.blit(self.rotated_arrow, (self.clock_sprite_x + self.rotated_arrow_rect[0], self.clock_sprite_y + self.rotated_arrow_rect[1]))
-        
         
         digits = [int(x) for x in str(self.game.save.gold)]
         digits.reverse()

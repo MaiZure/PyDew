@@ -382,6 +382,9 @@ class World:
                 object.render_front(self.fg)
         screen.blit(self.fg, (0,0), (self.top_left_x,self.top_left_y,screen.get_width(),screen.get_height()))
         
+    def render_scaled(self,screen):
+        self.game.player.render_scaled(screen)
+        
     def get_tile_x(self, tile_num):
         return tile_num % self.map_width
         

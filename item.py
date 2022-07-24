@@ -281,12 +281,11 @@ class Tool(Item):
         self.name += tool["name"]
         self.inv_frame = tool["inv_frame"][self.quality]
         self.player_sequence = tool["player_sequence"]
+        
         self.item_sequence = tool["item_sequence"]
-        
-        
         self.item_sequence = self.quality_item_sequence(self.item_sequence, self.quality)
-        # Alter item sequence based on quality right here
-        # Iterate through tuple and genereate new tuples = (base + 7*quality)
+        
+        self.sprite_sequence = self.generate_sprite_sequence(self.item_sequence, tool["item_rot"])
         
         
         self.hair_yoff = tool["hair_yoff"]
@@ -311,6 +310,53 @@ class Tool(Item):
             outer.append(tuple(inner))
         return tuple(outer)
         
+    def generate_sprite_sequence(self, frames, rotations):
+        out = []
+        scale = self.game.config.screen_scaling
+        size = (self.sprite[0].get_width(), self.sprite[0].get_height()*2)
+        for outer in range(len(frames)):
+            dir_sequence = []
+            reverse = True if outer == 3 else False
+            for inner in range(len(frames[outer])):
+                # Get basic sprite
+                surf = pygame.Surface(size, pygame.SRCALPHA).convert_alpha()
+                if reverse:
+                    base_surf = pygame.Surface(size, pygame.SRCALPHA).convert_alpha()
+                    base_surf.blit(self.sprite[frames[outer][inner]-21],(0,0))
+                    base_surf.blit(self.sprite[frames[outer][inner]],(0,16))
+                    surf.blit(pygame.transform.flip(base_surf,True,False),surf.get_rect())
+                else:
+                    surf.blit(self.sprite[frames[outer][inner]-21],(0,0))
+                    surf.blit(self.sprite[frames[outer][inner]],(0,16))
+                
+                #Rescale sprite
+                scaled_surf = pygame.transform.scale(surf,(size[0]*scale,size[1]*scale))
+                
+                #Rotate sprite
+                scaled_surf = self.rotate_tool(scaled_surf,rotations[outer][inner])
+                
+                #Finalize
+                dir_sequence.append(scaled_surf)
+            out.append(tuple(dir_sequence))
+        return tuple(out)
+
+        
+    def rotate_tool(self,image,angle):
+        scale = self.game.config.screen_scaling
+        pos = (0,0)
+        originPos = (image.get_width() // 2, image.get_height() // 2)
+        
+        image_rect = image.get_rect(topleft = (pos[0] - originPos[0], pos[1]-originPos[1]))
+        offset_center_to_pivot = pygame.math.Vector2(pos) - image_rect.center
+        rotated_offset = offset_center_to_pivot.rotate(-angle)
+        rotated_image_center = (pos[0] - rotated_offset.x, pos[1] - rotated_offset.y)
+        rotated_image = pygame.transform.rotate(image, angle)
+        rotated_image_rect = rotated_image.get_rect(center = rotated_image_center)
+        return rotated_image
+        
+        # Probably need to return a rect too? See below
+        #self.rotated_arrow_rect = rotated_image_rect
+       
 class Food(Item):
     def __init__(self, game, type):
         super().__init__(game)
@@ -326,7 +372,7 @@ class Weapon(Item):
         weapon = game.item.weapon[type]
         self.name = weapon["name"]
         
-        #Overrides specific weapon for now
+        # Overrides specific weapon for now
         self.init_item()
         self.sprite = self.game.sprite.get_tiles("weapons")
         self.stackable = False
@@ -395,6 +441,10 @@ class ItemLoader:
             "item_sequence": (),
             "item_xoff": (),
             "item_yoff": (),
+            "item_rot": ((0,0,0,0,0,0),
+                         (0,0,0,0,0,0),
+                         (0,0,0,0,0,0),
+                         (0,0,0,0,0,0)),
             "hair_yoff": (-1,0,1,2,2,1)
         }
         self.tool["pickaxe"] = {
@@ -414,6 +464,10 @@ class ItemLoader:
             "item_sequence": (),
             "item_xoff": (),
             "item_yoff": (),
+            "item_rot": ((0,0,0,0,0,0),
+                         (0,0,0,0,0,0),
+                         (0,0,0,0,0,0),
+                         (0,0,0,0,0,0)),
             "hair_yoff": (-1,0,1,2,2,1)
         }
         self.tool["axe"] = {
@@ -430,13 +484,23 @@ class ItemLoader:
                                 ((None,None,None,("axe",(1,0)),None,None)),
                                 ((None,None,None,("axe",(0,-1)),None,None)),
                                 ((None,None,None,("axe",(-1,0)),None,None))),
-            "item_sequence": ((210,210,211,211,211,265),
-                             (212,212,212,212,212,212),
-                             (214,214,214,214,214,214),
-                             (212,212,212,212,212,212)),# Use quality offset
-            "item_xoff": (-3,-2,-1,0,0,0),
-            "item_yoff": (-1,5,8,14,14,14),
-            "hair_yoff": (-1,0,1,2,2,1)
+            "item_sequence": ((210,210,211,211,211,265), # base frame
+                             (212,212,212,212,212,265),  # tool 'level'
+                             (213,213,214,214,214,265),  # computed in 
+                             (212,212,212,212,212,265)), # tool constructor
+            "item_xoff": ((-6,-3,-1,0,0,0),
+                         (-10,0,6,12,12,0),
+                         (0,0,0,0,0,0),
+                         (5,0,-25,-28,-28,0)),
+            "item_yoff": ((-1,4,10,16,16,16),
+                         (-2,-3,1,25,25,0),
+                         (-10,-8,-6,-4,0,0),
+                         (-2,-3,1,25,25,0)),
+            "item_rot": ((5,3,0,0,0,0),
+                         (10,0,-45,-100,-100,0),
+                         (0,0,0,0,0,0),
+                         (-10,0,45,100,100,0)),
+            "hair_yoff": (-1,0,2,3,3,2)
         }
         self.tool["scythe"] = {
             "name": "Scythe",
@@ -455,6 +519,10 @@ class ItemLoader:
             "item_sequence": (),
             "item_xoff": (),
             "item_yoff": (),
+            "item_rot": ((0,0,0,0,0,0),
+                         (0,0,0,0,0,0),
+                         (0,0,0,0,0,0),
+                         (0,0,0,0,0,0)),
             "hair_yoff": (-1,0,1,2,2,1)
         }
         self.tool["gscythe"] = {
@@ -474,6 +542,10 @@ class ItemLoader:
             "item_sequence": (),
             "item_xoff": (),
             "item_yoff": (),
+            "item_rot": ((0,0,0,0,0,0),
+                         (0,0,0,0,0,0),
+                         (0,0,0,0,0,0),
+                         (0,0,0,0,0,0)),
             "hair_yoff": (-1,0,1,2,2,1)
         }
         self.tool["wateringcan"] = {
@@ -493,6 +565,10 @@ class ItemLoader:
             "item_sequence": (),
             "item_xoff": (),
             "item_yoff": (),
+            "item_rot": ((0,0,0,0,0,0),
+                         (0,0,0,0,0,0),
+                         (0,0,0,0,0,0),
+                         (0,0,0,0,0,0)),
             "hair_yoff": (-1,0,1,2,2,1)
         }       
         self.weapon["galaxysword"] = {

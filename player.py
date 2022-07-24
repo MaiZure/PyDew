@@ -58,8 +58,6 @@ class Player:
         
         self.hair_frame_off = 0
     
-    # Because pants are weird....
-    
     def init_second_stage(self):
         self.name = random.choice(list(self.game.sprite.character_sheet.keys()))
         self.sprite = self.game.sprite.get_tiles("farmer_base")
@@ -156,7 +154,7 @@ class Player:
                 # Tool usage actions
                 self.frame_sequence = self.player_sequence
                 self.actiontimer += 2
-                self.frame = int((self.actiontimer/10)%8)
+                self.frame = int((self.actiontimer/10)%8) # 10
                 
                 if self.frame >= len(self.player_sequence): # End of sequence check
                     self.frame = 0
@@ -315,8 +313,8 @@ class Player:
         pants_pos = (self.x-top_left_x,self.y-16-top_left_y)
         if self.item_sequence:
             item = self.current_item
-            item_pos = (self.x-top_left_x+item.item_xoff[self.frame],self.y-16-top_left_y+item.item_yoff[self.frame])
-            item_pos_top = (self.x-top_left_x+item.item_xoff[self.frame],self.y-32-top_left_y+item.item_yoff[self.frame])
+            item_pos = (self.x-top_left_x+item.item_xoff[self.dir][self.frame],self.y-16-top_left_y+item.item_yoff[self.dir][self.frame])
+            item_pos_top = (self.x-top_left_x+item.item_xoff[self.dir][self.frame],self.y-32-top_left_y+item.item_yoff[self.dir][self.frame])
         
         body_sprite = self.sprite[frame]
         arms_sprite = self.sprite[frame+6]
@@ -324,10 +322,6 @@ class Player:
         pants_sprite = self.pants[frame]
         hair_frame = (self.hair_num % 8) + int(self.hair_num/8)*24
         hair_sprite = self.hair[hair_frame+self.hair_frame_off]
-        if self.item_sequence:
-            item_frame = self.item_sequence[self.dir][self.frame]
-            item_sprite = self.current_item.sprite[item_frame]
-            item_sprite_top = self.current_item.sprite[item_frame-21]
         
         if self.dir == 3:
             body_sprite = pygame.transform.flip(body_sprite,True,False)
@@ -339,10 +333,38 @@ class Player:
         screen.blit(shirt_sprite, shirt_pos, self.get_shirt_dir(self.dir))        
         screen.blit(hair_sprite, hair_pos, (0,0,16,32))
         screen.blit(arms_sprite, arms_pos, (0,0,16,32))
-        if self.item_sequence:
-            if item_frame >= 3 :
-                screen.blit(item_sprite_top, item_pos_top, (0,0,16,32))
-                screen.blit(item_sprite, item_pos, (0,0,16,32))
+                
+    def render_scaled(self, screen):
+        if not self.item_sequence: return
+        item = self.current_item
+        if not item: return
+        
+        top_left_x = self.game.world.top_left_x
+        top_left_y = self.game.world.top_left_y
+        x = self.x
+        y = self.y
+        scale = self.game.config.screen_scaling
+        frame = self.frame
+        
+        item_x = (x - top_left_x + self.current_item.item_xoff[self.dir][frame]) * scale
+        item_y = (y - top_left_y + self.current_item.item_yoff[self.dir][frame] - 32) * scale            
+        item_sprite = self.current_item.sprite_sequence[self.dir][frame]    
+        
+        
+        screen.blit(item_sprite, (item_x, item_y))
+        
+        # Draw hair over sprite
+        if self.dir == 2:
+            hair_pos = ((self.x-top_left_x)*scale,(self.y-15-top_left_y-self.hair_yoff[self.frame])*scale)
+            hair_frame = (self.hair_num % 8) + int(self.hair_num/8)*24
+            hair_sprite = self.hair[hair_frame+self.hair_frame_off]
+            
+            
+            dest_width = hair_sprite.get_width()*scale
+            dest_height = hair_sprite.get_height()*scale
+            scaled_hair_sprite = pygame.Surface((dest_width,dest_height), pygame.SRCALPHA)
+            pygame.transform.scale(hair_sprite, (dest_width, dest_height), scaled_hair_sprite)          
+            screen.blit(scaled_hair_sprite, hair_pos)
 
     def move_down(self):
         self.moving = True
