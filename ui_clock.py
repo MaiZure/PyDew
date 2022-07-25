@@ -18,7 +18,9 @@ class Clock:
         self.text_layer = None
         self.update_time = False
         
-        self.clock_rect = pygame.Rect(333, 432, 72, 57)
+        self.clock_width = 72
+        self.clock_height = 57
+        self.clock_rect = pygame.Rect(333, 432, self.clock_width, self.clock_height)
         self.season_rect = pygame.Rect(406, 441+(self.game.save.season*8), 12, 8)
         self.weather_rect = pygame.Rect(329+(self.game.save.weather*12), 421, 12, 8)
         self.arrow_rect = pygame.Rect(324,477,7,19)

@@ -168,7 +168,7 @@ class MapObject:
             self.hp = 100
         if self.type == 20:
             self.spr_name = "spr_rock_large"
-            self.action_list = ("pick")
+            self.action_list = ("pickaxe")
             self.hp = 100
             self.loot = [("stone",2), ("stone",2), ("stone",2)]
         if self.type == 21:
@@ -207,7 +207,6 @@ class Farmhouse:
         self.level = 0
         
     def render_back(self, screen):
-        print("Drawing House BG")
         w = self.sprite[self.level].get_width()
         h = self.sprite[self.level].get_height()
         spr_top = self.always_front_layer_height*16

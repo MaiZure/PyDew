@@ -145,8 +145,8 @@ class PyDew:
             self.world.render_back(self.bg_surface)
             self.world.render_mid(self.mid_surface)
             self.world.render_front(self.fg_surface)
-            self.ui.ui_render(self.ui_surface) 
-        self.ui.menu_render(self.menu_surface)
+            self.ui.ui_render(self.ui_surface)
+        #self.ui.menu_render(self.menu_surface)
 
         for light in self.world.lights:
             light.render(self.ambient_surface)
@@ -160,14 +160,16 @@ class PyDew:
         pygame.transform.scale(self.unscaled_screen,self.final_screen.get_rect().size, self.scaled_screen)
         pygame.transform.scale(self.unscaled_ui_screen,self.final_screen.get_rect().size, self.scaled_ui_screen)
         
-        self.scaled_screen.blit(self.scaled_ui_screen,(0,0))    
-        self.scaled_screen.blit(self.menu_surface, (0,0))
+        # Most expensive calls right here
+        #self.scaled_screen.blit(self.scaled_ui_screen,(0,0))
+        self.ui.ui_render(self.scaled_ui_screen, self.scaled_screen)
+        #self.scaled_screen.blit(self.menu_surface, (0,0))
+        self.ui.menu_render(self.scaled_screen)
         
-        # Post scaling rendering (text, some UI elements like health bars, clock hand rotation [future])
+        # Post scaling rendering (item usage, hovers, text, UI elements like health bars, clock hand rotation)
         self.world.render_scaled(self.scaled_screen)
         self.ui.ui_render_scaled(self.scaled_screen)
-        
-
+      
         self.final_screen.blit(self.scaled_screen,(0,0))
         pygame.display.update()
 
