@@ -172,6 +172,7 @@ class Item:
             self.sprite = self.game.sprite.get_tiles("springobjects")
             self.hover = self.generate_hover(256,192)
             return self
+
         self.inv_frame = int(data[0])
         self.spr_frame = self.inv_frame
         self.name = data[1]
@@ -258,8 +259,13 @@ class Resource(Item):
     
         #if not type in game.item.resource: return
     
-        super().__init__(game)    
-        self.init_item(self.game.data.get_object_by_name(type))         
+        super().__init__(game)
+        
+        # Check for objects with duplicate names
+        if type == "stone": objdata = self.game.data.get_object_by_num(390)
+        else: objdata = self.game.data.get_object_by_name(type)
+        
+        self.init_item(objdata)
         self.sprite = game.sprite.get_tiles("springobjects")
         self.spr_frame = self.inv_frame
         self.stackable = True
@@ -364,10 +370,8 @@ class Seeds(Item):
         super().__init__(game)
         
 class Weapon(Item):
-    def __init__(self, game, type):
+    def __init__(self, game):
         super().__init__(game)
-        weapon = game.item.weapon[type]
-        self.name = weapon["name"]
         
         # Overrides specific weapon for now
         self.init_item()
@@ -386,6 +390,7 @@ class Weapon(Item):
         self.item_xoff = ()
         self.item_yoff = ()
         self.hair_yoff = (-1,0,1,2,2,1)
+        self.ecost = 2
         
     def init_item(self, data=None):
         if not data:
@@ -450,21 +455,30 @@ class ItemLoader:
             "ecost": 2,
             "sprite": "tools",
             "inv_frame": [131, 138, 145, 173, 180],  # Each quality level
-            "player_sequence": ((),
-                                (),
-                                (),
-                                ()),
-            "action_sequence": ((None,None,None,None,None,None),
-                                (),
-                                (),
-                                ()),
-            "item_sequence": (),
-            "item_xoff": (),
-            "item_yoff": (),
-            "item_rot": ((0,0,0,0,0,0),
+            "player_sequence": ((198,199,200,201,201,202),
+                                (144,145,146,147,147,148),
+                                (108,109,110,111,111,112),
+                                (144,145,146,147,147,148)),
+            "action_sequence": ((None,None,None,("pickaxe",(0,1)),None,None),
+                                (None,None,None,("pickaxe",(1,0)),None,None),
+                                (None,None,None,("pickaxe",(0,-1)),None,None),
+                                (None,None,None,("pickaxe",(-1,0)),None,None)),
+            "item_sequence": ((126,126,127,127,127,265), # base frame
+                             (128,128,128,128,128,265),  # tool 'level'
+                             (129,129,130,130,130,265),  # computed in 
+                             (128,128,128,128,128,265)), # tool constructor
+            "item_xoff": ((-6,-3,-1,0,0,0),
+                         (-10,0,6,12,12,0),
                          (0,0,0,0,0,0),
+                         (5,0,-25,-28,-28,0)),
+            "item_yoff": ((-1,4,10,16,16,16),
+                         (-2,-3,1,25,25,0),
+                         (-10,-5,2,2,2,0),
+                         (-2,-3,1,25,25,0)),
+            "item_rot": ((5,3,0,0,0,0),
+                         (10,0,-45,-100,-100,0),
                          (0,0,0,0,0,0),
-                         (0,0,0,0,0,0)),
+                         (-10,0,45,100,100,0)),
             "hair_yoff": (-1,0,1,2,2,1)
         }
         self.tool["axe"] = {
@@ -568,8 +582,8 @@ class ItemLoader:
                          (0,0,0,0,0,0)),
             "hair_yoff": (-1,0,1,2,2,1)
         }       
-        self.weapon["galaxysword"] = {
-            "name": "Galaxy Sword",
-            "desc": "",
-            "inv_frame": [4]  # Each quality level
-        }
+        #self.weapon["galaxysword"] = {
+        #    "name": "Galaxy Sword",
+        #    "desc": "",
+        #    "inv_frame": [4]  # Each quality level
+        #}

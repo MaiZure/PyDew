@@ -84,7 +84,7 @@ class Player:
         self.inventory[2] = Tool(self.game, "hoe")
         self.inventory[3] = Tool(self.game, "scythe")
         self.inventory[4] = Tool(self.game, "wateringcan")
-        self.inventory[5] = Weapon(self.game, "galaxysword")
+        self.inventory[5] = Weapon(self.game)
         
         self.inventory[9] = (Item(self.game)).init_item()
         

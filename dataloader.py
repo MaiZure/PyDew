@@ -23,10 +23,7 @@ class DataLoader:
             self.file[name] = json.load(open(path+file))
             
     def get_object_by_num(self,num):
-        dict = self.file["objectinformation"]["content"]
-        result = dict[str(num)]
-        result = str(num)+"/"+result
-        return result
+        return self.items[num]
         
     def get_object_by_name(self,name):
         return self.items[name]
