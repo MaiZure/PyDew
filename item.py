@@ -432,21 +432,30 @@ class ItemLoader:
             "ecost": 2,
             "sprite": "tools",
             "inv_frame": [47, 54, 61, 89, 96],  # Each quality level
-            "player_sequence": ((),
-                                (),
-                                (),
-                                ()),
-            "action_sequence": ((None,None,None,None,None,None),
-                                (),
-                                (),
-                                ()),
-            "item_sequence": (),
-            "item_xoff": (),
-            "item_yoff": (),
-            "item_rot": ((0,0,0,0,0,0),
+            "player_sequence": ((198,199,200,201,201,202),
+                                (144,145,146,147,147,148),
+                                (108,109,110,111,111,112),
+                                (144,145,146,147,147,148)),
+            "action_sequence": ((None,None,None,("hoe",(0,1)),None,None),
+                                (None,None,None,("hoe",(1,0)),None,None),
+                                (None,None,None,("hoe",(0,-1)),None,None),
+                                (None,None,None,("hoe",(-1,0)),None,None)),
+            "item_sequence": ((42,42,43,43,43,265), # base frame
+                             (44,44,44,44,44,265),  # tool 'level'
+                             (45,45,46,46,46,265),  # computed in 
+                             (44,44,44,44,44,265)), # tool constructor
+            "item_xoff": ((-6,-3,-1,0,0,0),
+                         (-10,0,6,12,12,0),
                          (0,0,0,0,0,0),
+                         (5,0,-25,-28,-28,0)),
+            "item_yoff": ((-1,4,10,16,16,16),
+                         (-2,-3,1,25,25,0),
+                         (-10,-5,2,2,2,0),
+                         (-2,-3,1,25,25,0)),
+            "item_rot": ((5,3,0,0,0,0),
+                         (10,0,-45,-100,-100,0),
                          (0,0,0,0,0,0),
-                         (0,0,0,0,0,0)),
+                         (-10,0,45,100,100,0)),
             "hair_yoff": (-1,0,1,2,2,1)
         }
         self.tool["pickaxe"] = {
