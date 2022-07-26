@@ -370,7 +370,7 @@ class Seeds(Item):
         super().__init__(game)
         
 class Weapon(Item):
-    def __init__(self, game):
+    def __init__(self, game, type=None):
         super().__init__(game)
         
         # Overrides specific weapon for now
@@ -522,30 +522,39 @@ class ItemLoader:
                          (-10,0,45,100,100,0)),
             "hair_yoff": (-1,0,2,3,3,2)
         }
-        self.tool["scythe"] = {
+        self.weapon["scythe"] = {
             "name": "Scythe",
             "desc": "It can cut grass in to hay, if you've built a silo",
             "ecost": 2,
             "sprite": "weapons",
             "inv_frame": [47],
-            "player_sequence": ((),
-                                (),
-                                (),
-                                ()),
+            "player_sequence": ((72,73,74,75,76,77),
+                                (90,91,92,93,94,95),
+                                (108,109,110,111,112,113),
+                                (90,91,92,93,94,95)),
             "action_sequence": ((None,None,None,None,None,None),
-                                (),
-                                (),
-                                ()),
-            "item_sequence": (),
-            "item_xoff": (),
-            "item_yoff": (),
+                                (None,None,None,None,None,None),
+                                (None,None,None,None,None,None),
+                                (None,None,None,None,None,None)),
+            "item_sequence": ((47,47,47,47,47,265), # base frame
+                             (47,47,47,47,47,265),  # tool 'level'
+                             (47,47,47,47,47,265),  # computed in 
+                             (47,47,47,47,47,265)), # tool constructor
+            "item_xoff": ((-6,-3,-1,0,0,0),
+                         (-10,0,6,12,12,0),
+                         (0,0,0,0,0,0),
+                         (5,0,-25,-28,-28,0)),
+            "item_yoff": ((-1,4,10,16,16,16),
+                         (-2,-3,1,25,25,0),
+                         (-10,-5,2,2,2,0),
+                         (-2,-3,1,25,25,0)),
             "item_rot": ((0,0,0,0,0,0),
                          (0,0,0,0,0,0),
                          (0,0,0,0,0,0),
                          (0,0,0,0,0,0)),
             "hair_yoff": (-1,0,1,2,2,1)
         }
-        self.tool["gscythe"] = {
+        self.weapon["gscythe"] = {
             "name": "Golden Scythe",
             "desc": "It's more powerful than a normal scythe",
             "ecost": 2,
