@@ -28,6 +28,12 @@ class DataLoader:
     def get_object_by_name(self,name):
         return self.items[name]
         
+    def get_weapon_by_num(self,num):
+        return self.weapons[num]
+        
+    def get_weapon_by_name(self,name):
+        return self.weapons[name]
+        
     def get_random_object(self):
         dict = self.file["objectinformation"]["content"]
         choice = random.choice(list(dict))

@@ -373,9 +373,11 @@ class Weapon(Item):
     def __init__(self, game, type=None):
         super().__init__(game)
         
-        # Overrides specific weapon for now
-        self.init_item()
-        self.sprite = self.game.sprite.get_tiles("weapons")
+        if type:
+            type = self.game.data.get_weapon_by_name(type)
+            
+        self.init_item(type)
+        
         self.stackable = False
         
         self.player_sequence = ((),
@@ -393,9 +395,21 @@ class Weapon(Item):
         self.ecost = 2
         
     def init_item(self, data=None):
+        self.stackable = False
+        self.quality = 0
         if not data:
             data = self.game.data.get_random_weapon()
-        self.parse_item_data(data)
+            self.parse_item_data(data)
+            self.sprite = self.game.sprite.get_tiles("weapons")
+            self.hover = self.generate_hover(256,192)
+            return self
+
+        self.inv_frame = int(data[0])
+        self.spr_frame = self.inv_frame
+        self.name = data[1]
+        self.category_str = self.get_category_label(data[9])
+        self.desc = data[2]
+        self.sprite = self.game.sprite.get_tiles("weapons")
         self.hover = self.generate_hover(256,192)
         return self
     
@@ -412,7 +426,7 @@ class Weapon(Item):
         if int(data) == 1: return "Dagger"
         if int(data) == 2: return "Hammer"
         if int(data) == 3: return "Sword"
-        if int(data) == 4: return ""
+        if int(data) == 4: return "Slingshot"
         return ""
         
         
@@ -600,8 +614,3 @@ class ItemLoader:
                          (0,0,0,0,0,0)),
             "hair_yoff": (-1,0,1,2,2,1)
         }       
-        #self.weapon["galaxysword"] = {
-        #    "name": "Galaxy Sword",
-        #    "desc": "",
-        #    "inv_frame": [4]  # Each quality level
-        #}
