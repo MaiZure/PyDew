@@ -320,12 +320,15 @@ class Player:
         arms_pos = (self.x-top_left_x,self.y-16-top_left_y)
         pants_pos = (self.x-top_left_x,self.y-16-top_left_y)
         
-        body_sprite = self.sprite[frame]
-        arms_sprite = self.sprite[frame+6]
+        body_sprite = self.sprite[frame]   
         shirt_sprite = self.shirt[self.shirt_num]
         pants_sprite = self.pants[frame]
         hair_frame = (self.hair_num % 8) + int(self.hair_num/8)*24
         hair_sprite = self.hair[hair_frame+self.hair_frame_off]
+        arms_sprite = self.sprite[frame+6] 
+        if self.action_locked:
+            if self.current_item.category_str == "Sword":
+                arms_sprite = self.sprite[frame+12]
         
         if self.dir == 3:
             body_sprite = pygame.transform.flip(body_sprite,True,False)

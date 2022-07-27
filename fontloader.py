@@ -91,10 +91,6 @@ class FontLoader:
             surf.blit(self.spritesheet[0], (current_x, current_y), rect)
             current_x += max(rect[2], crop_wid) + self.get_char_kerning(char)["x"]
         
-        # Scale
-        #if scaling_cut > 1:
-        #    surf = pygame.transform.scale(surf, (int(surf.get_width()/scaling_cut),int(surf.get_height()/scaling_cut)))
-        
         colored_text = surf.copy()
         shadow_text = surf.copy()
         

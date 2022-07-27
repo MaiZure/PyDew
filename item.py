@@ -380,18 +380,18 @@ class Weapon(Item):
         
         self.stackable = False
         
-        self.player_sequence = ((),
-                                (),
-                                (),
-                                ())
+        self.player_sequence = ((72,73,74,75,76,77),
+                                (90,91,92,93,94,95),
+                                (108,109,110,111,112,113),
+                                (90,91,92,93,94,95))
         self.action_sequence = ((None,None,None,None,None,None),
-                                (),
-                                (),
-                                ())
+                                (None,None,None,None,None,None),
+                                (None,None,None,None,None,None),
+                                (None,None,None,None,None,None))
         self.item_sequence = ()
         self.item_xoff = ()
         self.item_yoff = ()
-        self.hair_yoff = (-1,0,1,2,2,1)
+        self.hair_yoff = (1,0,-1,-1,-1,0)
         self.ecost = 2
         
     def init_item(self, data=None):
