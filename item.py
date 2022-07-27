@@ -253,6 +253,22 @@ class Item:
                 current_line = ""
             current += 1
         return lines
+        
+    def rotate_item(self,image,angle):
+        scale = self.game.config.screen_scaling
+        pos = (0,0)
+        originPos = (image.get_width() // 2, image.get_height() // 2)
+        
+        image_rect = image.get_rect(topleft = (pos[0] - originPos[0], pos[1]-originPos[1]))
+        offset_center_to_pivot = pygame.math.Vector2(pos) - image_rect.center
+        rotated_offset = offset_center_to_pivot.rotate(-angle)
+        rotated_image_center = (pos[0] - rotated_offset.x, pos[1] - rotated_offset.y)
+        rotated_image = pygame.transform.rotate(image, angle)
+        rotated_image_rect = rotated_image.get_rect(center = rotated_image_center)
+        return rotated_image
+        
+        # Probably need to return a rect too? See below
+        #self.rotated_arrow_rect = rotated_image_rect
 
 class Resource(Item):
     def __init__(self, game, type):
@@ -336,29 +352,13 @@ class Tool(Item):
                 scaled_surf = pygame.transform.scale(surf,(size[0]*scale,size[1]*scale))
                 
                 #Rotate sprite
-                scaled_surf = self.rotate_tool(scaled_surf,rotations[outer][inner])
+                scaled_surf = self.rotate_item(scaled_surf,rotations[outer][inner])
                 
                 #Finalize
                 dir_sequence.append(scaled_surf)
             out.append(tuple(dir_sequence))
         return tuple(out)
 
-        
-    def rotate_tool(self,image,angle):
-        scale = self.game.config.screen_scaling
-        pos = (0,0)
-        originPos = (image.get_width() // 2, image.get_height() // 2)
-        
-        image_rect = image.get_rect(topleft = (pos[0] - originPos[0], pos[1]-originPos[1]))
-        offset_center_to_pivot = pygame.math.Vector2(pos) - image_rect.center
-        rotated_offset = offset_center_to_pivot.rotate(-angle)
-        rotated_image_center = (pos[0] - rotated_offset.x, pos[1] - rotated_offset.y)
-        rotated_image = pygame.transform.rotate(image, angle)
-        rotated_image_rect = rotated_image.get_rect(center = rotated_image_center)
-        return rotated_image
-        
-        # Probably need to return a rect too? See below
-        #self.rotated_arrow_rect = rotated_image_rect
        
 class Food(Item):
     def __init__(self, game, type):
@@ -388,11 +388,26 @@ class Weapon(Item):
                                 (None,None,None,None,None,None),
                                 (None,None,None,None,None,None),
                                 (None,None,None,None,None,None))
-        self.item_sequence = ()
-        self.item_xoff = ()
-        self.item_yoff = ()
+        self.item_sequence = (tuple([self.inv_frame]*6),
+                             tuple([self.inv_frame]*6),
+                             tuple([self.inv_frame]*6),
+                             tuple([self.inv_frame]*6))
+        self.item_xoff = ((0,0,0,0,0,0),
+                         (0,0,0,0,0,0),
+                         (0,0,0,0,0,0),
+                         (0,0,0,0,0,0))
+        self.item_yoff = ((0,0,0,0,0,0),
+                         (0,0,0,0,0,0),
+                         (0,0,0,0,0,0),
+                         (0,0,0,0,0,0))
         self.hair_yoff = (1,0,-1,-1,-1,0)
+        self.item_rot = ((0,0,0,0,0,0),
+                         (0,0,0,0,0,0),
+                         (0,0,0,0,0,0),
+                         (0,0,0,0,0,0))
         self.ecost = 2
+               
+        self.sprite_sequence = self.generate_sprite_sequence(self.item_sequence, self.item_rot)
         
     def init_item(self, data=None):
         self.stackable = False
@@ -428,6 +443,34 @@ class Weapon(Item):
         if int(data) == 3: return "Sword"
         if int(data) == 4: return "Slingshot"
         return ""
+        
+    def generate_sprite_sequence(self, frames, rotations):
+        out = []
+        scale = self.game.config.screen_scaling
+        size = (self.sprite[0].get_width(), self.sprite[0].get_height()*2)
+        for outer in range(len(frames)):
+            dir_sequence = []
+            reverse = True if outer == 3 else False
+            for inner in range(len(frames[outer])):
+                # Get basic sprite
+                surf = pygame.Surface(size, pygame.SRCALPHA).convert_alpha()
+                if reverse:
+                    base_surf = pygame.Surface(size, pygame.SRCALPHA).convert_alpha()
+                    base_surf.blit(self.sprite[frames[outer][inner]],(0,16))
+                    surf.blit(pygame.transform.flip(base_surf,True,False),surf.get_rect())
+                else:
+                    surf.blit(self.sprite[frames[outer][inner]],(0,16))
+                
+                #Rescale sprite
+                scaled_surf = pygame.transform.scale(surf,(size[0]*scale,size[1]*scale))
+                
+                #Rotate sprite
+                scaled_surf = self.rotate_item(scaled_surf,rotations[outer][inner])
+                
+                #Finalize
+                dir_sequence.append(scaled_surf)
+            out.append(tuple(dir_sequence))
+        return tuple(out)
         
         
 class ItemLoader:
