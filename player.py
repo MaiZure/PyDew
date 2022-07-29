@@ -55,9 +55,10 @@ class Player:
                           (0,-1,-1,-1,0,-1,-1,-1))
         self.hair_yoff = self.hair_yoff_base[self.dir]
         self.shirt_yoff = (0,-1,-1,-1,0,-1,-1,-1)
-        
         self.hair_frame_off = 0
-    
+        self.scaled_hair = [None]*4
+        self.scaled_shirt = [None]*4
+        
     def init_second_stage(self):
         self.name = random.choice(list(self.game.sprite.character_sheet.keys()))
         self.sprite = self.game.sprite.get_tiles("farmer_base")
@@ -73,11 +74,17 @@ class Player:
         
         # Cache scaled hair/shirt to draw over up facing tools/weapons
         hair_frame = (self.hair_num % 8) + int(self.hair_num/8)*24
-        hair_sprite = self.hair[hair_frame+self.hair_frame_off+16]
-        self.scaled_hair = self.game.sprite.rescale_sprite(hair_sprite, self.game.config.screen_scaling)
-        shirt_sprite = pygame.Surface((8,8),pygame.SRCALPHA)
-        shirt_sprite.blit(self.shirt[self.shirt_num], (0,0),self.get_shirt_dir(2))
-        self.scaled_shirt = self.game.sprite.rescale_sprite(shirt_sprite, self.game.config.screen_scaling)
+        for i in range(4):
+            if i == 0: hair_dir_off = 0
+            if i == 1: hair_dir_off = 8
+            if i == 2: hair_dir_off = 16
+            if i == 3: hair_dir_off = 8
+            hair_sprite = self.hair[hair_frame+self.hair_frame_off+hair_dir_off]
+            self.scaled_hair[i] = self.game.sprite.rescale_sprite(hair_sprite, self.game.config.screen_scaling)
+            shirt_sprite = pygame.Surface((8,8),pygame.SRCALPHA)
+            shirt_sprite.blit(self.shirt[self.shirt_num], (0,0),self.get_shirt_dir(i))
+            self.scaled_shirt[i] = self.game.sprite.rescale_sprite(shirt_sprite, self.game.config.screen_scaling)
+            # TODO - i == 3 needs to be reversed
     
         self.inventory[0] = Tool(self.game, "axe")
         self.inventory[1] = Tool(self.game, "pickaxe")
@@ -162,7 +169,7 @@ class Player:
                 # Tool usage actions
                 self.frame_sequence = self.player_sequence
                 self.actiontimer += 2
-                self.frame = int((self.actiontimer/10)%8) # 10
+                self.frame = int((self.actiontimer/6)%8) # /6
                 
                 if self.frame >= len(self.player_sequence): # End of sequence check
                     self.frame = 0
@@ -175,18 +182,21 @@ class Player:
                 else:
                     # Still in a sequence, so check for an action
                     if self.action_sequence[self.frame]:  # Check for world interaction (chop,hit,etc)
-                        action = self.action_sequence[self.frame]
-                        action_item = action[0]
                         current_map = self.game.world.current_map
-                        action_mxy = (current_map,action[1][0]+self.gx,action[1][1]+self.gy)
-                        print("Use " + str(action[0]) + " at " + str(action_mxy))
-                        if action_mxy in self.game.world.objects:
-                            object = self.game.world.objects[action_mxy]
-                            if action_item in object.action_list:
-                                object.hp -= (item.quality+1)*30
-                                if object.hp < 1: # Should consider queueing an item event
-                                    object.destroy()
-                        self.action_sequence[self.frame] = None # Overwrite after first check
+                        action_list = self.action_sequence[self.frame]
+                        print(action_list)
+                        for action in action_list:
+                            print(action)
+                            action_item = action[0]
+                            action_mxy = (current_map,action[1][0]+self.gx,action[1][1]+self.gy)
+                            print("Use " + str(action[0]) + " at " + str(action_mxy))
+                            if action_mxy in self.game.world.objects:
+                                object = self.game.world.objects[action_mxy]
+                                if action_item in object.action_list:
+                                    object.hp -= (item.quality+1)*30
+                                    if object.hp < 1: # Should consider queueing an item event
+                                        object.destroy()
+                            self.action_sequence[self.frame] = None # Overwrite after first check
         else:
             self.actiontimer = 0
             self.action_frame = 0
@@ -360,14 +370,13 @@ class Player:
         screen.blit(item_sprite, (item_x, item_y))
         
         # Draw hair over sprite
-        if self.dir == 2:
+        if self.dir == 2 or ((self.dir == 1 or self.dir == 3) and self.current_item.category_str == "Sword"):
             shirt_pos = ((self.x-top_left_x+4)*scale,(self.y-top_left_y-1-self.hair_yoff[self.frame])*scale)
             hair_pos = ((self.x-top_left_x)*scale,(self.y-15-top_left_y-self.hair_yoff[self.frame])*scale)
-            hair_frame = (self.hair_num % 8) + int(self.hair_num/8)*24
-            hair_sprite = self.hair[hair_frame+self.hair_frame_off]
                     
-            screen.blit(self.scaled_hair, hair_pos)
-            screen.blit(self.scaled_shirt, shirt_pos)
+            screen.blit(self.scaled_hair[self.dir], hair_pos)
+            if self.dir == 2:
+                screen.blit(self.scaled_shirt[self.dir], shirt_pos)
 
     def move_down(self):
         self.moving = True

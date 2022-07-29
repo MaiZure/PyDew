@@ -142,13 +142,13 @@ class MapObject:
             self.loot = [("wood",2),("wood",2),("wood",2)]
         if self.type == 13: 
             self.spr_name = "spr_weed"
-            self.action_list = ("axe", "scythe", "bomb")
+            self.action_list = ("axe", "scythe", "slash", "bomb")
         if self.type == 14: 
             self.spr_name = "spr_weed"
-            self.action_list = ("axe", "scythe", "bomb")
+            self.action_list = ("axe", "scythe", "slash", "bomb")
         if self.type == 15: 
             self.spr_name = "spr_weed"
-            self.action_list = ("axe", "scythe", "bomb")
+            self.action_list = ("axe", "scythe", "slash", "bomb")
         if self.type == 16:
             self.spr_name = "spr_rock_small"
             self.action_list = ("pickaxe", "bomb")
@@ -178,12 +178,12 @@ class MapObject:
             self.loot = [("wood",2), ("hardwood",2), ("hardwood",2), ("hardwood",2)]
         if self.type == 22:
             self.spr_name = "spr_grass"
-            self.action_list = ("scythe")
+            self.action_list = ("slash")
             self.collision_width = 0
             self.collision_height = 0
         if self.type == 23:
             self.spr_name = "spr_little_tree"
-            self.action_list = ("axe")
+            self.action_list = ("axe", "slash")
             self.hp = 1
             self.loot = [("wood",2)]
         if self.type == 24:

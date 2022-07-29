@@ -384,25 +384,25 @@ class Weapon(Item):
                                 (90,91,92,93,94,95),
                                 (108,109,110,111,112,113),
                                 (90,91,92,93,94,95))
-        self.action_sequence = ((None,None,None,None,None,None),
-                                (None,None,None,None,None,None),
-                                (None,None,None,None,None,None),
-                                (None,None,None,None,None,None))
+        self.action_sequence = (( (),(),(),(),(),() ),
+                                ( [("slash",(0,-1)),("slash",(0,-2))],[("slash",(1,-1)),("slash",(1,-2)),("slash",(2,-1)),("slash",(2,-2))],[("slash",(1,0)),("slash",(2,0))],[("slash",(1,1)),("slash",(1,2)),("slash",(2,1)),("slash",(2,2))],[("slash",(0,1)),("slash",(0,2))],() ),
+                                ( (),(),(),(),(),() ),
+                                ( [("slash",(0,-1)),("slash",(0,-2))],[("slash",(-1,-1)),("slash",(-1,-2)),("slash",(-2,-1)),("slash",(-2,-2))],[("slash",(-1,0)),("slash",(-2,0))],[("slash",(-1,1)),("slash",(-1,2)),("slash",(-2,1)),("slash",(-2,2))],[("slash",(0,1)),("slash",(0,2))],() ))
         self.item_sequence = (tuple([self.inv_frame]*6),
                              tuple([self.inv_frame]*6),
                              tuple([self.inv_frame]*6),
                              tuple([self.inv_frame]*6))
         self.item_xoff = ((0,0,0,0,0,0),
-                         (0,0,0,0,0,0),
+                         (-13,12,12,13,-3,-10),
                          (0,0,0,0,0,0),
                          (0,0,0,0,0,0))
         self.item_yoff = ((0,0,0,0,0,0),
-                         (0,0,0,0,0,0),
+                         (-6,0,12,38,38,38),
                          (0,0,0,0,0,0),
                          (0,0,0,0,0,0))
         self.hair_yoff = (1,0,-1,-1,-1,0)
         self.item_rot = ((0,0,0,0,0,0),
-                         (0,0,0,0,0,0),
+                         (45,0,-45,-90,-130,-160),
                          (0,0,0,0,0,0),
                          (0,0,0,0,0,0))
         self.ecost = 2
@@ -493,10 +493,10 @@ class ItemLoader:
                                 (144,145,146,147,147,148),
                                 (108,109,110,111,111,112),
                                 (144,145,146,147,147,148)),
-            "action_sequence": ((None,None,None,("hoe",(0,1)),None,None),
-                                (None,None,None,("hoe",(1,0)),None,None),
-                                (None,None,None,("hoe",(0,-1)),None,None),
-                                (None,None,None,("hoe",(-1,0)),None,None)),
+            "action_sequence": (( (),(),(),[("hoe",(0,1))],(),()),
+                                ( (),(),(),[("hoe",(1,0))],(),()),
+                                ( (),(),(),[("hoe",(0,-1))],(),()),
+                                ( (),(),(),[("hoe",(-1,0))],(),())),
             "item_sequence": ((42,42,43,43,43,265), # base frame
                              (44,44,44,44,44,265),  # tool 'level'
                              (45,45,46,46,46,265),  # computed in 
@@ -525,10 +525,10 @@ class ItemLoader:
                                 (144,145,146,147,147,148),
                                 (108,109,110,111,111,112),
                                 (144,145,146,147,147,148)),
-            "action_sequence": ((None,None,None,("pickaxe",(0,1)),None,None),
-                                (None,None,None,("pickaxe",(1,0)),None,None),
-                                (None,None,None,("pickaxe",(0,-1)),None,None),
-                                (None,None,None,("pickaxe",(-1,0)),None,None)),
+            "action_sequence": ((None,None,None,[("pickaxe",(0,1))],None,None),
+                                (None,None,None,[("pickaxe",(1,0))],None,None),
+                                (None,None,None,[("pickaxe",(0,-1))],None,None),
+                                (None,None,None,[("pickaxe",(-1,0))],None,None)),
             "item_sequence": ((126,126,127,127,127,265), # base frame
                              (128,128,128,128,128,265),  # tool 'level'
                              (129,129,130,130,130,265),  # computed in 
@@ -557,10 +557,10 @@ class ItemLoader:
                                 (144,145,146,147,147,148),
                                 (108,109,110,111,111,112),
                                 (144,145,146,147,147,148)),
-            "action_sequence": ((None,None,None,("axe",(0,1)),None,None),
-                                ((None,None,None,("axe",(1,0)),None,None)),
-                                ((None,None,None,("axe",(0,-1)),None,None)),
-                                ((None,None,None,("axe",(-1,0)),None,None))),
+            "action_sequence": ((None,None,None,[("axe",(0,1))],None,None),
+                                ((None,None,None,[("axe",(1,0))],None,None)),
+                                ((None,None,None,[("axe",(0,-1))],None,None)),
+                                ((None,None,None,[("axe",(-1,0))],None,None))),
             "item_sequence": ((210,210,211,211,211,265), # base frame
                              (212,212,212,212,212,265),  # tool 'level'
                              (213,213,214,214,214,265),  # computed in 
