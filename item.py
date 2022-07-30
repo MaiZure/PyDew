@@ -384,9 +384,9 @@ class Weapon(Item):
                                 (90,91,92,93,94,95),
                                 (108,109,110,111,112,113),
                                 (90,91,92,93,94,95))
-        self.action_sequence = (( (),(),(),(),(),() ),
+        self.action_sequence = (( [("slash",(1,0)),("slash",(2,0))],[("slash",(1,1)),("slash",(1,2)),("slash",(2,                          1)),("slash",(2,2))],[("slash",(0,1)),("slash",(0,2))],[("slash",(-1,1)),("slash",(-                          1,2)),("slash",(-1,1)),("slash",(-2,2))],[("slash",(-1,0)),("slash",(-2,0))],() ),
                                 ( [("slash",(0,-1)),("slash",(0,-2))],[("slash",(1,-1)),("slash",(1,-2)),("slash",(2,-1)),("slash",(2,-2))],[("slash",(1,0)),("slash",(2,0))],[("slash",(1,1)),("slash",(1,2)),("slash",(2,1)),("slash",(2,2))],[("slash",(0,1)),("slash",(0,2))],() ),
-                                ( (),(),(),(),(),() ),
+                                ( [("slash",(-1,0)),("slash",(-2,0))],[("slash",(-1,-1)),("slash",(-1,-2)),("slash",(-2,-1)),("slash",(-2,-2))],[("slash",(0,-1)),("slash",(0,-2))],[("slash",(1,-1)),("slash",(1,-2)),("slash",(1,-1)),("slash",(2,-2))],[("slash",(1,0)),("slash",(2,0))],() ),
                                 ( [("slash",(0,-1)),("slash",(0,-2))],[("slash",(-1,-1)),("slash",(-1,-2)),("slash",(-2,-1)),("slash",(-2,-2))],[("slash",(-1,0)),("slash",(-2,0))],[("slash",(-1,1)),("slash",(-1,2)),("slash",(-2,1)),("slash",(-2,2))],[("slash",(0,1)),("slash",(0,2))],() ))
         self.item_sequence = (tuple([self.inv_frame]*6),
                              tuple([self.inv_frame]*6),
