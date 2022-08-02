@@ -237,7 +237,7 @@ class Player:
         self.player_sequence = item.player_sequence[self.dir]
         self.item_sequence = item.item_sequence
         self.action_sequence = list(item.action_sequence[self.dir])
-        self.hair_yoff = item.hair_yoff
+        self.hair_yoff = item.hair_yoff[self.dir]
         self.ep -= item.ecost
         
     @property
