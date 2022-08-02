@@ -21,7 +21,7 @@ class PyDew:
     def __init__(self):
         ctypes.windll.user32.SetProcessDPIAware()  # Pass OS DPI to PyGame (avoid OS-level scaling)
         pygame.init()
-        self.version = "0.2.3.103"
+        self.version = "0.2.3.104"
         print("Hello PyDew "+str(self.version))
         self.config = Config()
         self.save = SaveData()
@@ -161,9 +161,7 @@ class PyDew:
         pygame.transform.scale(self.unscaled_ui_screen,self.final_screen.get_rect().size, self.scaled_ui_screen)
         
         # Most expensive calls right here
-        #self.scaled_screen.blit(self.scaled_ui_screen,(0,0))
         self.ui.ui_render(self.scaled_ui_screen, self.scaled_screen)
-        #self.scaled_screen.blit(self.menu_surface, (0,0))
         self.ui.menu_render(self.scaled_screen)
         
         # Post scaling rendering (item usage, hovers, text, UI elements like health bars, clock hand rotation)

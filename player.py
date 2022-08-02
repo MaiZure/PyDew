@@ -81,6 +81,9 @@ class Player:
             if i == 3: hair_dir_off = 8
             hair_sprite = self.hair[hair_frame+self.hair_frame_off+hair_dir_off]
             self.scaled_hair[i] = self.game.sprite.rescale_sprite(hair_sprite, self.game.config.screen_scaling)
+            if i == 3:
+                self.scaled_hair[i] = pygame.transform.flip(self.scaled_hair[i],True,False)
+            
             shirt_sprite = pygame.Surface((8,8),pygame.SRCALPHA)
             shirt_sprite.blit(self.shirt[self.shirt_num], (0,0),self.get_shirt_dir(i))
             self.scaled_shirt[i] = self.game.sprite.rescale_sprite(shirt_sprite, self.game.config.screen_scaling)
@@ -373,7 +376,7 @@ class Player:
         if self.dir == 2 or ((self.dir == 1 or self.dir == 3) and self.current_item.category_str == "Sword"):
             shirt_pos = ((self.x-top_left_x+4)*scale,(self.y-top_left_y-1-self.hair_yoff[self.frame])*scale)
             hair_pos = ((self.x-top_left_x)*scale,(self.y-15-top_left_y-self.hair_yoff[self.frame])*scale)
-                    
+            
             screen.blit(self.scaled_hair[self.dir], hair_pos)
             if self.dir == 2:
                 screen.blit(self.scaled_shirt[self.dir], shirt_pos)
