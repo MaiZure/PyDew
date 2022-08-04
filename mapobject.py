@@ -60,6 +60,8 @@ class MapObject:
             self.large_sprite_front = self.large_sprite[1]
             self.large_sprite_all = self.large_sprite[2]
             self.set_large_collision_box(self.spr_name)
+            # add the large object to the O(1) object tracker
+            self.world.objects[(self.world.current_map,self.gx,self.gy)] = self
             self.ogx, self.ogy = self.game.sprite.get_large_sprite_origin(self.spr_name)
          
     def set_large_collision_box(self, spr_name, value=1):
