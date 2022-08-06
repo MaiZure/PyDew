@@ -25,6 +25,8 @@ class MapObject:
         self.sprite_height = 1
         self.x = self.gx*16
         self.y = self.gy*16
+        self.draw_off_px = 0
+        self.draw_off_py = 0
         self.sprite = game.sprite.get_tiles("paths")
         self.large_sprite = None
         self.large_sprite_mid = None
@@ -49,7 +51,10 @@ class MapObject:
         if self.collision_height and self.collision_width:
             self.world.collision_map[self.tile_num] = 1
         self.reverse = random.choice((True,False))
-             
+        
+        self.draw_off_x = self.game.sprite.get_draw_off_x(self.spr_name) + random.randint(-4,4)
+        self.draw_off_y = self.game.sprite.get_draw_off_y(self.spr_name)  + random.randint(-8,2)
+        
         if self.spr_name:
             if self.reverse:
                 self.large_sprite = self.game.sprite.get_large_sprite(self.spr_name)
@@ -63,6 +68,8 @@ class MapObject:
             # add the large object to the O(1) object tracker
             self.world.objects[(self.world.current_map,self.gx,self.gy)] = self
             self.ogx, self.ogy = self.game.sprite.get_large_sprite_origin(self.spr_name)
+            
+        
          
     def set_large_collision_box(self, spr_name, value=1):
         # Collisions start from the front/bottom of a sprite and work backward
@@ -122,7 +129,7 @@ class MapObject:
         top_left_y = self.game.world.top_left_y
             
         if self.large_sprite:
-            screen.blit(self.large_sprite_all, (self.x-top_left_x-self.ogx*16,self.y-top_left_y-self.ogy*16), (0,0,3*16,6*16))
+            screen.blit(self.large_sprite_all, (self.x-top_left_x+self.draw_off_x-self.ogx*16,self.y-top_left_y+self.draw_off_y-self.ogy*16), (0,0,3*16,6*16))
         else:
             screen.blit(self.sprite[self.type], (self.x,self.y), (0,0,16,16))
             

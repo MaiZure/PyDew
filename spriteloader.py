@@ -182,16 +182,24 @@ class SpriteLoader:
         
     def get_collision_height(self,name) -> int:
         return self.large_sprites[name]["collision_height"]
-        
+       
+    def get_draw_off_x(self,name) -> int:
+        return self.large_sprites[name]["draw_off_x"] if "draw_off_x" in self.large_sprites[name] else 0
+    
+    def get_draw_off_y(self,name) -> int:
+        return self.large_sprites[name]["draw_off_y"] if "draw_off_y" in self.large_sprites[name] else 0
+    
     def get_large_sprite(self, name):
         sheet = self.large_sprites[name]["sheet"]
         sheet_tiles = self.get_tiles(sheet)
         sprite_height = self.large_sprites[name]["sprite_height"]
         sprite_width = self.large_sprites[name]["sprite_width"]
+        tw_px = self.large_sprites[name]["tile_width_px"] if "tile_width_px" in self.large_sprites[name] else 16
+        th_px = self.large_sprites[name]["tile_height_px"] if "tile_height_px" in self.large_sprites[name] else 16
         tiles = self.large_sprites[name]["tiles"].copy()
         if type(tiles[0]) == list: # Choose from two possible sprites
             tiles = random.choice(tiles).copy()
-        rect = pygame.Rect(0, 0, sprite_width*16, sprite_height*16)
+        rect = pygame.Rect(0, 0, sprite_width*tw_px, sprite_height*th_px)
         new_sprite_mid = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
         new_sprite_front = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
         new_sprite_all = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
@@ -200,7 +208,7 @@ class SpriteLoader:
             for row in range(sprite_width):
                 src_tile = tiles.pop(0)
                 if src_tile:
-                    rect = pygame.Rect(row*16, column*16, 16, 16) # Optimize - don't make 2 sprites if not used
+                    rect = pygame.Rect(row*16, column*16, tw_px, th_px) # Optimize - don't make 2 sprites if not used
                     if src_tile[1] == 1:  #Should be < 3 when mid layer is actually working (rendered by gy order) 
                         new_sprite_mid.blit(sheet_tiles[src_tile[0]], rect)
                     if src_tile[1] > 1 :
@@ -318,6 +326,10 @@ class SpriteLoader:
             "tiles": [[(0+(season*4),1)],[(1+(season*4),1)],[(2+(season*4),1)]],
             "sprite_height": 1,
             "sprite_width": 1,
+            "tile_width_px": 15,
+            "tile_height_px": 20,
+            "draw_off_x": 1,
+            "draw_off_y": -4,
             "sprite_origin": (0,0),
             "collision_width": 0,
             "collision_height": 0
