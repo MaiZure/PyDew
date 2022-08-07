@@ -130,6 +130,10 @@ class Player:
         if input[pygame.K_EQUALS]: self.game.ui.ibar.change_selection(11)
         self.walking = input[pygame.K_LSHIFT]
         
+    def handle_mouse(self, event):
+        if event.button == 1: self.use_item()
+        if event.button == 3: self.do_action()
+        
     def randomize_character(self):
         self.hair_num = random.randint(0,55)
         self.shirt_num = random.randint(0,15)

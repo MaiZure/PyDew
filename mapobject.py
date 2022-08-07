@@ -6,7 +6,7 @@ from item import *
 class MapObject:
     """ 'type' is matched to 'path' TileIDs (caller must compute path base)"""
     def __init__(self, game, world, type, gx, gy):
-        if type < 8 or type > 28:
+        if type < 8 or type > 26:
             # This effectively removes the object as no reference is built
             return None
         
@@ -53,7 +53,7 @@ class MapObject:
         self.reverse = random.choice((True,False))
         
         self.draw_off_x = self.game.sprite.get_draw_off_x(self.spr_name) + random.randint(-4,4)
-        self.draw_off_y = self.game.sprite.get_draw_off_y(self.spr_name)  + random.randint(-8,2)
+        self.draw_off_y = self.game.sprite.get_draw_off_y(self.spr_name)  + random.randint(-4,4)
         
         if self.spr_name:
             if self.reverse:
@@ -86,7 +86,9 @@ class MapObject:
                     if key in self.world.objects and self.world.objects[key] == self:
                         del self.world.objects[key]
                     
-    def destroy(self):       
+    def destroy(self):
+        if self.type == 22:
+            if random.randint(1,2) == 1: return
         self.world.current_map_path_objects.pop(self.world.current_map_path_objects.index(self))
         del self.world.objects[(self.world.current_map,self.gx,self.gy)]
         

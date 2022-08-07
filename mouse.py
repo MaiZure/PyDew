@@ -18,9 +18,13 @@ class MouseHandler:
         if self.ui.player_menu_enabled:
             self.ui.player_menu.handle_input(event)
             return
-        
-        if event.button == 1 & self.ui.ibar.ibar_clickrect.collidepoint(pos):
-            self.ui.ibar.handle_mouse(event)    # Move this elsewhere (not all left click goes to ibar
+
+        if event.button == 1:
+            if self.ui.ibar.ibar_clickrect.collidepoint(pos):
+                self.ui.ibar.handle_mouse(event)
+            self.game.player.handle_mouse(event)
+        if event.button == 3:
+            self.game.player.handle_mouse(event)        
         if event.button == 4 or event.button == 5:  # Mouse wheel up/down
             self.ui.ibar.handle_mouse(event)
         
