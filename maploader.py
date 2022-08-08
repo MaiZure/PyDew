@@ -115,7 +115,7 @@ class MapLoader:
         return actions
                                 
         
-    def get_map_tiles_index(self, name) -> list:
+    def get_map_tileset_index(self, name) -> list:
         index = {"paths": -1}
         tilesets = self.get_tileset_names(name)
         tiles = [None]
@@ -148,12 +148,12 @@ class MapLoader:
         # No given light indoors so return default
         return ((int(95/light_cut_factor),int(95/light_cut_factor),int(95/light_cut_factor)))
         
-    def get_map_animations(self, name, tiles_index) -> list: 
+    def get_map_animations(self, name, tileset_index) -> list: 
         animated_tiles = []
         for tileset in self.map[name]["tilesets"]:
             tileset_name = (tileset["image"].split("/")).pop()
             tileset_name = tileset_name.split(".")[0]
-            tile_offset = tiles_index[tileset_name]
+            tile_offset = tileset_index[tileset_name]
             if "tiles" in tileset:
                 for tile in tileset["tiles"]:
                     if "animation" in tile.keys():
@@ -163,14 +163,14 @@ class MapLoader:
                         animated_tiles.append(alist)
         return animated_tiles
         
-    def get_passable_tiles(self, name, tiles_index):
+    def get_passable_tiles(self, name, tileset_index):
         passable_tiles = []
         impassable_tiles = []
         
         for tileset in self.map[name]["tilesets"]:
             tileset_name = (tileset["image"].split("/")).pop()
             tileset_name = tileset_name.split(".")[0]
-            tile_offset = tiles_index[tileset_name]
+            tile_offset = tileset_index[tileset_name]
             if "tiles" in tileset:
                 for tile in tileset["tiles"]:
                     tile_id = tile["id"]

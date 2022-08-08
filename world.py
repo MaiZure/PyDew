@@ -23,9 +23,9 @@ class World:
         self.tick_time = 0
         self.speed_time = False
         
-        self.map_layers = []
-        self.tiles = []
-        self.tiles_index = {}
+        self.map_tiles = {}
+        self.tileset = []
+        self.tileset_index = {}
         self.current_map = "" #town
         self.current_map_path_objects = []
         self.special_objects = {}
@@ -36,7 +36,7 @@ class World:
         self.animated_tiles = []
         self.passable_tiles = []
         self.impassable_tiles = []
-        self.collision_map = []     # Basic Boolean collisions (Aligned with self.tiles)
+        self.collision_map = []     # Basic Boolean collisions (Aligned with *_layer)
         self.spawnable_map = []
         self.npcs = []
         self.lights = []
@@ -107,6 +107,9 @@ class World:
         self.game.mid_surface.fill(pygame.Color(0,0,0,0))
         self.game.fg_surface.fill(pygame.Color(0,0,0,0))
         
+        # Create basic map objects
+        self.create_map_tiles(self.current_map, (self.map_width, self.map_height))
+        
         self.init_map_second_stage()
         return True
         
@@ -122,12 +125,12 @@ class World:
             
         self.init_specials()
         
-        self.tiles = self.game.map.get_map_tiles(self.current_map)
-        self.tiles_index = self.game.map.get_map_tiles_index(self.current_map)
+        self.tileset = self.game.map.get_map_tiles(self.current_map)
+        self.tileset_index = self.game.map.get_map_tileset_index(self.current_map)
         self.generate_background_layers()
         self.generate_foreground_layers()
-        self.animated_tiles = self.game.map.get_map_animations(self.current_map, self.tiles_index)
-        self.passable_tiles, self.impassable_tiles = self.game.map.get_passable_tiles(self.current_map, self.tiles_index)
+        self.animated_tiles = self.game.map.get_map_animations(self.current_map, self.tileset_index)
+        self.passable_tiles, self.impassable_tiles = self.game.map.get_passable_tiles(self.current_map, self.tileset_index)
         self.edge_warp_points = self.game.map.get_map_warps(self.current_map)
         self.warp_points = self.game.map.get_map_warpactions(self.current_map)
         self.action_points = self.game.map.get_map_actions(self.current_map)
@@ -139,6 +142,15 @@ class World:
         self.embed_map_animations(self.bldg_layer, self.bldg_tile_update_reel)
         
         self.init_npcs()
+        
+    def create_map_tiles(self, map, location):
+        width = location[0]
+        height = location[1]
+        for j in range(height):
+            for i in range(width):
+                key = (map, (i,j))
+                if key not in self.map_tiles:
+                    self.map_tiles[key] = MapTile(self.game, map, (i,j))
     
     def create_wood(self):
     
@@ -165,19 +177,19 @@ class World:
                 bldg_tile = self.bldg_layer[j*self.map_width+i]
                 if bg_tile:
                     if type(bg_tile) == int: # Just a tile number
-                        self.bg.blit(self.tiles[bg_tile], (i*16,j*16))
+                        self.bg.blit(self.tileset[bg_tile], (i*16,j*16))
                     if type(bg_tile) == list: # Animated - List of tuple frames (duration, tile number)
-                        self.bg.blit(self.tiles[bg_tile[0][1]], (i*16,j*16))
+                        self.bg.blit(self.tileset[bg_tile[0][1]], (i*16,j*16))
                 if bldg_tile:
                     if type(bldg_tile) == int:
-                        self.bg.blit(self.tiles[bldg_tile], (i*16,j*16))
+                        self.bg.blit(self.tileset[bldg_tile], (i*16,j*16))
                     if type(bldg_tile) == list:
-                        self.bg.blit(self.tiles[bg_tile[0][1]], (i*16,j*16))
+                        self.bg.blit(self.tileset[bg_tile[0][1]], (i*16,j*16))
         for object in self.special_objects[self.current_map]:
             object.render_back(self.bg)
                     
     def generate_foreground_layers(self):   ## Refactor this fxn somehow
-        paths_tile_base = self.tiles_index["paths"]
+        paths_tile_base = self.tileset_index["paths"]
         for j in range(0,self.map_height):
             for i in range(0,self.map_width):
                 path_tile = 0
@@ -195,9 +207,9 @@ class World:
                         self.path_layer[j*self.map_width+i] = 0
                     MapObject(self.game,self,path_tile-paths_tile_base,i,j)
                 if front_tile: 
-                    self.mid.blit(self.tiles[front_tile], (i*16,j*16))
+                    self.mid.blit(self.tileset[front_tile], (i*16,j*16))
                 if afront_tile:
-                    self.fg.blit(self.tiles[afront_tile], (i*16,j*16))
+                    self.fg.blit(self.tileset[afront_tile], (i*16,j*16))
                     
     def generate_collision_map(self) -> list:
         collision_map = []
@@ -418,9 +430,9 @@ class World:
         new_tile = layer[tile_num]
         if not new_tile: return   
         if type(new_tile) == int:
-            surface.blit(self.tiles[new_tile], (x*16, y*16))
+            surface.blit(self.tileset[new_tile], (x*16, y*16))
         if type(new_tile) == list:
-            surface.blit(self.tiles[new_tile[0][1]], (x*16, y*16))
+            surface.blit(self.tileset[new_tile[0][1]], (x*16, y*16))
     
     def update_tile(self, tile_num, layer):
         new_tile = layer[tile_num]
@@ -459,4 +471,29 @@ class World:
                 self.special_objects[self.current_map].append(Farmhouse(self.game, self))
         
         
+class MapTile:
+    def __init__(self, game, map, location):
+        self.game = game
+        self.x = location[0]
+        self.y = location[1]
+        self.map = map
+        self.collision = False
+        self.spawnable = False
+        self.diggable = False
+        self.passable = False
+        self.water = False
+        self.dug = False
+        self.watered = False
+        self.type = 0
+        self.animated = False
+        self.crop = None
+        self.object = None
         
+        self.bg_layer = None
+        self.bldg_layer = None
+        self.path_layer = None
+        self.front_layer = None
+        self.always_front_layer = None
+        
+    def init_second_stage(self):
+        pass
