@@ -35,6 +35,7 @@ class World:
         self.paths_tile_base = 0
         self.animated_tiles = []
         self.passable_tiles = []
+        self.diggable_tiles = []
         self.impassable_tiles = []
         self.collision_map = []     # Basic Boolean collisions (Aligned with *_layer)
         self.spawnable_map = []
@@ -131,16 +132,23 @@ class World:
         self.generate_foreground_layers()
         self.animated_tiles = self.game.map.get_map_animations(self.current_map, self.tileset_index)
         self.passable_tiles, self.impassable_tiles = self.game.map.get_passable_tiles(self.current_map, self.tileset_index)
+        self.diggable_tiles = self.game.map.get_diggable_tiles(self.current_map, self.tileset_index)
         self.edge_warp_points = self.game.map.get_map_warps(self.current_map)
         self.warp_points = self.game.map.get_map_warpactions(self.current_map)
         self.action_points = self.game.map.get_map_actions(self.current_map)
         
         self.collision_map = self.generate_collision_map()
-        for mapobject in self.current_map_path_objects:
-            mapobject.init_second_stage()
+        
         self.embed_map_animations(self.bg_layer, self.bg_tile_update_reel)
         self.embed_map_animations(self.bldg_layer, self.bldg_tile_update_reel)
         
+        for tiles in self.map_tiles:
+            tile = self.map_tiles[tiles]
+            tile.init_second_stage()
+        
+        for mapobject in self.current_map_path_objects:
+            mapobject.init_second_stage()        
+                
         self.init_npcs()
         
     def create_map_tiles(self, map, location):
@@ -150,7 +158,27 @@ class World:
             for i in range(width):
                 key = (map, (i,j))
                 if key not in self.map_tiles:
-                    self.map_tiles[key] = MapTile(self.game, map, (i,j))
+                    tile = MapTile(self.game, map, (i,j))
+                    self.map_tiles[key] = tile 
+                    tile_num = self.get_tile_num(i,j)
+                    
+                    if self.bg_layer: 
+                        if type(self.bg_layer[tile_num]) == list:  # This is an animated tile
+                            tile.bg_layer = self.bg_layer[tile_num][0][1]
+                            tile.animated = True
+                        else:
+                            tile.bg_layer = self.bg_layer[tile_num]
+                    if self.bldg_layer:
+                        if type(self.bldg_layer[tile_num]) == list:  # This is an animated tile
+                            tile.bldg_layer = self.bldg_layer[tile_num][0][1]
+                            tile.animated = True
+                        else:
+                            tile.bldg_layer = self.bldg_layer[tile_num]
+                            
+                    if self.path_layer: tile.path_layer = self.path_layer[tile_num]                   
+                    if self.front_layer: tile.front_layer = self.front_layer[tile_num]                   
+                    if self.always_front_layer: tile.always_front_layer = self.always_front_layer[tile_num]
+                    
     
     def create_wood(self):
     
@@ -184,7 +212,7 @@ class World:
                     if type(bldg_tile) == int:
                         self.bg.blit(self.tileset[bldg_tile], (i*16,j*16))
                     if type(bldg_tile) == list:
-                        self.bg.blit(self.tileset[bg_tile[0][1]], (i*16,j*16))
+                        self.bg.blit(self.tileset[bldg_tile[0][1]], (i*16,j*16))
         for object in self.special_objects[self.current_map]:
             object.render_back(self.bg)
                     
@@ -205,7 +233,7 @@ class World:
                 if path_tile: # My god clean this up
                     if path_tile-paths_tile_base < 9: # Delete pathing-related tiles (unused?)
                         self.path_layer[j*self.map_width+i] = 0
-                    MapObject(self.game,self,path_tile-paths_tile_base,i,j)
+                    #MapObject(self.game,self,None,path_tile-paths_tile_base,i,j)
                 if front_tile: 
                     self.mid.blit(self.tileset[front_tile], (i*16,j*16))
                 if afront_tile:
@@ -387,9 +415,6 @@ class World:
         screen.fill(pygame.Color(0,0,0,0))
         if self.redraw_front:
             self.redraw_front = False
-            #self.fg.fill(pygame.Color(0,0,0,0))
-            #for mapobject in self.current_map_path_objects:
-            #    mapobject.render_front(self.mid)
             for object in self.special_objects[self.current_map]:
                 object.render_front(self.fg)
         screen.blit(self.fg, (0,0), (self.top_left_x,self.top_left_y,screen.get_width(),screen.get_height()))
@@ -474,6 +499,7 @@ class World:
 class MapTile:
     def __init__(self, game, map, location):
         self.game = game
+        self.world = self.game.world
         self.x = location[0]
         self.y = location[1]
         self.map = map
@@ -496,4 +522,12 @@ class MapTile:
         self.always_front_layer = None
         
     def init_second_stage(self):
-        pass
+        if self.bg_layer in self.world.passable_tiles or self.bldg_layer in self.world.passable_tiles:
+            self.passable = True
+        if self.bg_layer in self.world.diggable_tiles or self.bldg_layer in self.world.diggable_tiles:
+            self.diggable = True
+        
+        if self.path_layer:
+            if self.path_layer < 9: self.path_layer = 0
+            paths_tile_base = self.world.tileset_index["paths"]
+            self.object = MapObject(self.game,self.world,self,self.path_layer-paths_tile_base,self.x,self.y)

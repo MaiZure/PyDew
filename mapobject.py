@@ -5,7 +5,7 @@ from item import *
 
 class MapObject:
     """ 'type' is matched to 'path' TileIDs (caller must compute path base)"""
-    def __init__(self, game, world, type, gx, gy):
+    def __init__(self, game, world, tile, type, gx, gy):
         if type < 8 or type > 26:
             # This effectively removes the object as no reference is built
             return None
@@ -19,6 +19,7 @@ class MapObject:
         self.gx = gx
         self.gy = gy
         self.tile_num = world.get_tile_num(self.gx,self.gy)
+        self.tile = tile
         self.collision_width = 1
         self.collision_height = 1
         self.sprite_width = 1
