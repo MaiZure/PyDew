@@ -144,6 +144,7 @@ class World:
         
         for tiles in self.map_tiles:
             tile = self.map_tiles[tiles]
+            self.set_tile_neighbors(tile)
             tile.init_second_stage()
         
         for mapobject in self.current_map_path_objects:
@@ -494,14 +495,33 @@ class World:
                        
             if self.current_map == "farm":
                 self.special_objects[self.current_map].append(Farmhouse(self.game, self))
-        
+                
+    def set_tile_neighbors(self, tile):
+        gx = tile.gx
+        gy = tile.gy
+        key = (self.current_map, ((gx,gy+1)))
+        if key in self.map_tiles: tile.neighbors[0] = self.map_tiles[key]
+        key = (self.current_map, ((gx+1,gy+1)))
+        if key in self.map_tiles: tile.neighbors[1] = self.map_tiles[key]
+        key = (self.current_map, ((gx+1,gy)))
+        if key in self.map_tiles: tile.neighbors[2] = self.map_tiles[key]
+        key = (self.current_map, ((gx+1,gy-1)))
+        if key in self.map_tiles: tile.neighbors[3] = self.map_tiles[key]
+        key = (self.current_map, ((gx,gy-1)))
+        if key in self.map_tiles: tile.neighbors[4] = self.map_tiles[key]
+        key = (self.current_map, ((gx-1,gy-1)))
+        if key in self.map_tiles: tile.neighbors[5] = self.map_tiles[key]
+        key = (self.current_map, ((gx-1,gy)))
+        if key in self.map_tiles: tile.neighbors[6] = self.map_tiles[key]
+        key = (self.current_map, ((gx-1,gy+1)))
+        if key in self.map_tiles: tile.neighbors[7] = self.map_tiles[key]
         
 class MapTile:
     def __init__(self, game, map, location):
         self.game = game
         self.world = self.game.world
-        self.x = location[0]
-        self.y = location[1]
+        self.gx = location[0]
+        self.gy = location[1]
         self.map = map
         self.collision = False
         self.spawnable = False
@@ -514,6 +534,7 @@ class MapTile:
         self.animated = False
         self.crop = None
         self.object = None
+        self.neighbors = [None for i in range(8)]
         
         self.bg_layer = None
         self.bldg_layer = None
@@ -530,4 +551,4 @@ class MapTile:
         if self.path_layer:
             if self.path_layer < 9: self.path_layer = 0
             paths_tile_base = self.world.tileset_index["paths"]
-            self.object = MapObject(self.game,self.world,self,self.path_layer-paths_tile_base,self.x,self.y)
+            self.object = MapObject(self.game,self.world,self,self.path_layer-paths_tile_base,self.gx,self.gy)
