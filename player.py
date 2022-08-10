@@ -195,7 +195,7 @@ class Player:
                         for action in action_list:
                             print(action)
                             action_item = action[0]
-                            action_mxy = (current_map,action[1][0]+self.gx,action[1][1]+self.gy)
+                            action_mxy = (current_map,(action[1][0]+self.gx,action[1][1]+self.gy))
                             #print("Use " + str(action[0]) + " at " + str(action_mxy))
                             if action_mxy in self.game.world.objects:
                                 object = self.game.world.objects[action_mxy]

@@ -442,7 +442,9 @@ class World:
         if gx < 1: return True
         if gy < 1: return True
         if tile_num > len(self.collision_map): return True
-        if self.collision_map[tile_num]: return False
+        tile = self.map_tiles[(self.current_map, (gx, gy))]
+        #if self.collision_map[tile_num]: return False
+        if tile.collision: return False
         return True
         
     def is_visible(self,x,y):
@@ -531,6 +533,7 @@ class MapTile:
         self.dug = False
         self.watered = False
         self.type = 0
+        self.init = False
         self.animated = False
         self.crop = None
         self.object = None
@@ -543,12 +546,19 @@ class MapTile:
         self.always_front_layer = None
         
     def init_second_stage(self):
+        if self.init: return
         if self.bg_layer in self.world.passable_tiles or self.bldg_layer in self.world.passable_tiles:
             self.passable = True
         if self.bg_layer in self.world.diggable_tiles or self.bldg_layer in self.world.diggable_tiles:
             self.diggable = True
         
+        if self.bldg_layer and not self.passable:
+            self.collision = True
+        
         if self.path_layer:
             if self.path_layer < 9: self.path_layer = 0
             paths_tile_base = self.world.tileset_index["paths"]
             self.object = MapObject(self.game,self.world,self,self.path_layer-paths_tile_base,self.gx,self.gy)
+        
+        self.init = True
+        

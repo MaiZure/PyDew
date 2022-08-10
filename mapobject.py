@@ -49,8 +49,6 @@ class MapObject:
     def init_second_stage(self):
         self.set_constants(self.type)
         
-        if self.collision_height and self.collision_width:
-            self.world.collision_map[self.tile_num] = 1
         self.reverse = random.choice((True,False))
         
         self.draw_off_x = self.game.sprite.get_draw_off_x(self.spr_name) + random.randint(-4,4)
@@ -67,23 +65,23 @@ class MapObject:
             self.large_sprite_all = self.large_sprite[2]
             self.set_large_collision_box(self.spr_name)
             # add the large object to the O(1) object tracker
-            self.world.objects[(self.world.current_map,self.gx,self.gy)] = self
+            self.world.objects[(self.world.current_map,(self.gx,self.gy))] = self
             self.ogx, self.ogy = self.game.sprite.get_large_sprite_origin(self.spr_name)
             
         
-         
     def set_large_collision_box(self, spr_name, value=1):
         # Collisions start from the front/bottom of a sprite and work backward
         self.collision_width = self.game.sprite.get_collision_width(spr_name)
         self.collision_height = self.game.sprite.get_collision_height(spr_name)
         for j in range(self.collision_height):
             for i in range(self.collision_width):
-                tile_num = self.world.get_tile_num(self.gx+i,self.gy+j)
-                self.world.collision_map[tile_num] = value
+                key = (self.world.current_map,(self.gx+i,self.gy+j))
+                tile = self.world.map_tiles[key]
                 if value:  # add the large object to the O(1) object tracker
-                    self.world.objects[(self.world.current_map,self.gx+i,self.gy+j)] = self # O(1) lookup by position
+                    self.world.objects[(self.world.current_map,(self.gx+i,self.gy+j))] = self # O(1) lookup by position
+                    tile.collision = True
                 else:      # Remove the large object from O(1) object tracker
-                    key = (self.world.current_map,self.gx+i,self.gy+j)
+                    tile.collision = False
                     if key in self.world.objects and self.world.objects[key] == self:
                         del self.world.objects[key]
                     
@@ -91,7 +89,7 @@ class MapObject:
         if self.type == 22:
             if random.randint(1,2) == 1: return
         self.world.current_map_path_objects.pop(self.world.current_map_path_objects.index(self))
-        del self.world.objects[(self.world.current_map,self.gx,self.gy)]
+        del self.world.objects[(self.world.current_map,(self.gx,self.gy))]
         
         # Maybe an object shouldn't ALWAYS clear collisions...?
         tile_num = self.world.get_tile_num(self.gx,self.gy)
