@@ -108,7 +108,7 @@ class World:
         self.game.mid_surface.fill(pygame.Color(0,0,0,0))
         self.game.fg_surface.fill(pygame.Color(0,0,0,0))
         
-        # Create basic map objects
+        # Create basic map objects (if first visit)
         self.create_map_tiles(self.current_map, (self.map_width, self.map_height))
         
         self.init_map_second_stage()
@@ -146,6 +146,8 @@ class World:
             tile = self.map_tiles[tiles]
             self.set_tile_neighbors(tile)
             tile.init_second_stage()
+        
+        self.current_map_path_objects = self.get_all_map_objects(self.current_map)
         
         for mapobject in self.current_map_path_objects:
             mapobject.init_second_stage()        
@@ -479,7 +481,7 @@ class World:
         for next_tile in tiles_to_update:
             last_frame = layer[next_tile].pop(0)
             delay = min(int((last_frame[0]*60)/1000),59)
-            reel[delay] += [next_tile]
+            reel[delay] += [next_tile]  
             layer[next_tile].append(last_frame)
             self.update_tile(next_tile,layer)
             
@@ -517,6 +519,17 @@ class World:
         if key in self.map_tiles: tile.neighbors[6] = self.map_tiles[key]
         key = (self.current_map, ((gx-1,gy+1)))
         if key in self.map_tiles: tile.neighbors[7] = self.map_tiles[key]
+        
+    def get_all_map_objects(self, map):
+        objects = []
+        for j in range(self.map_height):
+            for i in range(self.map_width):
+                key = (map, (i,j))
+                if key in self.map_tiles: 
+                    tile = self.map_tiles[key]
+                    if tile.object:
+                        objects.append(tile.object)
+        return objects
         
 class MapTile:
     def __init__(self, game, map, location):
@@ -559,6 +572,10 @@ class MapTile:
             if self.path_layer < 9: self.path_layer = 0
             paths_tile_base = self.world.tileset_index["paths"]
             self.object = MapObject(self.game,self.world,self,self.path_layer-paths_tile_base,self.gx,self.gy)
+            
+            # Clear up unused for now
+            if self.object.type < 8 or self.object.type > 26: 
+                self.object = None
         
         self.init = True
         

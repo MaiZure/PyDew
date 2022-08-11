@@ -6,6 +6,7 @@ from item import *
 class MapObject:
     """ 'type' is matched to 'path' TileIDs (caller must compute path base)"""
     def __init__(self, game, world, tile, type, gx, gy):
+        self.type = type
         if type < 8 or type > 26:
             # This effectively removes the object as no reference is built
             return None
@@ -36,17 +37,17 @@ class MapObject:
         self.ogx = 0
         self.ogy = 0
         self.hp = 1
-        self.type = type
         self.reverse = False
+        self.init = False
         self.action_list = ()
         self.spr_name = ""
         self.loot = []
-        
         
         # Object is valid -- register with world tracker
         world.current_map_path_objects.append(self)   # Linear list tracker
         
     def init_second_stage(self):
+        if self.init: return
         self.set_constants(self.type)
         
         self.reverse = random.choice((True,False))
@@ -67,6 +68,7 @@ class MapObject:
             # add the large object to the O(1) object tracker
             self.world.objects[(self.world.current_map,(self.gx,self.gy))] = self
             self.ogx, self.ogy = self.game.sprite.get_large_sprite_origin(self.spr_name)
+        self.init = True
             
         
     def set_large_collision_box(self, spr_name, value=1):
