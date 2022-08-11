@@ -16,6 +16,7 @@ class Light:
         #self.game.ambient_surface.set_colorkey((16,16,16))
         for i in range(64,0, -1):
             pygame.draw.circle(self.surf, (5,5,5,max(255-i*4,0)), (80,80), i)
+
         
     def render(self, screen):
         if not self.world.is_visible(self.gx,self.gy): return

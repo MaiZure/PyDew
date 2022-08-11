@@ -571,11 +571,14 @@ class MapTile:
         if self.path_layer:
             if self.path_layer < 9: self.path_layer = 0
             paths_tile_base = self.world.tileset_index["paths"]
-            self.object = MapObject(self.game,self.world,self,self.path_layer-paths_tile_base,self.gx,self.gy)
+            type = self.path_layer-paths_tile_base
+            new_obj = MapObject(self.game,self.world,self,type,self.gx,self.gy)
+            self.object = new_obj if type > 8 and type < 27 else None
             
             # Clear up unused for now
-            if self.object.type < 8 or self.object.type > 26: 
-                self.object = None
+            
+            #if self.object.type < 8 or self.object.type > 26: 
+            #    self.object = None
         
         self.init = True
         
