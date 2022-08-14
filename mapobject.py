@@ -27,8 +27,8 @@ class MapObject:
         self.sprite_height = 1
         self.x = self.gx*16
         self.y = self.gy*16
-        self.draw_off_px = 0
-        self.draw_off_py = 0
+        self.draw_off_x = 0
+        self.draw_off_y = 0
         self.sprite = game.sprite.get_tiles("paths")
         self.large_sprite = None
         self.large_sprite_mid = None
@@ -49,11 +49,13 @@ class MapObject:
     def init_second_stage(self):
         if self.init: return
         self.set_constants(self.type)
-        
+
         self.reverse = random.choice((True,False))
         
-        self.draw_off_x = self.game.sprite.get_draw_off_x(self.spr_name) + random.randint(-4,4)
-        self.draw_off_y = self.game.sprite.get_draw_off_y(self.spr_name)  + random.randint(-4,4)
+        if self.type == 22:
+            self.draw_off_x = self.game.sprite.get_draw_off_x(self.spr_name) + random.randint(-4,4)
+            self.draw_off_y = self.game.sprite.get_draw_off_y(self.spr_name)  + random.randint(-4,4)
+        
         
         if self.spr_name:
             if self.reverse:
@@ -68,8 +70,11 @@ class MapObject:
             # add the large object to the O(1) object tracker
             self.world.objects[(self.world.current_map,(self.gx,self.gy))] = self
             self.ogx, self.ogy = self.game.sprite.get_large_sprite_origin(self.spr_name)
+
         self.init = True
             
+    def get_large_sprite(self):
+        return self.large_sprite_all
         
     def set_large_collision_box(self, spr_name, value=1):
         # Collisions start from the front/bottom of a sprite and work backward
@@ -78,9 +83,10 @@ class MapObject:
         for j in range(self.collision_height):
             for i in range(self.collision_width):
                 key = (self.world.current_map,(self.gx+i,self.gy+j))
-                tile = self.world.map_tiles[key]
+                key_tile = (self.gx+i, self.gy+j)
+                tile = self.world.map_tiles[self.world.current_map][key_tile]
                 if value:  # add the large object to the O(1) object tracker
-                    self.world.objects[(self.world.current_map,(self.gx+i,self.gy+j))] = self # O(1) lookup by position
+                    self.world.objects[key] = self # O(1) lookup by position
                     tile.collision = True
                 else:      # Remove the large object from O(1) object tracker
                     tile.collision = False
@@ -100,6 +106,7 @@ class MapObject:
         
         # Remove from tile (eventually multiple objects per tile?)
         self.tile.object = None
+        self.world.redraw_objects = True
         
         self.world.redraw_front = True
               
@@ -112,13 +119,13 @@ class MapObject:
             item.count = random.randint(1,max_count)
             
     def render_mid(self, screen):
-        if not self.game.world.is_visible(self.gx, self.gy): return
+        #if not self.game.world.is_visible(self.gx, self.gy): return
         top_left_x = self.game.world.top_left_x
         top_left_y = self.game.world.top_left_y
         if self.large_sprite:
-            screen.blit(self.large_sprite_mid, (self.x-top_left_x-self.ogx*16,self.y-top_left_y-self.ogy*16), (0,0,3*16,6*16))
+            screen.blit(self.large_sprite_mid, (self.x-self.ogx*16,self.y-self.ogy*16), (0,0,3*16,6*16))
         else:
-            screen.blit(self.sprite[self.type], (self.x-top_left_x,self.y-top_left_y), (0,0,16,16))
+            screen.blit(self.sprite[self.type], (self.x,self.y), (0,0,16,16))
             
     def render_front(self, screen):
         top_left_x = self.game.world.top_left_x
@@ -130,12 +137,12 @@ class MapObject:
             screen.blit(self.sprite[self.type], (self.x,self.y), (0,0,16,16))
             
     def render_all(self, screen):
-        if not self.game.world.is_visible(self.gx, self.gy): return
+        #if not self.game.world.is_visible(self.gx, self.gy): return
         top_left_x = self.game.world.top_left_x
         top_left_y = self.game.world.top_left_y
-            
+        
         if self.large_sprite:
-            screen.blit(self.large_sprite_all, (self.x-top_left_x+self.draw_off_x-self.ogx*16,self.y-top_left_y+self.draw_off_y-self.ogy*16), (0,0,3*16,6*16))
+            screen.blit(self.large_sprite_all, (self.x+self.draw_off_x-self.ogx*16,self.y+self.draw_off_y-self.ogy*16), (0,0,3*16,6*16))
         else:
             screen.blit(self.sprite[self.type], (self.x,self.y), (0,0,16,16))
             

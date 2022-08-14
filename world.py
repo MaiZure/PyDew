@@ -16,6 +16,7 @@ class World:
         self.top_left_y_last = 0
         self.optimized_render = False
         self.redraw_front = True
+        self.redraw_objects = True
         self.map_width = 0
         self.map_height = 0
         self.hour = 6
@@ -23,7 +24,7 @@ class World:
         self.tick_time = 0
         self.speed_time = False
         
-        self.map_tiles = {}
+        self.map_tiles = {}         # Nested dictionary of MapTiles {map_name}{(gx,gy)}
         self.tileset = []
         self.tileset_index = {}
         self.current_map = "" #town
@@ -56,7 +57,7 @@ class World:
         self.bldg_layer = []
         self.path_layer = []
         self.front_layer = []
-        self.always_front_layer = []
+        self.afront_layer = []
         
         self.map_width = 0 
         self.map_height = 0
@@ -92,16 +93,18 @@ class World:
         self.bldg_layer = self.game.map.get_layer_data(self.current_map,"Buildings")
         self.path_layer = self.game.map.get_layer_data(self.current_map,"Paths")
         self.front_layer = self.game.map.get_layer_data(self.current_map,"Front")
-        self.always_front_layer = self.game.map.get_layer_data(self.current_map,"AlwaysFront")
+        self.afront_layer = self.game.map.get_layer_data(self.current_map,"AlwaysFront")
         
         self.map_width = self.game.map.get_layer_width(self.current_map,0)
         self.map_height = self.game.map.get_layer_height(self.current_map,0)
         
-        # Create background surface to render map
+        # Create intermediate surfaces
         rect = pygame.Rect(0, 0, self.map_width*16, self.map_height*16) 
         self.bg = pygame.Surface(rect.size).convert()
         self.mid = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
+        self.mid_object = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
         self.fg = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
+        self.front_object = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
         
         # Clear old surfaces
         self.game.bg_surface.fill(pygame.Color(0,0,0,0))
@@ -128,8 +131,6 @@ class World:
         
         self.tileset = self.game.map.get_map_tiles(self.current_map)
         self.tileset_index = self.game.map.get_map_tileset_index(self.current_map)
-        self.generate_background_layers()
-        self.generate_foreground_layers()
         self.animated_tiles = self.game.map.get_map_animations(self.current_map, self.tileset_index)
         self.passable_tiles, self.impassable_tiles = self.game.map.get_passable_tiles(self.current_map, self.tileset_index)
         self.diggable_tiles = self.game.map.get_diggable_tiles(self.current_map, self.tileset_index)
@@ -142,45 +143,52 @@ class World:
         self.embed_map_animations(self.bg_layer, self.bg_tile_update_reel)
         self.embed_map_animations(self.bldg_layer, self.bldg_tile_update_reel)
         
-        for tiles in self.map_tiles:
-            tile = self.map_tiles[tiles]
+        for tiles in self.map_tiles[self.current_map]:
+            tile = self.map_tiles[self.current_map][tiles]
             self.set_tile_neighbors(tile)
             tile.init_second_stage()
-        
+   
         self.current_map_path_objects = self.get_all_map_objects(self.current_map)
         
         for mapobject in self.current_map_path_objects:
-            mapobject.init_second_stage()        
-                
+            mapobject.init_second_stage()     
+
+        for tiles in self.map_tiles[self.current_map]:
+            tile = self.map_tiles[self.current_map][tiles]
+            tile.render_tile()
+         
+        self.generate_background_specials()
+        
         self.init_npcs()
         
     def create_map_tiles(self, map, location):
+        if map in self.map_tiles: return    # No need to create twice
+        self.map_tiles[map] = {}
         width = location[0]
         height = location[1]
         for j in range(height):
             for i in range(width):
-                key = (map, (i,j))
-                if key not in self.map_tiles:
-                    tile = MapTile(self.game, map, (i,j))
-                    self.map_tiles[key] = tile 
-                    tile_num = self.get_tile_num(i,j)
-                    
-                    if self.bg_layer: 
-                        if type(self.bg_layer[tile_num]) == list:  # This is an animated tile
-                            tile.bg_layer = self.bg_layer[tile_num][0][1]
-                            tile.animated = True
-                        else:
-                            tile.bg_layer = self.bg_layer[tile_num]
-                    if self.bldg_layer:
-                        if type(self.bldg_layer[tile_num]) == list:  # This is an animated tile
-                            tile.bldg_layer = self.bldg_layer[tile_num][0][1]
-                            tile.animated = True
-                        else:
-                            tile.bldg_layer = self.bldg_layer[tile_num]
-                            
-                    if self.path_layer: tile.path_layer = self.path_layer[tile_num]                   
-                    if self.front_layer: tile.front_layer = self.front_layer[tile_num]                   
-                    if self.always_front_layer: tile.always_front_layer = self.always_front_layer[tile_num]
+                key = (i,j)
+                tile = MapTile(self.game, map, (i,j))
+                self.map_tiles[map][key] = tile 
+                tile_num = self.get_tile_num(i,j)
+                
+                if self.bg_layer: 
+                    if type(self.bg_layer[tile_num]) == list:  # This is an animated tile
+                        tile.bg_layer = self.bg_layer[tile_num][0][1]
+                        tile.animated = True
+                    else:
+                        tile.bg_layer = self.bg_layer[tile_num]
+                if self.bldg_layer:
+                    if type(self.bldg_layer[tile_num]) == list:  # This is an animated tile
+                        tile.bldg_layer = self.bldg_layer[tile_num][0][1]
+                        tile.animated = True
+                    else:
+                        tile.bldg_layer = self.bldg_layer[tile_num]
+                        
+                if self.path_layer: tile.path_layer = self.path_layer[tile_num]                   
+                if self.front_layer: tile.front_layer = self.front_layer[tile_num]                   
+                if self.afront_layer: tile.afront_layer = self.afront_layer[tile_num]
                     
     
     def create_wood(self):
@@ -189,8 +197,7 @@ class World:
         new_item = Resource(self.game, "wood")
         new_item.create_at(self.game.player.x-24, self.game.player.y-24)
         self.items[self.current_map].append(new_item)
-        
-        
+               
     def set_random_season(self):
         self.game.config.season = random.choice(["spring","summer","fall","winter"])
         self.set_season()
@@ -201,46 +208,10 @@ class World:
         
         self.npcs.append(NPC(self.game))
         
-    def generate_background_layers(self):
-        for j in range(0,self.map_height):
-            for i in range(0,self.map_width):
-                bg_tile = self.bg_layer[j*self.map_width+i]
-                bldg_tile = self.bldg_layer[j*self.map_width+i]
-                if bg_tile:
-                    if type(bg_tile) == int: # Just a tile number
-                        self.bg.blit(self.tileset[bg_tile], (i*16,j*16))
-                    if type(bg_tile) == list: # Animated - List of tuple frames (duration, tile number)
-                        self.bg.blit(self.tileset[bg_tile[0][1]], (i*16,j*16))
-                if bldg_tile:
-                    if type(bldg_tile) == int:
-                        self.bg.blit(self.tileset[bldg_tile], (i*16,j*16))
-                    if type(bldg_tile) == list:
-                        self.bg.blit(self.tileset[bldg_tile[0][1]], (i*16,j*16))
+    def generate_background_specials(self):
         for object in self.special_objects[self.current_map]:
             object.render_back(self.bg)
-                    
-    def generate_foreground_layers(self):   ## Refactor this fxn somehow
-        paths_tile_base = self.tileset_index["paths"]
-        for j in range(0,self.map_height):
-            for i in range(0,self.map_width):
-                path_tile = 0
-                front_tile = 0
-                if self.path_layer:
-                    path_tile = self.path_layer[j*self.map_width+i]
-                if self.front_layer:
-                    front_tile = self.front_layer[j*self.map_width+i]
-                if self.always_front_layer:  # Because get_layer_data() returns None if no AlwaysFront layer exists
-                    afront_tile = self.always_front_layer[j*self.map_width+i]   #self.always_front_layer could be None
-                else:
-                    afront_tile = None # to avoid error 7 lines below
-                if path_tile: # My god clean this up
-                    if path_tile-paths_tile_base < 9: # Delete pathing-related tiles (unused?)
-                        self.path_layer[j*self.map_width+i] = 0
-                    #MapObject(self.game,self,None,path_tile-paths_tile_base,i,j)
-                if front_tile: 
-                    self.mid.blit(self.tileset[front_tile], (i*16,j*16))
-                if afront_tile:
-                    self.fg.blit(self.tileset[afront_tile], (i*16,j*16))
+            
                     
     def generate_collision_map(self) -> list:
         collision_map = []
@@ -385,16 +356,25 @@ class World:
         screen.blit(self.bg, (0,0), (self.top_left_x,self.top_left_y,screen.get_width(),screen.get_height()))
         
     def render_mid(self, screen):
+        player = self.game.player
         screen.fill(pygame.Color(0,0,0,0))
         
-        # Render part of all map items 'before' the player -- exit at player and start later
-        for obj_num in range(len(self.current_map_path_objects)):
-            mapobject = self.current_map_path_objects[obj_num]
-            if mapobject.gy <= self.game.player.gy:
-                mapobject.render_all(screen)
-            else: break;
-            
-        screen.blit(self.mid, (0,0), (self.top_left_x,self.top_left_y,screen.get_width(),screen.get_height()/2))
+        if self.redraw_objects:
+            self.mid_object.fill(pygame.Color(0,0,0,0))
+            self.front_object.fill(pygame.Color(0,0,0,0))
+            for tiles in self.map_tiles[self.current_map]:
+                tile = self.map_tiles[self.current_map][tiles]
+                tile.render_object(self.mid_object, self.front_object)
+            self.redraw_objects = False
+        
+        dest = (0,0)
+        src = (self.top_left_x, 
+               self.top_left_y, 
+               screen.get_width(), 
+               16*(((player.y - self.top_left_y)//16)+1)-self.top_left_y%16)  # Top 'half'
+               
+        screen.blit(self.mid_object, dest, src)
+        screen.blit(self.mid, dest, src)
         
         for item in self.items[self.current_map]:
             item.render(screen)
@@ -402,16 +382,18 @@ class World:
         for npc in self.npcs:
             npc.render(screen)
         
-        self.game.player.render(screen) # Find a way to partition the MO around the player rather than O(2n)
+        player.render(screen) 
         
-        # Render remaining map items 'after' the player
-        if len(self.current_map_path_objects):
-            for obj_num in range(obj_num, len(self.current_map_path_objects)):
-                mapobject = self.current_map_path_objects[obj_num]
-                if mapobject.gy > self.game.player.gy:
-                    mapobject.render_all(screen)
-                
-        screen.blit(self.mid, (0,screen.get_height()/2), (self.top_left_x,self.top_left_y+screen.get_height()/2,screen.get_width(),screen.get_height()/2))
+        dest = (0, 16*(((player.y - self.top_left_y)//16)+1)-self.top_left_y%16)
+        src = (self.top_left_x, 
+               self.top_left_y+16*(((player.y - self.top_left_y)//16)+1)-self.top_left_y%16, 
+               screen.get_width(), 
+               screen.get_height()-(player.y - self.top_left_y)+8)   # bottom 'half'
+        
+        screen.blit(self.mid_object, dest, src)
+        screen.blit(self.mid, dest, src)
+        
+        screen.blit(self.front_object, (0,0), (self.top_left_x,self.top_left_y,screen.get_width(),screen.get_height()))
         
     def render_front(self, screen):
         if self.optimized_render: return
@@ -444,8 +426,7 @@ class World:
         if gx < 1: return True
         if gy < 1: return True
         if tile_num > len(self.collision_map): return True
-        tile = self.map_tiles[(self.current_map, (gx, gy))]
-        #if self.collision_map[tile_num]: return False
+        tile = self.map_tiles[self.current_map][(gx, gy)]
         if tile.collision: return False
         return True
         
@@ -503,30 +484,31 @@ class World:
     def set_tile_neighbors(self, tile):
         gx = tile.gx
         gy = tile.gy
-        key = (self.current_map, ((gx,gy+1)))
-        if key in self.map_tiles: tile.neighbors[0] = self.map_tiles[key]
-        key = (self.current_map, ((gx+1,gy+1)))
-        if key in self.map_tiles: tile.neighbors[1] = self.map_tiles[key]
-        key = (self.current_map, ((gx+1,gy)))
-        if key in self.map_tiles: tile.neighbors[2] = self.map_tiles[key]
-        key = (self.current_map, ((gx+1,gy-1)))
-        if key in self.map_tiles: tile.neighbors[3] = self.map_tiles[key]
-        key = (self.current_map, ((gx,gy-1)))
-        if key in self.map_tiles: tile.neighbors[4] = self.map_tiles[key]
-        key = (self.current_map, ((gx-1,gy-1)))
-        if key in self.map_tiles: tile.neighbors[5] = self.map_tiles[key]
-        key = (self.current_map, ((gx-1,gy)))
-        if key in self.map_tiles: tile.neighbors[6] = self.map_tiles[key]
-        key = (self.current_map, ((gx-1,gy+1)))
-        if key in self.map_tiles: tile.neighbors[7] = self.map_tiles[key]
+        map = self.map_tiles[self.current_map]
+        key = (gx,gy+1)
+        if key in map: tile.neighbors[0] = map[key]
+        key = (gx+1,gy+1)
+        if key in map: tile.neighbors[1] = map[key]
+        key = (gx+1,gy)
+        if key in map: tile.neighbors[2] = map[key]
+        key = (gx+1,gy-1)
+        if key in map: tile.neighbors[3] = map[key]
+        key = (gx,gy-1)
+        if key in map: tile.neighbors[4] = map[key]
+        key = (gx-1,gy-1)
+        if key in map: tile.neighbors[5] = map[key]
+        key = (gx-1,gy)
+        if key in map: tile.neighbors[6] = map[key]
+        key = (gx-1,gy+1)
+        if key in map: tile.neighbors[7] = map[key]
         
     def get_all_map_objects(self, map):
         objects = []
         for j in range(self.map_height):
             for i in range(self.map_width):
-                key = (map, (i,j))
-                if key in self.map_tiles: 
-                    tile = self.map_tiles[key]
+                key = (i,j)
+                if key in self.map_tiles[self.current_map]: 
+                    tile = self.map_tiles[self.current_map][key]
                     if tile.object:
                         objects.append(tile.object)
         return objects
@@ -542,12 +524,14 @@ class MapTile:
         self.spawnable = False
         self.diggable = False
         self.passable = False
+        self.spawnable = False
         self.water = False
         self.dug = False
         self.watered = False
         self.type = 0
         self.init = False
         self.animated = False
+        self.redraw = True
         self.crop = None
         self.object = None
         self.neighbors = [None for i in range(8)]
@@ -556,29 +540,77 @@ class MapTile:
         self.bldg_layer = None
         self.path_layer = None
         self.front_layer = None
-        self.always_front_layer = None
+        self.afront_layer = None
+        
+        self.bg_tile = None
+        self.bldg_tile = None
+        self.front_tile = None
+        self.afront_tile = None
+        
+        rect = pygame.Rect(0, 0, 16, 16) 
+        self.surface = pygame.Surface(rect.size).convert()
+        self.surface.fill(pygame.Color(0,0,0,0))
         
     def init_second_stage(self):
         if self.init: return
+        
+        if self.bg_layer: self.bg_tile = self.world.tileset[self.bg_layer]
+        if self.bldg_layer: self.bldg_tile = self.world.tileset[self.bldg_layer]
+        if self.front_layer: self.front_tile = self.world.tileset[self.front_layer]
+        if self.afront_layer: self.afront_tile = self.world.tileset[self.afront_layer]      
+        
         if self.bg_layer in self.world.passable_tiles or self.bldg_layer in self.world.passable_tiles:
             self.passable = True
         if self.bg_layer in self.world.diggable_tiles or self.bldg_layer in self.world.diggable_tiles:
-            self.diggable = True
-        
+            self.diggable = True       
         if self.bldg_layer and not self.passable:
             self.collision = True
         
         if self.path_layer:
             if self.path_layer < 9: self.path_layer = 0
             paths_tile_base = self.world.tileset_index["paths"]
-            type = self.path_layer-paths_tile_base
+            type = self.path_layer-paths_tile_base         
             new_obj = MapObject(self.game,self.world,self,type,self.gx,self.gy)
             self.object = new_obj if type > 8 and type < 27 else None
-            
-            # Clear up unused for now
-            
-            #if self.object.type < 8 or self.object.type > 26: 
-            #    self.object = None
-        
+           
         self.init = True
         
+    def render_tile(self):
+        if self.map != self.world.current_map: return
+        
+        bg = self.world.bg
+        mid_obj = self.world.mid_object
+        front_obj = self.world.front_object
+        mid = self.world.mid
+        fg = self.world.fg
+        
+        bg.blit(self.surface, (0,0), (0,0,16,16))
+        mid.blit(self.surface, (0,0), (0,0,16,16))
+        fg.blit(self.surface, (0,0), (0,0,16,16))
+        
+        self.render_back(bg)
+        self.render_object(mid_obj, front_obj)
+        self.render_mid(mid)
+        self.render_front(fg)
+        
+    def render_back(self, surface): 
+        # This typically only happens once at map init
+        if self.bg_tile:
+            surface.blit(self.bg_tile, (self.gx*16,self.gy*16))
+        if self.bldg_tile:
+            surface.blit(self.bldg_tile, (self.gx*16,self.gy*16))      
+            
+    def render_object(self, mid, fg):
+        if self.object:
+            self.object.render_mid(mid)
+            self.object.render_front(fg)
+            
+    def render_mid(self, mid):
+        if self.front_tile:
+            mid.blit(self.front_tile, (self.gx*16,self.gy*16))
+            
+    def render_front(self, surface):
+        if self.afront_tile:
+            surface.blit(self.afront_tile, (self.gx*16,self.gy*16))
+            
+    
