@@ -155,7 +155,7 @@ class World:
 
         for tiles in self.map_tiles[self.current_map]:
             tile = self.map_tiles[self.current_map][tiles]
-            tile.render_tile()
+            tile.update() #tile.render_tile()
          
         self.generate_background_specials()
         
@@ -550,6 +550,8 @@ class MapTile:
         rect = pygame.Rect(0, 0, 16, 16) 
         self.surface = pygame.Surface(rect.size).convert()
         self.surface.fill(pygame.Color(0,0,0,0))
+        self.dig_tiles = self.game.sprite.get_tiles("hoeDirt")
+        self.dig_tilenum = 0
         
     def init_second_stage(self):
         if self.init: return
@@ -572,8 +574,31 @@ class MapTile:
             type = self.path_layer-paths_tile_base         
             new_obj = MapObject(self.game,self.world,self,type,self.gx,self.gy)
             self.object = new_obj if type > 8 and type < 27 else None
+        
+        #Test dig
+        if self.diggable:
+            self.dug = True
            
         self.init = True
+    
+    def get_dig_grid(self):
+        grid = []
+        for neighbor in range(8):
+            if self.neighbors[neighbor]:
+                grid.append(True if self.neighbors[neighbor].dug else False)
+            else:
+                grid.append(False)
+        return grid
+        
+    def compute_tilenum(self):
+        dig_grid = self.get_dig_grid()
+        if True not in dig_grid: return 0
+        if dig_grid[0]: return 12
+        return 0
+    
+    def update(self):
+        self.dig_tilenum = self.compute_tilenum()
+        self.render_tile()
         
     def render_tile(self):
         if self.map != self.world.current_map: return
@@ -599,6 +624,8 @@ class MapTile:
             surface.blit(self.bg_tile, (self.gx*16,self.gy*16))
         if self.bldg_tile:
             surface.blit(self.bldg_tile, (self.gx*16,self.gy*16))      
+        if self.dug:
+            surface.blit(self.dig_tiles[self.dig_tilenum], (self.gx*16,self.gy*16))
             
     def render_object(self, mid, fg):
         if self.object:
