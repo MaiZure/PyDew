@@ -577,7 +577,8 @@ class MapTile:
         
         #Test dig
         if self.diggable:
-            self.dug = True
+            if random.randint(1,2) == 1:
+                self.dug = True
            
         self.init = True
     
@@ -592,9 +593,27 @@ class MapTile:
         
     def compute_tilenum(self):
         dig_grid = self.get_dig_grid()
-        if True not in dig_grid: return 0
-        if dig_grid[0]: return 12
-        return 0
+        major_sum = dig_grid[0] + dig_grid[2] + dig_grid[4] + dig_grid[6]
+        if major_sum == 0: return 0
+        if major_sum == 1:
+            if dig_grid[0]: return 12
+            if dig_grid[2]: return 37
+            if dig_grid[4]: return 36
+            if dig_grid[6]: return 39
+        if major_sum == 2:
+            if dig_grid[0] and dig_grid[2]: return 1
+            if dig_grid[0] and dig_grid[4]: return 24
+            if dig_grid[0] and dig_grid[6]: return 3
+            if dig_grid[2] and dig_grid[4]: return 25
+            if dig_grid[2] and dig_grid[6]: return 38
+            if dig_grid[4] and dig_grid[6]: return 27
+        if major_sum == 3:
+            if not dig_grid[0]: return 26
+            if not dig_grid[2]: return 15
+            if not dig_grid[4]: return 2
+            if not dig_grid[6]: return 13
+        if major_sum == 4: return 14
+        print("Dig Grid compute error")
     
     def update(self):
         self.dig_tilenum = self.compute_tilenum()
