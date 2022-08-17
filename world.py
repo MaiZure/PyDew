@@ -552,6 +552,7 @@ class MapTile:
         self.surface.fill(pygame.Color(0,0,0,0))
         self.dig_tiles = self.game.sprite.get_tiles("hoeDirt")
         self.dig_tilenum = 0
+        self.water_tilenum = 0
         
     def init_second_stage(self):
         if self.init: return
@@ -577,8 +578,10 @@ class MapTile:
         
         #Test dig
         if self.diggable:
+            self.dug = True
             if random.randint(1,2) == 1:
-                self.dug = True
+                self.watered = True
+            
            
         self.init = True
     
@@ -590,33 +593,44 @@ class MapTile:
             else:
                 grid.append(False)
         return grid
+    
+    def get_water_grid(self):
+        grid = []
+        for neighbor in range(8):
+            if self.neighbors[neighbor]:
+                grid.append(True if self.neighbors[neighbor].watered else False)
+            else:
+                grid.append(False)
+        return grid
         
-    def compute_tilenum(self):
-        dig_grid = self.get_dig_grid()
-        major_sum = dig_grid[0] + dig_grid[2] + dig_grid[4] + dig_grid[6]
-        if major_sum == 0: return 0
+    def compute_tilenum(self, water=False):
+        grid = self.get_water_grid() if water else self.get_dig_grid() 
+        off = 4 if water else 0
+        major_sum = grid[0] + grid[2] + grid[4] + grid[6]
+        if major_sum == 0: return 0 + off
         if major_sum == 1:
-            if dig_grid[0]: return 12
-            if dig_grid[2]: return 37
-            if dig_grid[4]: return 36
-            if dig_grid[6]: return 39
+            if grid[0]: return 12 + off
+            if grid[2]: return 37 + off
+            if grid[4]: return 36 + off
+            if grid[6]: return 39 + off
         if major_sum == 2:
-            if dig_grid[0] and dig_grid[2]: return 1
-            if dig_grid[0] and dig_grid[4]: return 24
-            if dig_grid[0] and dig_grid[6]: return 3
-            if dig_grid[2] and dig_grid[4]: return 25
-            if dig_grid[2] and dig_grid[6]: return 38
-            if dig_grid[4] and dig_grid[6]: return 27
+            if grid[0] and grid[2]: return 1 + off
+            if grid[0] and grid[4]: return 24 + off
+            if grid[0] and grid[6]: return 3 + off
+            if grid[2] and grid[4]: return 25 + off
+            if grid[2] and grid[6]: return 38 + off
+            if grid[4] and grid[6]: return 27 + off
         if major_sum == 3:
-            if not dig_grid[0]: return 26
-            if not dig_grid[2]: return 15
-            if not dig_grid[4]: return 2
-            if not dig_grid[6]: return 13
-        if major_sum == 4: return 14
-        print("Dig Grid compute error")
+            if not grid[0]: return 26 + off
+            if not grid[2]: return 15 + off
+            if not grid[4]: return 2 + off
+            if not grid[6]: return 13 + off
+        if major_sum == 4: return 14 + off
+        print("Grid compute error")
     
     def update(self):
         self.dig_tilenum = self.compute_tilenum()
+        self.water_tilenum = self.compute_tilenum(True)
         self.render_tile()
         
     def render_tile(self):
@@ -645,6 +659,8 @@ class MapTile:
             surface.blit(self.bldg_tile, (self.gx*16,self.gy*16))      
         if self.dug:
             surface.blit(self.dig_tiles[self.dig_tilenum], (self.gx*16,self.gy*16))
+        if self.watered:
+            surface.blit(self.dig_tiles[self.water_tilenum], (self.gx*16,self.gy*16))
             
     def render_object(self, mid, fg):
         if self.object:
