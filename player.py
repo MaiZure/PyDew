@@ -211,7 +211,11 @@ class Player:
                             if action_item == "watering":
                                 map = self.game.world.current_map
                                 tile = self.game.world.map_tiles[map][(gx,gy)]
-                                tile.water_tile()
+                                if tile.water:
+                                    self.current_item.water_level = 40
+                                elif self.current_item.water_level > 0:
+                                    tile.water_tile()
+                                    self.current_item.water_level -= 1
                             self.action_sequence[self.frame] = None # Overwrite after first check
         else:
             self.actiontimer = 0
@@ -357,8 +361,6 @@ class Player:
                 arms_sprite = self.sprite[frame+12]
             if self.current_item.category_str == "Tool" and self.current_item.arm_frame_off:
                 arms_sprite = self.sprite[frame+self.current_item.arm_frame_off[self.dir][self.frame]]
-            #if self.current_item.name == self.current_item.quality_name(self.current_item.quality) + " Watering #Can":
-            #    arms_sprite = self.sprite[frame+12]
         
         if self.dir == 3:
             body_sprite = pygame.transform.flip(body_sprite,True,False)

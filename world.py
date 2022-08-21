@@ -4,6 +4,7 @@ from npc import NPC
 from item import *
 
 from mapobject import *
+from crop import *
 
 class World:
 
@@ -37,6 +38,7 @@ class World:
         self.animated_tiles = []
         self.passable_tiles = []
         self.diggable_tiles = []
+        self.water_tiles = []
         self.impassable_tiles = []
         self.collision_map = []     # Basic Boolean collisions (Aligned with *_layer)
         self.spawnable_map = []
@@ -134,6 +136,7 @@ class World:
         self.animated_tiles = self.game.map.get_map_animations(self.current_map, self.tileset_index)
         self.passable_tiles, self.impassable_tiles = self.game.map.get_passable_tiles(self.current_map, self.tileset_index)
         self.diggable_tiles = self.game.map.get_diggable_tiles(self.current_map, self.tileset_index)
+        self.water_tiles = self.game.map.get_water_tiles(self.current_map, self.tileset_index)
         self.edge_warp_points = self.game.map.get_map_warps(self.current_map)
         self.warp_points = self.game.map.get_map_warpactions(self.current_map)
         self.action_points = self.game.map.get_map_actions(self.current_map)
@@ -565,7 +568,9 @@ class MapTile:
         if self.bg_layer in self.world.passable_tiles or self.bldg_layer in self.world.passable_tiles:
             self.passable = True
         if self.bg_layer in self.world.diggable_tiles or self.bldg_layer in self.world.diggable_tiles:
-            self.diggable = True       
+            self.diggable = True
+        if self.bg_layer in self.world.water_tiles or self.bldg_layer in self.world.water_tiles:
+            self.water = True    
         if self.bldg_layer and not self.passable:
             self.collision = True
         

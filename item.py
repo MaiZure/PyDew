@@ -298,8 +298,11 @@ class Tool(Item):
         if self.quality > 0:
             self.name += self.quality_name(self.quality) + " " 
         self.name += tool["name"]
+        self.watercan = True if tool["name"] == "Watering Can" else False
         self.inv_frame = tool["inv_frame"][self.quality]
         self.player_sequence = tool["player_sequence"]
+        
+        self.water_level = 40 if self.watercan else 0
         
         self.item_sequence = tool["item_sequence"]
         self.item_sequence = self.quality_item_sequence(self.item_sequence, self.quality)

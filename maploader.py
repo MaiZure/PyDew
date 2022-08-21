@@ -200,4 +200,21 @@ class MapLoader:
                                     diggable_tiles.append(tile_id+tile_offset)
         return diggable_tiles
         
+    def get_water_tiles(self, name, tileset_index):
+        water_tiles = []
+        
+        for tileset in self.map[name]["tilesets"]:
+            tileset_name = (tileset["image"].split("/")).pop()
+            tileset_name = tileset_name.split(".")[0]
+            tile_offset = tileset_index[tileset_name]
+            if "tiles" in tileset:
+                for tile in tileset["tiles"]:
+                    tile_id = tile["id"]
+                    if "properties" in tile:
+                        for property in tile["properties"]:
+                            if property["name"] == "Water":
+                                if property["value"] == "T" or property["value"] == "t":
+                                    water_tiles.append(tile_id+tile_offset)
+        return water_tiles
+        
    
