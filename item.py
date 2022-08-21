@@ -306,6 +306,10 @@ class Tool(Item):
         
         self.sprite_sequence = self.generate_sprite_sequence(self.item_sequence, tool["item_rot"])
         
+        self.arm_frame_off = None
+        if tool["arm_frame_off"]:
+            self.arm_frame_off = tool["arm_frame_off"]
+        
         
         self.hair_yoff = tool["hair_yoff"]
         self.item_xoff = tool["item_xoff"]
@@ -519,7 +523,8 @@ class ItemLoader:
             "hair_yoff": ((-1,0,1,2,2,1),
                          (-1,0,1,2,2,1),
                          (-1,0,1,2,2,1),
-                         (-1,0,1,2,2,1))                       
+                         (-1,0,1,2,2,1)),
+            "arm_frame_off": ()
         }
         self.tool["pickaxe"] = {
             "name": "Pickaxe",
@@ -554,7 +559,8 @@ class ItemLoader:
             "hair_yoff": ((-1,0,1,2,2,1),
                          (-1,0,1,2,2,1),
                          (-1,0,1,2,2,1),
-                         (-1,0,1,2,2,1))
+                         (-1,0,1,2,2,1)),
+            "arm_frame_off": ()
         }
         self.tool["axe"] = {
             "name": "Axe",
@@ -589,7 +595,8 @@ class ItemLoader:
             "hair_yoff": ((-1,0,2,3,3,2),
                          (-1,0,2,3,3,2),
                          (-1,0,2,3,3,2),
-                         (-1,0,2,3,3,2))
+                         (-1,0,2,3,3,2)),
+            "arm_frame_off": ()
         }
         self.weapon["scythe"] = {
             "name": "Scythe",
@@ -624,7 +631,8 @@ class ItemLoader:
             "hair_yoff": ((-1,0,1,2,2,1),
                          (-1,0,1,2,2,1),
                          (-1,0,1,2,2,1),
-                         (-1,0,1,2,2,1))
+                         (-1,0,1,2,2,1)),
+            "arm_frame_off": ()
         }
         self.weapon["gscythe"] = {
             "name": "Golden Scythe",
@@ -650,7 +658,8 @@ class ItemLoader:
             "hair_yoff": ((-1,0,1,2,2,1),
                          (-1,0,1,2,2,1),
                          (-1,0,1,2,2,1),
-                         (-1,0,1,2,2,1))
+                         (-1,0,1,2,2,1)),
+            "arm_frame_off": ()
         }
         self.tool["wateringcan"] = {
             "name": "Watering Can",
@@ -658,23 +667,36 @@ class ItemLoader:
             "ecost": 2,
             "sprite": "tools",
             "inv_frame": [296, 303, 310, 338, 345],  # Each quality level
-            "player_sequence": ((),
-                                (),
-                                (),
-                                ()),
-            "action_sequence": ((None,None,None,None,None,None),
-                                (),
-                                (),
-                                ()),
-            "item_sequence": (),
-            "item_xoff": (),
-            "item_yoff": (),
+            "player_sequence": ((76,75,73,73,73,73),
+                                (166,167,129,129,129,129),
+                                (108,109,111,111,111,111),
+                                (166,167,129,129,129,129)),
+            "action_sequence": ((None,None,None,[("watering",(0,1))],None,None),
+                                ((None,None,None,[("watering",(1,0))],None,None)),
+                                ((None,None,None,[("watering",(0,-1))],None,None)),
+                                ((None,None,None,[("watering",(-1,0))],None,None))),
+            "item_sequence": ((294,294,295,295,295,265), # base frame
+                             (296,296,297,297,297,265),  # tool 'level'
+                             (298,298,298,298,298,265),  # computed in 
+                             (296,296,297,297,297,265)), # tool constructor
+            "item_xoff": ((1,1,0,0,0,0),
+                         (10,10,11,11,11,11),
+                         (0,0,0,0,0,0),
+                         (-10,-10,-11,-11,-11,-11)),
+            "item_yoff": ((19,16,17,17,17,17),
+                         (12,10,6,6,6,6),
+                         (1,2,-5,-5,-5,-5),
+                         (12,10,6,6,6,6)),
             "item_rot": ((0,0,0,0,0,0),
                          (0,0,0,0,0,0),
                          (0,0,0,0,0,0),
                          (0,0,0,0,0,0)),
-            "hair_yoff": ((-1,0,1,2,2,1),
-                         (-1,0,1,2,2,1),
-                         (-1,0,1,2,2,1),
-                         (-1,0,1,2,2,1))
+            "hair_yoff": ((-3,-1,1,1,1,1),
+                         (-3,-1,1,1,1,1),
+                         (-3,-1,1,1,1,1),
+                         (-3,-1,1,1,1,1)),
+            "arm_frame_off": ((6,6,6,6,6,6),
+                             (6,6,12,12,12,12),
+                             (6,6,6,6,6,6),
+                             (6,6,12,12,12,12)),
         }       

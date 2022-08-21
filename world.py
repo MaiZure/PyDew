@@ -576,11 +576,11 @@ class MapTile:
             new_obj = MapObject(self.game,self.world,self,type,self.gx,self.gy)
             self.object = new_obj if type > 8 and type < 27 else None
         
-        #Test dig
-        if self.diggable:
-            self.dug = True
-            if random.randint(1,2) == 1:
-                self.watered = True
+        #Test dig/water
+        #if self.diggable:
+        #    self.dug = True
+        #    if random.randint(1,2) == 1:
+        #        self.watered = True
             
            
         self.init = True
@@ -627,6 +627,20 @@ class MapTile:
             if not grid[6]: return 13 + off
         if major_sum == 4: return 14 + off
         print("Grid compute error")
+        
+    def dig_tile(self):
+        if not self.object and self.diggable:
+            self.dug = True
+            for neighbor in self.neighbors:
+                neighbor.update()
+            self.update()
+            
+    def water_tile(self):
+        if not self.object and self.dug:
+            self.watered = True
+            for neighbor in self.neighbors:
+                neighbor.update()
+            self.update()
     
     def update(self):
         self.dig_tilenum = self.compute_tilenum()

@@ -54,7 +54,6 @@ class Player:
                           (0,-1,-2,-1,0,-1,-2,-1),
                           (0,-1,-1,-1,0,-1,-1,-1))
         self.hair_yoff = self.hair_yoff_base[self.dir]
-        self.shirt_yoff = (0,-1,-1,-1,0,-1,-1,-1)
         self.hair_frame_off = 0
         self.scaled_hair = [None]*4
         self.scaled_shirt = [None]*4
@@ -195,7 +194,9 @@ class Player:
                         for action in action_list:
                             print(action)
                             action_item = action[0]
-                            action_mxy = (current_map,(action[1][0]+self.gx,action[1][1]+self.gy))
+                            gx = action[1][0]+self.gx
+                            gy = action[1][1]+self.gy
+                            action_mxy = (current_map,(gx,gy))
                             #print("Use " + str(action[0]) + " at " + str(action_mxy))
                             if action_mxy in self.game.world.objects:
                                 object = self.game.world.objects[action_mxy]
@@ -203,6 +204,14 @@ class Player:
                                     object.hp -= (item.quality+1)*30
                                     if object.hp < 1: # Should consider queueing an item event
                                         object.destroy()
+                            if action_item == "hoe":
+                                map = self.game.world.current_map
+                                tile = self.game.world.map_tiles[map][(gx,gy)]
+                                tile.dig_tile()
+                            if action_item == "watering":
+                                map = self.game.world.current_map
+                                tile = self.game.world.map_tiles[map][(gx,gy)]
+                                tile.water_tile()
                             self.action_sequence[self.frame] = None # Overwrite after first check
         else:
             self.actiontimer = 0
@@ -346,6 +355,10 @@ class Player:
         if self.action_locked:
             if self.current_item.category_str == "Sword":
                 arms_sprite = self.sprite[frame+12]
+            if self.current_item.category_str == "Tool" and self.current_item.arm_frame_off:
+                arms_sprite = self.sprite[frame+self.current_item.arm_frame_off[self.dir][self.frame]]
+            #if self.current_item.name == self.current_item.quality_name(self.current_item.quality) + " Watering #Can":
+            #    arms_sprite = self.sprite[frame+12]
         
         if self.dir == 3:
             body_sprite = pygame.transform.flip(body_sprite,True,False)
