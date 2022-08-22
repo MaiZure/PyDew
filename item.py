@@ -50,7 +50,7 @@ class Item:
             digits = [int(x) for x in str(self.count)]
             digits.reverse()
             for i, d in enumerate(digits):
-                screen.blit(ui.tiny_numbers, (slot_pos[0]+55-15*i,slot_pos[1]+53),ui.tiny_numbers_rect[d])
+                screen.blit(ui.tiny_numbers, (slot_pos[0]+49-15*i,slot_pos[1]+43),ui.tiny_numbers_rect[d])
                 
                 
     def generate_hover(self, width=0, height=0):

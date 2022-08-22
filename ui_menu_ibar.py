@@ -101,7 +101,7 @@ class InventoryBar:
         self.redraw_inventory = True
         
     def force_redraw(self):
-        self.last_selection = self.game.ui.ibar.selection
+        self.last_selection = self.selection
         self.redraw_ibar_selection = True
         self.redraw_inventory = True
     
@@ -110,12 +110,12 @@ class InventoryBar:
             return
         
         if self.redraw_ibar_selection:
-            self.redraw_ibar_selection = False
-            self.ibar_sprite.blit(self.spritesheet[56], (16+self.tile_width*self.selection,16), (0,0,64,64))
+            self.redraw_ibar_selection = False           
             if self.last_selection > -1:
                 self.ibar_sprite.blit(self.spritesheet[9], (16+self.tile_width*self.last_selection,16), (0,0,64,64))
                 self.ibar_sprite.blit(self.spritesheet[10], (16+self.tile_width*self.last_selection,16), (0,0,64,64))
-                self.last_selection = -1        
+                self.last_selection = -1
+            self.ibar_sprite.blit(self.spritesheet[56], (16+self.tile_width*self.selection,16), (0,0,64,64))
             
         # Probably don't need to redraw items on every frame eh?
         if self.redraw_inventory:
