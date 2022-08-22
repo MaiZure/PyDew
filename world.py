@@ -30,6 +30,7 @@ class World:
         self.tileset_index = {}
         self.current_map = "" #town
         self.current_map_path_objects = []
+
         self.special_objects = {}
         self.edge_warp_points = {}  # Map edge warps
         self.warp_points = {}       # (legacy) object warp points (doors)
@@ -50,6 +51,7 @@ class World:
         
         self.items = {}      # Items in the world
         self.objects = {}    # Objects on the map 
+        self.crops = {}      # Crops planted
         
         self.bg_tile_update_reel = [[] for a in range(60)]   # Maintan 60 frames
         self.bldg_tile_update_reel = [[] for a in range(60)]
@@ -103,6 +105,7 @@ class World:
         # Create intermediate surfaces
         rect = pygame.Rect(0, 0, self.map_width*16, self.map_height*16) 
         self.bg = pygame.Surface(rect.size).convert()
+        self.back_object = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
         self.mid = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
         self.mid_object = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
         self.fg = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
@@ -327,6 +330,8 @@ class World:
                 self.hour += 1
                 if self.hour > 23:
                     self.hour = 0
+                if self.hour == 2:
+                    self.next_day()
         self.darkening = True if self.hour >= 18 else False
     
     def update_ambient(self):
@@ -357,6 +362,7 @@ class World:
         
     def render_back(self, screen):
         screen.blit(self.bg, (0,0), (self.top_left_x,self.top_left_y,screen.get_width(),screen.get_height()))
+        screen.blit(self.back_object, (0,0), (self.top_left_x,self.top_left_y,screen.get_width(),screen.get_height()))
         
     def render_mid(self, screen):
         player = self.game.player
@@ -368,6 +374,7 @@ class World:
             for tiles in self.map_tiles[self.current_map]:
                 tile = self.map_tiles[self.current_map][tiles]
                 tile.render_object(self.mid_object, self.front_object)
+                tile.render_crop(self.back_object, self.mid_object, self.front_object)
             self.redraw_objects = False
         
         dest = (0,0)
@@ -516,6 +523,33 @@ class World:
                         objects.append(tile.object)
         return objects
         
+    def get_all_map_crops(self, map):
+        crops = []
+        for j in range(self.map_height):
+            for i in range(self.map_width):
+                key = (i,j)
+                if key in self.map_tiles[self.current_map]: 
+                    tile = self.map_tiles[self.current_map][key]
+                    if tile.crop:
+                        crops.append(tile.crop)
+        return crops
+        
+    def grow_all_crops(self):
+        for crop in self.crops:
+            self.crops[crop].grow()
+            
+    def next_day(self):
+        self.game.save.day += 1
+        self.hour = 6
+        self.minute = 0
+        self.tick_time = 0
+        self.darkening = False
+        self.ambient_light = (0,0,0)
+        self.outdoor_ambient = (0,0,0)
+        self.game.ui.clock.arrow_angle = 180
+        
+        self.grow_all_crops()
+        
 class MapTile:
     def __init__(self, game, map, location):
         self.game = game
@@ -581,11 +615,19 @@ class MapTile:
             new_obj = MapObject(self.game,self.world,self,type,self.gx,self.gy)
             self.object = new_obj if type > 8 and type < 27 else None
         
+        if self.gx > 62 and self.gx < 67:
+            if self.gy > 17 and self.gy < 20:
+                self.dug = True
+                self.watered = True
+                #self.plant_crop(random.choice(list(self.game.data.crops.values()))[0])
+            
         #Test dig/water
         #if self.diggable:
         #    self.dug = True
-        #    if random.randint(1,2) == 1:
-        #        self.watered = True
+        #    if not self.object:
+        #        self.plant_crop(random.choice(list(self.game.data.crops.values()))[0])
+        #        if random.randint(1,2) == 1:
+        #            self.watered = True
             
            
         self.init = True
@@ -646,7 +688,18 @@ class MapTile:
             for neighbor in self.neighbors:
                 neighbor.update()
             self.update()
-    
+            
+    def plant_crop(self, index):
+        if not self.dug: return
+        if self.crop: return
+        if index not in self.game.data.crops: return
+            
+        crop_data = self.game.data.crops[index]
+        new_crop = Crop(self.game, crop_data, self)
+        self.crop = new_crop
+        if new_crop not in self.world.crops:
+            self.world.crops[self.map, (self.gx, self.gy)] = new_crop
+             
     def update(self):
         self.dig_tilenum = self.compute_tilenum()
         self.water_tilenum = self.compute_tilenum(True)
@@ -656,6 +709,7 @@ class MapTile:
         if self.map != self.world.current_map: return
         
         bg = self.world.bg
+        bg_obj = self.world.back_object
         mid_obj = self.world.mid_object
         front_obj = self.world.front_object
         mid = self.world.mid
@@ -667,6 +721,7 @@ class MapTile:
         
         self.render_back(bg)
         self.render_object(mid_obj, front_obj)
+        self.render_crop(bg_obj, mid_obj, front_obj)
         self.render_mid(mid)
         self.render_front(fg)
         
@@ -685,6 +740,10 @@ class MapTile:
         if self.object:
             self.object.render_mid(mid)
             self.object.render_front(fg)
+            
+    def render_crop(self, bg, mid, fg):
+        if self.crop:
+            self.crop.render(bg, mid, fg)
             
     def render_mid(self, mid):
         if self.front_tile:

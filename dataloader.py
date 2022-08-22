@@ -10,6 +10,7 @@ class DataLoader:
         self.game = game
         self.items = {}
         self.weapons = {}
+        self.crops = {}
         
     def init_second_stage(self):
         self.load_data()
@@ -41,6 +42,13 @@ class DataLoader:
         result = choice+"/"+result
         return result
         
+    def get_random_seed(self):
+        dict = self.file["objectinformation"]["content"]
+        choice = random.choice(list(self.crops.values()))[0]
+        result = dict[choice]
+        result = choice+"/"+result
+        return result
+        
     def get_random_weapon(self):
         dict = self.file["weapons"]["content"]
         choice = random.choice(list(dict))
@@ -51,6 +59,7 @@ class DataLoader:
     def parse_object_data(self):
         self.items = self.build_lookup_dict(self.file["objectinformation"]["content"])
         self.weapons = self.build_lookup_dict(self.file["weapons"]["content"])
+        self.crops = self.build_lookup_dict(self.file["crops"]["content"])
             
     def build_lookup_dict(self, dict):
         output = {}

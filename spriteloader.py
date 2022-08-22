@@ -45,6 +45,7 @@ class SpriteLoader:
             if name == "map": size = (300,180)
             if name == "houses": size = (272,144)
             if name == "grass": size = (15,20)
+            if name == "crops": size = (16,32)
             #if name == "walls_and_floors": size = (16,32)
             self.sheet[name] = (pygame.image.load(open(path+file)).convert_alpha(), size[0], size[1])
     

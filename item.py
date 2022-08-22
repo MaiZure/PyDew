@@ -167,7 +167,7 @@ class Item:
             
     def init_item(self, data=None):
         if not data:
-            data = self.game.data.get_random_object()
+            data = self.game.data.get_random_seed()#self.game.data.get_random_object()
             self.parse_item_data(data)
             self.sprite = self.game.sprite.get_tiles("springobjects")
             self.hover = self.generate_hover(256,192)

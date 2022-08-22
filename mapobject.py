@@ -119,28 +119,18 @@ class MapObject:
             item.count = random.randint(1,max_count)
             
     def render_mid(self, screen):
-        #if not self.game.world.is_visible(self.gx, self.gy): return
-        top_left_x = self.game.world.top_left_x
-        top_left_y = self.game.world.top_left_y
         if self.large_sprite:
             screen.blit(self.large_sprite_mid, (self.x-self.ogx*16,self.y-self.ogy*16), (0,0,3*16,6*16))
         else:
             screen.blit(self.sprite[self.type], (self.x,self.y), (0,0,16,16))
             
     def render_front(self, screen):
-        top_left_x = self.game.world.top_left_x
-        top_left_y = self.game.world.top_left_y
-            
         if self.large_sprite:
             screen.blit(self.large_sprite_front, (self.x-self.ogx*16,self.y-self.ogy*16), (0,0,3*16,6*16))
         else:
             screen.blit(self.sprite[self.type], (self.x,self.y), (0,0,16,16))
             
     def render_all(self, screen):
-        #if not self.game.world.is_visible(self.gx, self.gy): return
-        top_left_x = self.game.world.top_left_x
-        top_left_y = self.game.world.top_left_y
-        
         if self.large_sprite:
             screen.blit(self.large_sprite_all, (self.x+self.draw_off_x-self.ogx*16,self.y+self.draw_off_y-self.ogy*16), (0,0,3*16,6*16))
         else:

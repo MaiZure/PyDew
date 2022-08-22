@@ -21,7 +21,7 @@ class PyDew:
     def __init__(self):
         ctypes.windll.user32.SetProcessDPIAware()  # Pass OS DPI to PyGame (avoid OS-level scaling)
         pygame.init()
-        self.version = "0.2.6.120"
+        self.version = "0.2.7.121"
         print("Hello PyDew "+str(self.version))
         self.config = Config()
         self.save = SaveData()
@@ -121,6 +121,8 @@ class PyDew:
                     self.world.litterbug()
                 if e.key == pygame.K_l:
                     self.world.speed_time = not self.world.speed_time
+                if e.key == pygame.K_u:
+                    self.world.next_day()
                 if e.key == pygame.K_ESCAPE:
                     self.ui.toggle_player_menu()
                 if e.key == pygame.K_TAB: 

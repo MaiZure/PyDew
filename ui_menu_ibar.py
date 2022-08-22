@@ -99,11 +99,16 @@ class InventoryBar:
         self.selection = select
         self.redraw_ibar_selection = True
         self.redraw_inventory = True
+        
+    def force_redraw(self):
+        self.last_selection = self.game.ui.ibar.selection
+        self.redraw_ibar_selection = True
+        self.redraw_inventory = True
     
     def render(self, screen):
         if not self.ibar_enabled:
             return
-    
+        
         if self.redraw_ibar_selection:
             self.redraw_ibar_selection = False
             self.ibar_sprite.blit(self.spritesheet[56], (16+self.tile_width*self.selection,16), (0,0,64,64))

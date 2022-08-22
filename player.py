@@ -12,7 +12,7 @@ class Player:
         self.pants_num = 0
         self.skin_num = 23
         self.inventory = [None] * 36
-        self.inventory_limit = 12
+        self.inventory_limit = 24
         self.hair_color = (192,32,32)
         self.pants_color = (0,0,224)
         self.action_locked = False
@@ -96,6 +96,7 @@ class Player:
         self.inventory[5] = Weapon(self.game)
         
         self.inventory[9] = (Item(self.game)).init_item()
+        self.inventory[9].count = 3
         
     def generate_pants(self):
         self.pants = pygame.Surface((288,672),pygame.SRCALPHA) ## TODO - Get first set of pants 192,672 of whole sheet
@@ -235,7 +236,7 @@ class Player:
         self.gy = gy
         self.y = self.gy*16
         
-    def do_action(self):
+    def get_front_tile(self):
         target_x = self.gx
         target_y = self.gy
         
@@ -244,18 +245,34 @@ class Player:
         if self.dir == 2: target_y -= 1
         if self.dir == 3: target_x -= 1
         
-        self.game.world.do_action((target_x, target_y))
+        return (target_x, target_y)
+        
+    def do_action(self):
+        target = self.get_front_tile()     
+        self.game.world.do_action(target)
     
     def use_item(self):
         item = self.current_item
         if not item: return
 
-        self.action_locked = True
-        self.player_sequence = item.player_sequence[self.dir]
-        self.item_sequence = item.item_sequence
-        self.action_sequence = list(item.action_sequence[self.dir])
-        self.hair_yoff = item.hair_yoff[self.dir]
-        self.ep -= item.ecost
+        if item.category_str == "Sword" or item.category_str == "Tool":        
+            self.action_locked = True
+            self.player_sequence = item.player_sequence[self.dir]
+            self.item_sequence = item.item_sequence
+            self.action_sequence = list(item.action_sequence[self.dir])
+            self.hair_yoff = item.hair_yoff[self.dir]
+            self.ep -= item.ecost
+            
+        if item.category_str == "Seed":
+            seed_index = item.inv_frame
+            target = self.get_front_tile()
+            tile = self.game.world.map_tiles[self.game.world.current_map][target]
+            if tile.dug and not tile.crop and not tile.object:
+                tile.plant_crop(seed_index)
+                item.count -= 1
+                if item.count < 1:
+                    self.inventory[self.game.ui.ibar.selection] = None
+                self.game.ui.ibar.force_redraw()
         
     @property
     def current_item(self):
