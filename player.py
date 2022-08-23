@@ -95,6 +95,10 @@ class Player:
         self.inventory[4] = Tool(self.game, "wateringcan")
         self.inventory[5] = Weapon(self.game)
         
+        self.inventory[7] = (Item(self.game)).init_item()
+        self.inventory[7].count = 3
+        self.inventory[8] = (Item(self.game)).init_item()
+        self.inventory[8].count = 3
         self.inventory[9] = (Item(self.game)).init_item()
         self.inventory[9].count = 3
         

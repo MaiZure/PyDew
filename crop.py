@@ -17,27 +17,38 @@ class Crop:
         self.season = data[2]
         self.sprite_index_base = int(data[3]) * 8 # Each sprite sequence has up to 8 frames 
         self.harvest_index = data[4]
-        self.regrow = data[5]
+        self.regrow_time = int(data[5])
         self.harvest_method = data[6]
         self.extra_harvest = data[7]
         self.trellis = data[8]
         self.tint = data[9]
         
         self.sprite = self.game.sprite.get_tiles("crops")
-        self.sprite_index = self.sprite_index_base + random.choice((0,1))
-    
+        
+        # Build stage index array
+        self.stages = []
+        self.stages.append(self.sprite_index_base + random.choice((0,1)))
+        self.sprite_index = self.stages[self.stage]
+        for i in range(len(self.stage_timers)):
+            self.stages.append(self.sprite_index_base + i+2)
+        self.final_stage_index = len(self.stages)-1
+        self.regrow_stage_index = -1
+        if self.regrow_time > 0:
+            self.stages.append(self.sprite_index_base + i+3)
+            self.regrow_stage_index = len(self.stages)-1
+            
     def grow(self):
         self.stage_time -= 1
         if self.stage_time < 1:
-            self.stage = 2 if self.stage < 2 else min(self.stage + 1, self.max_stage)
+            if self.stage < self.final_stage_index:
+                self.stage += 1
             if self.stage < len(self.stage_timers):
                 self.stage_time = int(self.stage_timers[self.stage-1])
-            self.sprite_index = self.sprite_index_base + self.stage
-        
+            self.sprite_index = self.stages[self.stage]
         self.tile.render_tile()
         
     def harvest(self):
-        if self.stage < self.max_stage: return
+        if self.stage < self.final_stage_index: return
         
     def remove(self):
         key = (self.tile.map, (self.tile.gx, self.tile.gy))
