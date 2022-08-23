@@ -9,10 +9,10 @@ class Crop:
         self.tile = tile
         self.x = self.tile.gx * 16
         self.y = self.tile.gy * 16
-        self.stage_time = 0
         self.stage = 0
         self.index = data[0]
         self.stage_timers = data[1].split(" ")
+        self.stage_time = int(self.stage_timers[self.stage])
         self.max_stage = len(self.stage_timers) + 1
         self.season = data[2]
         self.sprite_index_base = int(data[3]) * 8 # Each sprite sequence has up to 8 frames 
@@ -27,8 +27,12 @@ class Crop:
         self.sprite_index = self.sprite_index_base + random.choice((0,1))
     
     def grow(self):
-        self.stage = 2 if self.stage < 2 else min(self.stage + 1, self.max_stage)
-        self.sprite_index = self.sprite_index_base + self.stage
+        self.stage_time -= 1
+        if self.stage_time < 1:
+            self.stage = 2 if self.stage < 2 else min(self.stage + 1, self.max_stage)
+            if self.stage < len(self.stage_timers):
+                self.stage_time = int(self.stage_timers[self.stage-1])
+            self.sprite_index = self.sprite_index_base + self.stage
         
         self.tile.render_tile()
         

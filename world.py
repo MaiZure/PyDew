@@ -699,6 +699,7 @@ class MapTile:
         self.crop = new_crop
         if new_crop not in self.world.crops:
             self.world.crops[self.map, (self.gx, self.gy)] = new_crop
+        self.update()
              
     def update(self):
         self.dig_tilenum = self.compute_tilenum()
