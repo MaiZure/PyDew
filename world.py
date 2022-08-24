@@ -261,6 +261,13 @@ class World:
         return None
         
     def do_action(self, location):
+        # Check for harvest
+        if self.map_tiles[self.current_map][location]:
+            tile = self.map_tiles[self.current_map][location]
+            if tile.crop and tile.crop.harvest_ready:
+                tile.crop.harvest()
+                return
+        
         if location not in self.action_points:
             return print("No action at " + str(location))
             
@@ -362,13 +369,13 @@ class World:
         
     def render_back(self, screen):
         screen.blit(self.bg, (0,0), (self.top_left_x,self.top_left_y,screen.get_width(),screen.get_height()))
-        screen.blit(self.back_object, (0,0), (self.top_left_x,self.top_left_y,screen.get_width(),screen.get_height()))
         
     def render_mid(self, screen):
         player = self.game.player
         screen.fill(pygame.Color(0,0,0,0))
-        
+                
         if self.redraw_objects:
+            self.back_object.fill(pygame.Color(0,0,0,0))
             self.mid_object.fill(pygame.Color(0,0,0,0))
             self.front_object.fill(pygame.Color(0,0,0,0))
             for tiles in self.map_tiles[self.current_map]:
@@ -376,6 +383,8 @@ class World:
                 tile.render_object(self.mid_object, self.front_object)
                 tile.render_crop(self.back_object, self.mid_object, self.front_object)
             self.redraw_objects = False
+            
+        screen.blit(self.back_object, (0,0), (self.top_left_x,self.top_left_y,screen.get_width(),screen.get_height()))
         
         dest = (0,0)
         src = (self.top_left_x, 

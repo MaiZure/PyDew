@@ -130,6 +130,7 @@ class Item:
         self.y = y
         self.gx = self.x/16
         self.gy = self.y/16
+        self.count = count
         self.game.world.items[self.game.world.current_map].append(self)
         
     def remove_from_world(self):
@@ -279,7 +280,9 @@ class Resource(Item):
         
         # Check for objects with duplicate names
         if type == "stone": objdata = self.game.data.get_object_by_num(390)
-        else: objdata = self.game.data.get_object_by_name(type)
+        else: 
+            if isinstance(type,str): objdata = self.game.data.get_object_by_name(type)
+            if isinstance(type,int): objdata = self.game.data.get_object_by_num(type)
         
         self.init_item(objdata)
         self.sprite = game.sprite.get_tiles("springobjects")

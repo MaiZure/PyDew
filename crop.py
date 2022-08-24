@@ -1,5 +1,6 @@
 import random
 import pygame
+from item import *
 
 class Crop:
     def __init__(self,game,data,tile):
@@ -9,6 +10,7 @@ class Crop:
         self.tile = tile
         self.x = self.tile.gx * 16
         self.y = self.tile.gy * 16
+        self.harvest_ready = False
         self.stage = 0
         self.index = data[0]
         self.stage_timers = data[1].split(" ")
@@ -42,13 +44,36 @@ class Crop:
         if self.stage_time < 1:
             if self.stage < self.final_stage_index:
                 self.stage += 1
+            if self.stage > self.final_stage_index:
+                self.stage -= 1
             if self.stage < len(self.stage_timers):
                 self.stage_time = int(self.stage_timers[self.stage-1])
+            self.harvest_ready = True if self.stage == self.final_stage_index else False
             self.sprite_index = self.stages[self.stage]
         self.tile.render_tile()
         
     def harvest(self):
-        if self.stage < self.final_stage_index: return
+        if not self.harvest_ready: return
+        item = Resource(self.game, self.harvest_index)
+        
+        self.harvest_ready = False
+        
+        # Create harvest
+        x = self.x + random.randint(-8,8)
+        y = self.y + random.randint(-8,8)
+        count = 1
+        item.create_at(x,y, count)
+        
+        # Destroy if single-harvest crop
+        if self.regrow_stage_index == -1:
+            self.tile.crop = None
+            self.game.world.redraw_objects = True
+        else: # Prep for regrow
+            self.stage_time = self.regrow_time
+            self.stage += 1
+            self.sprite_index = self.stages[self.stage]
+            self.game.world.redraw_objects = True
+        
         
     def remove(self):
         key = (self.tile.map, (self.tile.gx, self.tile.gy))
