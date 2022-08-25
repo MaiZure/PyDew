@@ -560,11 +560,23 @@ class World:
         if self.game.save.day > 28:
             self.game.save.day = 1
             self.game.save.season += 1
+            self.next_season()
             if self.game.save.season > 3:
                 self.game.save.season = 0
                 self.game.save.year += 1
-                
+        
+        # TODO - Spread weeds/rocks
+        
+        self.game.ui.clock.trigger_update()
         self.grow_all_crops()
+        
+    def next_season(self):
+        # TODO -- Kill all non-seasonal plants
+        
+        for map_key in self.map_tiles:
+            for tile_key in self.map_tiles[map_key]:
+                tile = self.map_tiles[map_key][tile_key]
+                tile.init = False
         
 class MapTile:
     def __init__(self, game, map, location):
@@ -631,11 +643,12 @@ class MapTile:
             new_obj = MapObject(self.game,self.world,self,type,self.gx,self.gy)
             self.object = new_obj if type > 8 and type < 27 else None
         
-        if self.gx > 62 and self.gx < 67:
-            if self.gy > 17 and self.gy < 20:
-                self.dug = True
-                self.watered = True
-                #self.plant_crop(random.choice(list(self.game.data.crops.values()))[0])
+        if self.map == "farm":
+            if self.gx > 62 and self.gx < 67:
+                if self.gy > 17 and self.gy < 20:
+                    self.dug = True
+                    self.watered = True
+                    #self.plant_crop(random.choice(list(self.game.data.crops.values()))[0])
             
         #Test dig/water
         #if self.diggable:
