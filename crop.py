@@ -50,7 +50,7 @@ class Crop:
                 self.stage_time = int(self.stage_timers[self.stage-1])
             self.harvest_ready = True if self.stage == self.final_stage_index else False
             self.sprite_index = self.stages[self.stage]
-        self.tile.render_tile()
+        self.game.world.redraw_objects = True
         
     def harvest(self):
         if not self.harvest_ready: return

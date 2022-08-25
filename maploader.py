@@ -53,7 +53,7 @@ class MapLoader:
         for tileset in self.map[name]["tilesets"]:
             tileset_name = (tileset["image"].split("/")).pop()
             tileset_name = tileset_name.split(".")[0]
-            names.append(tileset_name)
+            names.append(self.escape_tileset_name(tileset_name))
         return names
         
     def get_map_tiles(self, name) -> list:
@@ -63,6 +63,22 @@ class MapLoader:
             tiles += self.game.sprite.get_tiles(tileset)
         return tiles
         
+    def get_season_name(self, num) -> str:
+        if num == 0: return "spring"
+        if num == 1: return "summer"
+        if num == 2: return "fall"
+        if num == 3: return "winter"
+        
+    def escape_tileset_name(self,name) -> str:
+        tileset_name = name
+        if "_outdoorsTileSheet2" in name:
+            season = self.game.save.season
+            tileset_name = self.get_season_name(season) + "_outdoorsTileSheet2"
+        elif "_outdoorsTileSheet" in name:
+            season = self.game.save.season
+            tileset_name = self.get_season_name(season) + "_outdoorsTileSheet"
+        return tileset_name
+    
     def get_map_warps(self,name) -> dict:
         warps = {}  # nested tuple ( (gx,gy), (newmap, gx, gy) )
         for map_properties in self.map[name]["properties"]:
@@ -153,6 +169,7 @@ class MapLoader:
         for tileset in self.map[name]["tilesets"]:
             tileset_name = (tileset["image"].split("/")).pop()
             tileset_name = tileset_name.split(".")[0]
+            tileset_name = self.escape_tileset_name(tileset_name)
             tile_offset = tileset_index[tileset_name]
             if "tiles" in tileset:
                 for tile in tileset["tiles"]:
@@ -170,6 +187,7 @@ class MapLoader:
         for tileset in self.map[name]["tilesets"]:
             tileset_name = (tileset["image"].split("/")).pop()
             tileset_name = tileset_name.split(".")[0]
+            tileset_name = self.escape_tileset_name(tileset_name)
             tile_offset = tileset_index[tileset_name]
             if "tiles" in tileset:
                 for tile in tileset["tiles"]:
@@ -189,6 +207,7 @@ class MapLoader:
         for tileset in self.map[name]["tilesets"]:
             tileset_name = (tileset["image"].split("/")).pop()
             tileset_name = tileset_name.split(".")[0]
+            tileset_name = self.escape_tileset_name(tileset_name)
             tile_offset = tileset_index[tileset_name]
             if "tiles" in tileset:
                 for tile in tileset["tiles"]:
@@ -206,6 +225,7 @@ class MapLoader:
         for tileset in self.map[name]["tilesets"]:
             tileset_name = (tileset["image"].split("/")).pop()
             tileset_name = tileset_name.split(".")[0]
+            tileset_name = self.escape_tileset_name(tileset_name)
             tile_offset = tileset_index[tileset_name]
             if "tiles" in tileset:
                 for tile in tileset["tiles"]:

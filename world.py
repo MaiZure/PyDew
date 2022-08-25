@@ -547,8 +547,7 @@ class World:
         for crop in self.crops:
             self.crops[crop].grow()
             
-    def next_day(self):
-        self.game.save.day += 1
+    def next_day(self):       
         self.hour = 6
         self.minute = 0
         self.tick_time = 0
@@ -557,6 +556,14 @@ class World:
         self.outdoor_ambient = (0,0,0)
         self.game.ui.clock.arrow_angle = 180
         
+        self.game.save.day += 1 
+        if self.game.save.day > 28:
+            self.game.save.day = 1
+            self.game.save.season += 1
+            if self.game.save.season > 3:
+                self.game.save.season = 0
+                self.game.save.year += 1
+                
         self.grow_all_crops()
         
 class MapTile:
