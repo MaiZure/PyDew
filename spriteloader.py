@@ -128,7 +128,10 @@ class SpriteLoader:
                 self.tiles[sheet] = self.get_spritesheet_tiles(sheet)
     
     def get_tiles(self, name) -> list:
-        return self.tiles[name]       
+        if isinstance(name, str):
+            return self.tiles[name]
+        if isinstance(name, list):
+            return self.tiles[name[self.game.save.season]]
         
     # Get the spritesheet from the library
     def get_spritesheet(self, name) -> pygame.image:
@@ -233,7 +236,7 @@ class SpriteLoader:
         # 1 and 2 in 'mid' and 3 in front
         season = self.game.save.season
         self.large_sprites["spr_oak"] = {
-            "sheet": "spring_outdoorsTileSheet",
+            "sheet": ["spring_outdoorsTileSheet","summer_outdoorsTileSheet","fall_outdoorsTileSheet","winter_outdoorsTileSheet"],
             "tiles": [(0,2), (1,2), (2,2), (25, 2), (26, 2), (27,2), (50, 2), (51, 2), (52, 2), (75, 2), (76, 2), (77, 2), None, (101,1), None, None, (126,1), None],
             "sprite_height": 6,
             "sprite_width": 3,
@@ -242,7 +245,7 @@ class SpriteLoader:
             "collision_height": 1
         }
         self.large_sprites["spr_maple"] = {
-            "sheet": "spring_outdoorsTileSheet",
+            "sheet": ["spring_outdoorsTileSheet","summer_outdoorsTileSheet","fall_outdoorsTileSheet","winter_outdoorsTileSheet"],
             "tiles": [(3,2), (4,2), (5,2), (28, 2), (29, 2), (30,2), (53, 2), (54, 2), (55, 2), (78, 2), (79, 2), (80, 2), None, (104,1), None, None, (129,1), None],
             "sprite_height": 6,
             "sprite_width": 3,
@@ -251,7 +254,7 @@ class SpriteLoader:
             "collision_height": 1
         }
         self.large_sprites["spr_pine"] = {
-            "sheet": "spring_outdoorsTileSheet",
+            "sheet": ["spring_outdoorsTileSheet","summer_outdoorsTileSheet","fall_outdoorsTileSheet","winter_outdoorsTileSheet"],
             "tiles": [(10,2), (11,2), (12,2), (35, 2), (36, 2), (37,2), (60, 2), (61, 2), (62, 2), (85, 2), (86, 2), (87, 2), None, (111,1), None, None, (136,1), None],
             "sprite_height": 6,
             "sprite_width": 3,
@@ -260,7 +263,7 @@ class SpriteLoader:
             "collision_height": 1
         }
         self.large_sprites["spr_bush_large"] = {
-            "sheet": "bushes",
+            "sheet": ["bushes","bushes","bushes","bushes"],
             "tiles": [(64,3), (65,3), (66,3), (72,1), (73, 1), (74, 1), (80,1), (81, 1), (82, 1)],
             "sprite_height": 3,
             "sprite_width": 3,
@@ -269,7 +272,7 @@ class SpriteLoader:
             "collision_height": 1
         }
         self.large_sprites["spr_bush_medium"] = {
-            "sheet": "bushes",
+            "sheet": ["bushes","bushes","bushes","bushes"],
             "tiles": [(0,2), (1,2), (8,1), (9, 1), (16, 1), (17,1)],
             "sprite_height": 3,
             "sprite_width": 2,
@@ -278,7 +281,7 @@ class SpriteLoader:
             "collision_height": 1
         }
         self.large_sprites["spr_bush_small"] = {
-            "sheet": "bushes",
+            "sheet": ["bushes","bushes","bushes","bushes"],
             "tiles": [[(112,1), (120,1)],[(113,1), (121,1)]],
             "sprite_height": 2,
             "sprite_width": 1,
@@ -287,7 +290,7 @@ class SpriteLoader:
             "collision_height": 1
         }
         self.large_sprites["spr_stick"] = {
-            "sheet": "springobjects",
+            "sheet": ["springobjects","springobjects","springobjects","springobjects"],
             "tiles": [[(294,1)],[(295,1)]],
             "sprite_height": 1,
             "sprite_width": 1,
@@ -296,7 +299,7 @@ class SpriteLoader:
             "collision_height": 1
         }
         self.large_sprites["spr_weed"] = {
-            "sheet": "springobjects",
+            "sheet": ["springobjects","springobjects","springobjects","springobjects"],
             "tiles": [[(784,1)],[(674,1)],[(675,1)]],
             "sprite_height": 1,
             "sprite_width": 1,
@@ -305,7 +308,7 @@ class SpriteLoader:
             "collision_height": 1
         }
         self.large_sprites["spr_rock_small"] = {
-            "sheet": "springobjects",
+            "sheet": ["springobjects","springobjects","springobjects","springobjects"],
             "tiles": [[(343,1)],[(450,1)]],
             "sprite_height": 1,
             "sprite_width": 1,
@@ -314,7 +317,7 @@ class SpriteLoader:
             "collision_height": 1
         }
         self.large_sprites["spr_log"] = {
-            "sheet": "springobjects",
+            "sheet": ["springobjects","springobjects","springobjects","springobjects"],
             "tiles": [[(602,1),(603,1),(626,1),(627,1)]],
             "sprite_height": 2,
             "sprite_width": 2,
@@ -323,7 +326,7 @@ class SpriteLoader:
             "collision_height": 2
         }
         self.large_sprites["spr_grass"] = {
-            "sheet": "grass",
+            "sheet": ["grass","grass","grass","grass"],
             "tiles": [[(0+(season*4),1)],[(1+(season*4),1)],[(2+(season*4),1)]],
             "sprite_height": 1,
             "sprite_width": 1,
@@ -336,7 +339,7 @@ class SpriteLoader:
             "collision_height": 0
         }
         self.large_sprites["spr_little_tree"] = {
-            "sheet": "paths",
+            "sheet": ["paths","paths","paths","paths"],
             "tiles": [[(23,1)]],
             "sprite_height": 1,
             "sprite_width": 1,
@@ -345,7 +348,7 @@ class SpriteLoader:
             "collision_height": 1
         }
         self.large_sprites["spr_stump_large"] = {
-            "sheet": "springobjects",
+            "sheet": ["springobjects","springobjects","springobjects","springobjects"],
             "tiles": [[(600,1),(601,1),(624,1),(625,1)]],
             "sprite_height": 2,
             "sprite_width": 2,
@@ -354,7 +357,7 @@ class SpriteLoader:
             "collision_height": 2
         }
         self.large_sprites["spr_rock_large"] = {
-            "sheet": "springobjects",
+            "sheet": ["springobjects","springobjects","springobjects","springobjects"],
             "tiles": [[(672,1),(673,1),(696,1),(697,1)]],
             "sprite_height": 2,
             "sprite_width": 2,

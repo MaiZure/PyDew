@@ -71,12 +71,16 @@ class MapLoader:
         
     def escape_tileset_name(self,name) -> str:
         tileset_name = name
+        season = self.game.save.season
+        season_name = self.get_season_name(season)
         if "_outdoorsTileSheet2" in name:
-            season = self.game.save.season
-            tileset_name = self.get_season_name(season) + "_outdoorsTileSheet2"
+            tileset_name = season_name + "_outdoorsTileSheet2"
         elif "_outdoorsTileSheet" in name:
-            season = self.game.save.season
-            tileset_name = self.get_season_name(season) + "_outdoorsTileSheet"
+            tileset_name = season_name + "_outdoorsTileSheet"
+        elif "_town" in name:
+            tileset_name = season_name + "_town"
+        elif "_beach" in name:
+            tileset_name = season_name + "_beach"
         return tileset_name
     
     def get_map_warps(self,name) -> dict:
