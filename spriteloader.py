@@ -201,6 +201,7 @@ class SpriteLoader:
         tw_px = self.large_sprites[name]["tile_width_px"] if "tile_width_px" in self.large_sprites[name] else 16
         th_px = self.large_sprites[name]["tile_height_px"] if "tile_height_px" in self.large_sprites[name] else 16
         tiles = self.large_sprites[name]["tiles"].copy()
+        season_offset = self.large_sprites[name]["season_offset"]
         if type(tiles[0]) == list: # Choose from two possible sprites
             tiles = random.choice(tiles).copy()
         rect = pygame.Rect(0, 0, sprite_width*tw_px, sprite_height*th_px)
@@ -214,9 +215,9 @@ class SpriteLoader:
                 if src_tile:
                     rect = pygame.Rect(row*16, column*16, tw_px, th_px) # Optimize - don't make 2 sprites if not used
                     if src_tile[1] == 1:  #Should be < 3 when mid layer is actually working (rendered by gy order) 
-                        new_sprite_mid.blit(sheet_tiles[src_tile[0]], rect)
+                        new_sprite_mid.blit(sheet_tiles[src_tile[0]+season_offset[self.game.save.season]], rect)
                     if src_tile[1] > 1 :
-                        new_sprite_front.blit(sheet_tiles[src_tile[0]], rect)
+                        new_sprite_front.blit(sheet_tiles[src_tile[0]+season_offset[self.game.save.season]], rect)
         new_sprite_all.blit(new_sprite_mid, (0,0))
         new_sprite_all.blit(new_sprite_front, (0,0))
         return new_sprite_mid, new_sprite_front, new_sprite_all
@@ -238,6 +239,7 @@ class SpriteLoader:
         self.large_sprites["spr_oak"] = {
             "sheet": ["spring_outdoorsTileSheet","summer_outdoorsTileSheet","fall_outdoorsTileSheet","winter_outdoorsTileSheet"],
             "tiles": [(0,2), (1,2), (2,2), (25, 2), (26, 2), (27,2), (50, 2), (51, 2), (52, 2), (75, 2), (76, 2), (77, 2), None, (101,1), None, None, (126,1), None],
+            "season_offset": [0,0,0,0],
             "sprite_height": 6,
             "sprite_width": 3,
             "sprite_origin": (1,5),
@@ -247,6 +249,7 @@ class SpriteLoader:
         self.large_sprites["spr_maple"] = {
             "sheet": ["spring_outdoorsTileSheet","summer_outdoorsTileSheet","fall_outdoorsTileSheet","winter_outdoorsTileSheet"],
             "tiles": [(3,2), (4,2), (5,2), (28, 2), (29, 2), (30,2), (53, 2), (54, 2), (55, 2), (78, 2), (79, 2), (80, 2), None, (104,1), None, None, (129,1), None],
+            "season_offset": [0,0,0,0],
             "sprite_height": 6,
             "sprite_width": 3,
             "sprite_origin": (1,5),
@@ -256,6 +259,7 @@ class SpriteLoader:
         self.large_sprites["spr_pine"] = {
             "sheet": ["spring_outdoorsTileSheet","summer_outdoorsTileSheet","fall_outdoorsTileSheet","winter_outdoorsTileSheet"],
             "tiles": [(10,2), (11,2), (12,2), (35, 2), (36, 2), (37,2), (60, 2), (61, 2), (62, 2), (85, 2), (86, 2), (87, 2), None, (111,1), None, None, (136,1), None],
+            "season_offset": [0,0,0,0],
             "sprite_height": 6,
             "sprite_width": 3,
             "sprite_origin": (1,5),
@@ -265,6 +269,7 @@ class SpriteLoader:
         self.large_sprites["spr_bush_large"] = {
             "sheet": ["bushes","bushes","bushes","bushes"],
             "tiles": [(64,3), (65,3), (66,3), (72,1), (73, 1), (74, 1), (80,1), (81, 1), (82, 1)],
+            "season_offset": [0,0,0,0],
             "sprite_height": 3,
             "sprite_width": 3,
             "sprite_origin": (0,2),
@@ -274,6 +279,7 @@ class SpriteLoader:
         self.large_sprites["spr_bush_medium"] = {
             "sheet": ["bushes","bushes","bushes","bushes"],
             "tiles": [(0,2), (1,2), (8,1), (9, 1), (16, 1), (17,1)],
+            "season_offset": [0,0,0,0],
             "sprite_height": 3,
             "sprite_width": 2,
             "sprite_origin": (0,2),
@@ -283,6 +289,7 @@ class SpriteLoader:
         self.large_sprites["spr_bush_small"] = {
             "sheet": ["bushes","bushes","bushes","bushes"],
             "tiles": [[(112,1), (120,1)],[(113,1), (121,1)]],
+            "season_offset": [0,0,0,0],
             "sprite_height": 2,
             "sprite_width": 1,
             "sprite_origin": (0,1),
@@ -292,15 +299,37 @@ class SpriteLoader:
         self.large_sprites["spr_stick"] = {
             "sheet": ["springobjects","springobjects","springobjects","springobjects"],
             "tiles": [[(294,1)],[(295,1)]],
+            "season_offset": [0,0,0,0],
             "sprite_height": 1,
             "sprite_width": 1,
             "sprite_origin": (0,0),
             "collision_width": 1,
             "collision_height": 1
         }
-        self.large_sprites["spr_weed"] = {
+        self.large_sprites["spr_weed1"] = {
             "sheet": ["springobjects","springobjects","springobjects","springobjects"],
-            "tiles": [[(784,1)],[(674,1)],[(675,1)]],
+            "tiles": [[(784,1)]],
+            "season_offset": [0,1,2,0],
+            "sprite_height": 1,
+            "sprite_width": 1,
+            "sprite_origin": (0,0),
+            "collision_width": 1,
+            "collision_height": 1
+        }
+        self.large_sprites["spr_weed2"] = {
+            "sheet": ["springobjects","springobjects","springobjects","springobjects"],
+            "tiles": [[(674,1)]],
+            "season_offset": [0,2,4,0],
+            "sprite_height": 1,
+            "sprite_width": 1,
+            "sprite_origin": (0,0),
+            "collision_width": 1,
+            "collision_height": 1
+        }
+        self.large_sprites["spr_weed3"] = {
+            "sheet": ["springobjects","springobjects","springobjects","springobjects"],
+            "tiles": [[(675,1)]],
+            "season_offset": [0,2,4,0],
             "sprite_height": 1,
             "sprite_width": 1,
             "sprite_origin": (0,0),
@@ -310,6 +339,7 @@ class SpriteLoader:
         self.large_sprites["spr_rock_small"] = {
             "sheet": ["springobjects","springobjects","springobjects","springobjects"],
             "tiles": [[(343,1)],[(450,1)]],
+            "season_offset": [0,0,0,0],
             "sprite_height": 1,
             "sprite_width": 1,
             "sprite_origin": (0,0),
@@ -319,6 +349,7 @@ class SpriteLoader:
         self.large_sprites["spr_log"] = {
             "sheet": ["springobjects","springobjects","springobjects","springobjects"],
             "tiles": [[(602,1),(603,1),(626,1),(627,1)]],
+            "season_offset": [0,0,0,0],
             "sprite_height": 2,
             "sprite_width": 2,
             "sprite_origin": (0,0),
@@ -327,7 +358,8 @@ class SpriteLoader:
         }
         self.large_sprites["spr_grass"] = {
             "sheet": ["grass","grass","grass","grass"],
-            "tiles": [[(0+(season*4),1)],[(1+(season*4),1)],[(2+(season*4),1)]],
+            "tiles": [[(0,1)],[(1,1)],[(2,1)]],
+            "season_offset": [0,4,8,12],
             "sprite_height": 1,
             "sprite_width": 1,
             "tile_width_px": 15,
@@ -341,6 +373,7 @@ class SpriteLoader:
         self.large_sprites["spr_little_tree"] = {
             "sheet": ["paths","paths","paths","paths"],
             "tiles": [[(23,1)]],
+            "season_offset": [0,0,0,0],
             "sprite_height": 1,
             "sprite_width": 1,
             "sprite_origin": (0,0),
@@ -350,6 +383,7 @@ class SpriteLoader:
         self.large_sprites["spr_stump_large"] = {
             "sheet": ["springobjects","springobjects","springobjects","springobjects"],
             "tiles": [[(600,1),(601,1),(624,1),(625,1)]],
+            "season_offset": [0,0,0,0],
             "sprite_height": 2,
             "sprite_width": 2,
             "sprite_origin": (0,0),
@@ -359,6 +393,7 @@ class SpriteLoader:
         self.large_sprites["spr_rock_large"] = {
             "sheet": ["springobjects","springobjects","springobjects","springobjects"],
             "tiles": [[(672,1),(673,1),(696,1),(697,1)]],
+            "season_offset": [0,0,0,0],
             "sprite_height": 2,
             "sprite_width": 2,
             "sprite_origin": (0,0),

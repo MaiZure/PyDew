@@ -19,8 +19,8 @@ class Player:
         self.player_sequence = ()
         self.action_sequence = ()
                
-        self.gx = 72#64  #78
-        self.gy = 17#67  #16
+        self.gx = 72 #64  #78
+        self.gy = 17 #67  #16
         self.x = self.gx*16 
         self.y = self.gy*16 
         

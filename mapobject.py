@@ -46,6 +46,16 @@ class MapObject:
         # Object is valid -- register with world tracker
         world.current_map_path_objects.append(self)   # Linear list tracker
         
+    def init_sprite(self):
+        if self.reverse:
+            self.large_sprite = self.game.sprite.get_large_sprite(self.spr_name)
+        else:
+            self.large_sprite = self.game.sprite.get_large_sprite_reverse(self.spr_name)
+            
+        self.large_sprite_mid = self.large_sprite[0]
+        self.large_sprite_front = self.large_sprite[1]
+        self.large_sprite_all = self.large_sprite[2]
+        
     def init_second_stage(self):
         if self.init: return
         self.set_constants(self.type)
@@ -55,17 +65,9 @@ class MapObject:
         if self.type == 22:
             self.draw_off_x = self.game.sprite.get_draw_off_x(self.spr_name) + random.randint(-4,4)
             self.draw_off_y = self.game.sprite.get_draw_off_y(self.spr_name)  + random.randint(-4,4)
-        
-        
+            
         if self.spr_name:
-            if self.reverse:
-                self.large_sprite = self.game.sprite.get_large_sprite(self.spr_name)
-            else:
-                self.large_sprite = self.game.sprite.get_large_sprite_reverse(self.spr_name)
-                
-            self.large_sprite_mid = self.large_sprite[0]
-            self.large_sprite_front = self.large_sprite[1]
-            self.large_sprite_all = self.large_sprite[2]
+            self.init_sprite()
             self.set_large_collision_box(self.spr_name)
             # add the large object to the O(1) object tracker
             self.world.objects[(self.world.current_map,(self.gx,self.gy))] = self
@@ -77,6 +79,7 @@ class MapObject:
         return self.large_sprite_all
         
     def set_large_collision_box(self, spr_name, value=1):
+        if self.tile.map != self.world.current_map: return
         # Collisions start from the front/bottom of a sprite and work backward
         self.collision_width = self.game.sprite.get_collision_width(spr_name)
         self.collision_height = self.game.sprite.get_collision_height(spr_name)
@@ -96,12 +99,12 @@ class MapObject:
     def destroy(self):
         if self.type == 22:
             if random.randint(1,2) == 1: return
-        self.world.current_map_path_objects.pop(self.world.current_map_path_objects.index(self))
-        del self.world.objects[(self.world.current_map,(self.gx,self.gy))]
+        if self in self.world.current_map_path_objects:
+            self.world.current_map_path_objects.pop(self.world.current_map_path_objects.index(self))
+        del self.world.objects[(self.tile.map,(self.gx,self.gy))]
         
         # Maybe an object shouldn't ALWAYS clear collisions...?
         tile_num = self.world.get_tile_num(self.gx,self.gy)
-        self.world.collision_map[tile_num] = 0
         self.set_large_collision_box(self.spr_name, 0)
         
         # Remove from tile (eventually multiple objects per tile?)
@@ -121,19 +124,19 @@ class MapObject:
     def render_mid(self, screen):
         if self.large_sprite:
             screen.blit(self.large_sprite_mid, (self.x-self.ogx*16,self.y-self.ogy*16), (0,0,3*16,6*16))
-        else:
+        else: #unused for now
             screen.blit(self.sprite[self.type], (self.x,self.y), (0,0,16,16))
             
     def render_front(self, screen):
         if self.large_sprite:
             screen.blit(self.large_sprite_front, (self.x-self.ogx*16,self.y-self.ogy*16), (0,0,3*16,6*16))
-        else:
+        else: #unused for now
             screen.blit(self.sprite[self.type], (self.x,self.y), (0,0,16,16))
             
     def render_all(self, screen):
         if self.large_sprite:
             screen.blit(self.large_sprite_all, (self.x+self.draw_off_x-self.ogx*16,self.y+self.draw_off_y-self.ogy*16), (0,0,3*16,6*16))
-        else:
+        else: #unused for now
             screen.blit(self.sprite[self.type], (self.x,self.y), (0,0,16,16))
             
     def set_constants(self,type):
@@ -142,68 +145,86 @@ class MapObject:
             self.action_list = ("axe", "bomb", "tap")
             self.hp = 300
             self.loot = [("wood",2),("wood",2),("wood",2)]
+            self.seasons = [True,True,True,True]
         if self.type == 10: 
             self.spr_name = "spr_maple";
             self.action_list = ("axe", "bomb", "tap")
             self.hp = 300
             self.loot = [("wood",2),("wood",2),("wood",2)]
+            self.seasons = [True,True,True,True]
         if self.type == 11: 
             self.spr_name = "spr_pine"
             self.action_list = ("axe", "bomb", "tap")
             self.hp = 300
             self.loot = [("wood",2),("wood",2),("wood",2)]
+            self.seasons = [True,True,True,True]
         if self.type == 13: 
-            self.spr_name = "spr_weed"
+            self.spr_name = "spr_weed1"
+            #self.tiles = 
             self.action_list = ("axe", "scythe", "slash", "bomb")
+            self.seasons = [True,True,True,False]
         if self.type == 14: 
-            self.spr_name = "spr_weed"
+            self.spr_name = "spr_weed2"
             self.action_list = ("axe", "scythe", "slash", "bomb")
+            self.seasons = [True,True,True,False]
         if self.type == 15: 
-            self.spr_name = "spr_weed"
+            self.spr_name = "spr_weed3"
             self.action_list = ("axe", "scythe", "slash", "bomb")
+            self.seasons = [True,True,True,False]
         if self.type == 16:
             self.spr_name = "spr_rock_small"
             self.action_list = ("pickaxe", "bomb")
-            self.loot = [("stone",2)]
+            self.loot = [("stone",2)]          
+            self.seasons = [True,True,True,True]
         if self.type == 17:
             self.spr_name = "spr_rock_small"; 
             self.action_list = ("pickaxe", "bomb")
             self.loot = [("stone",2)]
+            self.seasons = [True,True,True,True]
         if self.type == 18: 
             self.spr_name = "spr_stick"
             self.action_list = ("axe", "scythe", "bomb")
             self.loot = [("wood",2)]
+            self.seasons = [True,True,True,True]
         if self.type == 19: 
             self.spr_name = "spr_log"
             self.action_list = ("axe")
             self.loot = [("wood",2), ("hardwood",2), ("hardwood",2), ("hardwood",2)]
             self.hp = 100
+            self.seasons = [True,True,True,True]
         if self.type == 20:
             self.spr_name = "spr_rock_large"
             self.action_list = ("pickaxe")
             self.hp = 100
             self.loot = [("stone",2), ("stone",2), ("stone",2)]
+            self.seasons = [True,True,True,True]
         if self.type == 21:
             self.spr_name = "spr_stump_large"
             self.action_list = ("axe")
             self.hp = 100
             self.loot = [("wood",2), ("hardwood",2), ("hardwood",2), ("hardwood",2)]
+            self.seasons = [True,True,True,True]
         if self.type == 22:
             self.spr_name = "spr_grass"
             self.action_list = ("slash")
             self.collision_width = 0
             self.collision_height = 0
+            self.seasons = [True,True,True,False]
         if self.type == 23:
             self.spr_name = "spr_little_tree"
             self.action_list = ("axe", "slash")
             self.hp = 1
             self.loot = [("wood",2)]
+            self.seasons = [True,True,True,True]
         if self.type == 24:
             self.spr_name = "spr_bush_large";
+            self.seasons = [True,True,True,True]
         if self.type == 25: 
             self.spr_name = "spr_bush_medium";
+            self.seasons = [True,True,True,True]
         if self.type == 26: 
             self.spr_name = "spr_bush_small";
+            self.seasons = [True,True,True,True]
             
 class Farmhouse:
     def __init__(self, game, world):        

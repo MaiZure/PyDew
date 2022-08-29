@@ -560,10 +560,10 @@ class World:
         if self.game.save.day > 28:
             self.game.save.day = 1
             self.game.save.season += 1
-            self.next_season()
             if self.game.save.season > 3:
                 self.game.save.season = 0
                 self.game.save.year += 1
+            self.next_season()
         
         # TODO - Spread weeds/rocks
         
@@ -571,12 +571,16 @@ class World:
         self.grow_all_crops()
         
     def next_season(self):
-        # TODO -- Kill all non-seasonal plants
-        
         for map_key in self.map_tiles:
             for tile_key in self.map_tiles[map_key]:
                 tile = self.map_tiles[map_key][tile_key]
-                tile.init = False
+                tile.reinit = True
+                if tile.object:
+                    if tile.object.seasons[self.game.save.season]:
+                        tile.object.init_sprite()
+                    else:
+                        # Kill all non-seasonal plants
+                        tile.object.destroy()
         
 class MapTile:
     def __init__(self, game, map, location):
@@ -595,6 +599,7 @@ class MapTile:
         self.watered = False
         self.type = 0
         self.init = False
+        self.reinit = True
         self.animated = False
         self.redraw = True
         self.crop = None
@@ -620,28 +625,10 @@ class MapTile:
         self.water_tilenum = 0
         
     def init_second_stage(self):
-        if self.init: return
-        
-        if self.bg_layer: self.bg_tile = self.world.tileset[self.bg_layer]
-        if self.bldg_layer: self.bldg_tile = self.world.tileset[self.bldg_layer]
-        if self.front_layer: self.front_tile = self.world.tileset[self.front_layer]
-        if self.afront_layer: self.afront_tile = self.world.tileset[self.afront_layer]      
-        
-        if self.bg_layer in self.world.passable_tiles or self.bldg_layer in self.world.passable_tiles:
-            self.passable = True
-        if self.bg_layer in self.world.diggable_tiles or self.bldg_layer in self.world.diggable_tiles:
-            self.diggable = True
-        if self.bg_layer in self.world.water_tiles or self.bldg_layer in self.world.water_tiles:
-            self.water = True    
-        if self.bldg_layer and not self.passable:
-            self.collision = True
-        
-        if self.path_layer:
-            if self.path_layer < 9: self.path_layer = 0
-            paths_tile_base = self.world.tileset_index["paths"]
-            type = self.path_layer-paths_tile_base         
-            new_obj = MapObject(self.game,self.world,self,type,self.gx,self.gy)
-            self.object = new_obj if type > 8 and type < 27 else None
+        if self.reinit:
+            self.init_layers()
+        if not self.init:
+            self.init_objects()
         
         if self.map == "farm":
             if self.gx > 62 and self.gx < 67:
@@ -658,8 +645,33 @@ class MapTile:
         #        if random.randint(1,2) == 1:
         #            self.watered = True
             
-           
         self.init = True
+        self.reinit = False
+    
+    def init_layers(self):
+        if self.bg_layer: self.bg_tile = self.world.tileset[self.bg_layer]
+        if self.bldg_layer: self.bldg_tile = self.world.tileset[self.bldg_layer]
+        if self.front_layer: self.front_tile = self.world.tileset[self.front_layer]
+        if self.afront_layer: self.afront_tile = self.world.tileset[self.afront_layer]      
+        
+        if self.bg_layer in self.world.passable_tiles or self.bldg_layer in self.world.passable_tiles:
+            self.passable = True
+        if self.bg_layer in self.world.diggable_tiles or self.bldg_layer in self.world.diggable_tiles:
+            self.diggable = True
+        if self.bg_layer in self.world.water_tiles or self.bldg_layer in self.world.water_tiles:
+            self.water = True    
+        if self.bldg_layer and not self.passable:
+            self.collision = True
+    
+    
+    def init_objects(self):
+        if self.path_layer and not self.object:
+            if self.path_layer < 9: self.path_layer = 0
+            paths_tile_base = self.world.tileset_index["paths"]
+            type = self.path_layer-paths_tile_base       
+            new_obj = MapObject(self.game,self.world,self,type,self.gx,self.gy)
+            self.object = new_obj if type > 8 and type < 27 else None
+    
     
     def get_dig_grid(self):
         grid = []
